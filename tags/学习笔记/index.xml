@@ -20,5 +20,14 @@
       <description>1. TCP概述 不同于UDP，TCP提供一种面向连接的、可靠的字节流服务，没有由TCP自动插入的记录标志或消息边界，TCP根本不会解读字节流里的</description>
     </item>
     
+    <item>
+      <title>加密与安全机制</title>
+      <link>https://ericwu0930.github.io/post/security/</link>
+      <pubDate>Fri, 14 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/security/</guid>
+      <description>加密是为了满足以下需求：在不安全的信道上保护所传输信息的机密性、完整性以及可认证性。有两种重要的加密算法——对称密钥与非对称密钥。 对称密钥 在</description>
+    </item>
+    
   </channel>
 </rss>

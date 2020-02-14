@@ -15,9 +15,9 @@
     
 
     
-    <meta name="title" content="学习笔记" />
-    <meta property="og:title" content="学习笔记" />
-    <meta property="twitter:title" content="学习笔记" />
+    <meta name="title" content="加密与安全机制" />
+    <meta property="og:title" content="加密与安全机制" />
+    <meta property="twitter:title" content="加密与安全机制" />
     
 
     
@@ -34,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>学习笔记-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>加密与安全机制-吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+    <link rel="canonical" href="/post/security/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -158,14 +158,41 @@
 
 
 
-<header class="intro-header" style="background-image: url('/img/roof.jpg')">
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>Eric&#39;s Blog </h1>
-                    
-		    <span class="subheading">路在脚下，心向远方</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" title="计算机网络">
+                            计算机网络
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                    </div>
+                    <h1>加密与安全机制</h1>
+                    <h2 class="subheading">计算机网络学习笔记之二</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Friday, February 14, 2020
+                        
+                        
+                        
+                    </span>
                 </div>
             </div>
         </div>
@@ -174,169 +201,86 @@
 
 
 
-  
-<div class="container">
-    <div class="row">
-        
-        
-   	    <div class="
-            col-lg-8 col-lg-offset-1
-            col-md-8 col-md-offset-1
-            col-sm-12
-            col-xs-12
-            post-container
-        ">
-            
 
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/tcp/">
-        <h2 class="post-title">
-            TCP:控制传输协议
-        </h2>
-	
-        <h3 class="post-subtitle">
-            计算机网络学习笔记之一
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            1. TCP概述 不同于UDP，TCP提供一种面向连接的、可靠的字节流服务，没有由TCP自动插入的记录标志或消息边界，TCP根本不会解读字节流里的
-       
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Friday, February 14, 2020
-    
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/security/">
-        <h2 class="post-title">
-            加密与安全机制
-        </h2>
-	
-        <h3 class="post-subtitle">
-            计算机网络学习笔记之二
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            加密是为了满足以下需求：在不安全的信道上保护所传输信息的机密性、完整性以及可认证性。有两种重要的加密算法——对称密钥与非对称密钥。 对称密钥 在
-       
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Friday, February 14, 2020
-    
-    
-    </p>
-
-</div>
-<hr>
-
+<article>
+    <div class="container">
+        <div class="row">
 
             
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#对称密钥">对称密钥</a></li>
+        <li><a href="#非对称密钥">非对称密钥</a></li>
+        <li><a href="#数字签名过程">数字签名过程</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <p>加密是为了满足以下需求：在不安全的信道上保护所传输信息的机密性、完整性以及可认证性。有两种重要的加密算法——对称密钥与非对称密钥。</p>
+<p><img src="https://i.loli.net/2020/02/14/ZqFWaQbjPp4Jo5X.png" alt="image-20200214191330790.png"></p>
+<h3 id="对称密钥">对称密钥</h3>
+<p>在对称密钥系统中，由于加密与解密的算法相同，它们的密钥也是相同的。多年来，最流行的对称密码算法是数据加密标准（DES）。DES是一种分组密码，也就是说每次对固定数目的比特块进行操作。DES使用64比特的数据块与56位的密钥。如今被更高级的AES所取代，AES的不同版本提供了长度不同的密钥，比如128位，192位以及256位，即AES-128，AES-192以及AES-256。</p>
+<p>它加密过程效率高，但是密钥的分配和保存是一个问题。</p>
+<h3 id="非对称密钥">非对称密钥</h3>
+<p>上图过程是加密的过程，因为公钥是可以公开的，那么任何人都可以给私钥的拥有者发送信息，而接受者无法追溯信息的来源。如果这个过程翻过来，就变成了一个认证过程。例如A用自己的私钥加密了一个邮件（<strong>用私钥加密也被称为签名</strong>），发送给B，B有A的公钥，知道该信息一定来源于A，因为只有A有A的私钥。但是这样，该信息就丧失了加密的属性，因为大家都有A的公钥。</p>
+<p>如何即实现加密，又实现认证呢？</p>
+<p>仍然是A给B发信息，先用A的私钥进行加密，然后再用B的公钥加密，传递给B。这样技能够认证消息经A授权，又能够保证其对B的机密性。</p>
+<p>非对称加密的过程效率比较低，在混合密码系统中，用非对称密钥对一会话密钥进行加密（对称的），然后用会话密钥对文件进行加密。</p>
+<h3 id="数字签名过程">数字签名过程</h3>
+<p><img src="https://s2.ax1x.com/2020/02/14/1j2GK1.png" alt="1j2GK1.png"></p>
+<p>数字签名的功能可用于维护信息的可认证性与不可抵赖性。</p>
+<p>A公司首先对文件用单向散列函数进行处理，得到一个固定大小的摘要（或指纹），这里使用<strong>MD5算法</strong>（加密列散算法的一种），得到了一个128位的摘要，使用A的私钥对这份摘要进行签名。然后A公司将文件，摘要以及A的公钥一起发给B。</p>
+<p>B使用同样的单向散列函数得到一个摘要。使用A的公钥对签名的摘要进行处理，然后将这两份摘要进行比对，如果一致，则可断定文件没有得到篡改。</p>
+<p>但是如图身份证，如果小明给自己制造了身份证，这个身份证有公信力么？显然没有，这里也一样，没有人可以给A担保，A就是A，B公司当然不会认可A，这时候需要引入有公信力的第三方机构，这里称为CA证书颁发机构。</p>
+<p>A首先向CA申请证书，经过CA的核实后，CA给A颁发了带有CA签名的A的公钥和私钥。如果B信任这个CA，那么他就有CA的公钥，用来认证带有CA签名的A的公钥。</p>
 
 
+                
 
-       	</div>
-        
-
-<div class="
-    col-lg-3 col-lg-offset-0
-    col-md-3 col-md-offset-0
-    col-sm-12
-    col-xs-12
-    sidebar-container
-">
-    
-    
-
-    
-	
-    <section class="visible-md visible-lg">
-	<hr><h5><a href="/top/about">ABOUT ME</a></h5>
-        <div class="short-about">
-            
-            <a href="/top/about">
-               <img src="/img/portrait.jpeg" alt="avatar" style="cursor: pointer" />
-            </a>
-            
-            
-                <p>Software Developer, Photographer and Life Adventurer</p>
-            
-           
-           <ul class="list-inline"> 
-               
-               
-               
-               
-               <li>
-                   <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-               <li>
-                   <a target="_blank" href="/img/we_chat.JPG">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               <li>
-                   <a target="_blank" href="https://github.com/ericwu0930/">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-               
-               <li>
-                   <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-            
-            
-               
-               
+                <hr>
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/post/tcp/" data-toggle="tooltip" data-placement="top" title="TCP:控制传输协议">Next
+                            Post &rarr;</a>
+                    </li>
+                    
                 </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
             </div>
-    </section>
-	
-    
-    
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
 
-    
-    
-</div>
+                
+                
 
-	</div>
-</div>
-
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
 
 
 
