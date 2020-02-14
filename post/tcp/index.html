@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="TCP:控制传输协议" />
+    <meta property="og:title" content="TCP:控制传输协议" />
+    <meta property="twitter:title" content="TCP:控制传输协议" />
+    
+
+    
+    <meta name="description" content="计算机网络学习笔记之一">
+    <meta property="og:description" content="计算机网络学习笔记之一" />
+    <meta property="twitter:description" content="计算机网络学习笔记之一" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>TCP:控制传输协议-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/tcp/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" title="计算机网络">
+                            计算机网络
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                    </div>
+                    <h1>TCP:控制传输协议</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Friday, February 14, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-tcp概述">1. TCP概述</a></li>
+    <li><a href="#2-tcp头部和封装">2. TCP头部和封装</a></li>
+    <li><a href="#3-tcp连接管理">3. TCP连接管理</a>
+      <ul>
+        <li><a href="#31-为什么是三次握手">3.1 为什么是三次握手？</a></li>
+        <li><a href="#32-为什么是四次挥手">3.2 为什么是四次挥手？</a></li>
+        <li><a href="#33-连接建立超时">3.3 连接建立超时</a></li>
+        <li><a href="#34-初始序列号">3.4 初始序列号</a></li>
+        <li><a href="#35-tcp状态转换">3.5 TCP状态转换</a></li>
+        <li><a href="#36-重置报文段">3.6 重置报文段</a></li>
+        <li><a href="#37-tcp的路径最大传输单元发现">3.7 TCP的路径最大传输单元发现</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-tcp超时与重传">4. TCP超时与重传</a>
+      <ul>
+        <li><a href="#41-带时间戳选项的rtt测量">4.1 带时间戳选项的RTT测量</a></li>
+        <li><a href="#42-设置重传超时rto">4.2 设置重传超时（RTO）</a></li>
+        <li><a href="#43-基于计时器的重传">4.3 基于计时器的重传</a></li>
+        <li><a href="#44-快速重传">4.4 快速重传</a></li>
+        <li><a href="#45-带选择确认的重传">4.5 带选择确认的重传</a></li>
+        <li><a href="#46-伪超时于重传">4.6 伪超时于重传</a></li>
+        <li><a href="#47-包失序">4.7 包失序</a></li>
+        <li><a href="#48-重复">4.8 重复</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-tcp数据流与窗口管理">5. TCP数据流与窗口管理</a>
+      <ul>
+        <li><a href="#51-交互式通信">5.1 交互式通信</a></li>
+        <li><a href="#52-延时确认">5.2 延时确认</a></li>
+        <li><a href="#53-nagle算法">5.3 Nagle算法</a></li>
+        <li><a href="#54-流量控制与窗口管理">5.4 流量控制与窗口管理</a></li>
+      </ul>
+    </li>
+    <li><a href="#6-tcp拥塞控制">6. TCP拥塞控制</a>
+      <ul>
+        <li><a href="#61-tcp拥塞检测">6.1 TCP拥塞检测</a></li>
+        <li><a href="#62-减缓tcp发送">6.2 减缓TCP发送</a></li>
+        <li><a href="#63-慢启动">6.3 慢启动</a></li>
+        <li><a href="#64-拥塞避免">6.4 拥塞避免</a></li>
+        <li><a href="#65-标准tcp">6.5 标准TCP</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <h2 id="1-tcp概述">1. TCP概述</h2>
+<p>不同于UDP，TCP提供一种面向连接的、可靠的字节流服务，没有由TCP自动插入的记录标志或消息边界，TCP根本不会解读字节流里的字节内容。</p>
+<p>为了实现可靠的连接服务，它使用了ARQ（自动重复请求）纠正差错，在发送方和接收方使用分组窗口和滑动窗口管理分组，并以此为基础进行流量控制和拥塞控制（流量控制是为了接收方，拥塞控制是为了不压垮发送方与接收方之间的网络）。</p>
+<p>TCP的可靠性体现在一下几个方面：</p>
+<ol>
+<li>TCP把一个发送应用程序的字节流以最佳大小转换成一组IP可以携带的分组，称为组包，并允许他们在传输过程中组合，（称为重新组包）</li>
+<li>TCP维持了一个强制的校验和（UDP不是强制的）</li>
+<li>TCP为一个窗口设置一个计时器，超时重传</li>
+<li>TCP使用的ACK是累积的，一个ACK丢失了，后续的ACK足以确认前面的报文</li>
+<li>TCP提供一种双工服务，每个报文段包含一个窗口通告以实现相反方向的流量控制</li>
+<li>使用序列号，TCP接收端可以丢弃重复的报文段和记录以杂乱次序到达的报文段</li>
+</ol>
+<h2 id="2-tcp头部和封装">2. TCP头部和封装</h2>
+<p><img src="/img/image-20200208221619513.png" alt=""></p>
+<p>标准TCP头部由20个字节构成，TCP头部必须是32位的倍数。阴影字段用于与该报文段发送方关联的相反方向的数据流。</p>
+<p>序列号代表着包含该序列号的报文段的数据<strong>从哪一个字节开始</strong>。SYN和FIN会消耗一个字节，而ACk则不消耗。消耗一个序列号意味着使用重传进行可靠传输。也就是说如果一个纯ACK数据报的序列号是K，那么相同方向下一个数据报的序列号依然是K。</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CWR</td>
+<td>拥塞窗口减</td>
+</tr>
+<tr>
+<td>ECE</td>
+<td>ECN回显（发送方接收到了一个更早的拥塞通告）</td>
+</tr>
+<tr>
+<td>URG</td>
+<td>紧急（紧急指针字段有效）</td>
+</tr>
+<tr>
+<td>ACK</td>
+<td>确认，该位置1时，确认号才有效</td>
+</tr>
+<tr>
+<td>PSH</td>
+<td>推送，通常表示发送端缓存为空</td>
+</tr>
+<tr>
+<td>RST</td>
+<td>重置连接</td>
+</tr>
+<tr>
+<td>SYN</td>
+<td>用于初始化</td>
+</tr>
+<tr>
+<td>FIN</td>
+<td>发送方已经结束向对方发送数据</td>
+</tr>
+</tbody>
+</table>
+<p>TCP头部包含多个选项，每个选项的头一个字节为“种类”，第二个字节显示该选项的总长度。</p>
+<table>
+<thead>
+<tr>
+<th>种类</th>
+<th>长度</th>
+<th>名称</th>
+<th>描述与目的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>4</td>
+<td>MSS</td>
+<td>最大段大小</td>
+</tr>
+<tr>
+<td>3</td>
+<td>3</td>
+<td>WSOPT</td>
+<td>窗口缩放因子</td>
+</tr>
+<tr>
+<td>4</td>
+<td>2</td>
+<td>SACK-Permitted</td>
+<td>发送者支持SACK选项</td>
+</tr>
+<tr>
+<td>5</td>
+<td>可变</td>
+<td>SACK</td>
+<td>SACK段</td>
+</tr>
+<tr>
+<td>8</td>
+<td>10</td>
+<td>TSOPT</td>
+<td>时间戳选项</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>
+<p>最大段大小：是指TCP协议所允许的从对方接受到的最大报文段，<strong>最大报文段只记录TCP数据的字节数</strong>，最大段大小并不是TCP通信双方的协商结果，还是一个限定的数字。（告知而非协商）</p>
+</li>
+<li>
+<p>窗口缩放选项：将TCP窗口大小字段由16位扩展为32位。该选项只能出现在一个SYN报文段中，因此当连接建立以后比例因子是与方向绑定的。每个方向的比例因子可各不相同。</p>
+</li>
+<li>
+<p>选择确认：通过接收SYN报文段中的“允许选择确认”选项，TCP通信方会了解自身具有发布SACK信息的能力，使用SACK块描述接收到的杂乱数据，每个SACK块由一对32位序列号表示，最多由3块。</p>
+</li>
+<li>
+<p>时间戳：时间戳选项要求发送方在每一个报文段中添加2个4字节的时间戳数值，接收方将会在确认中反映这些数值，允许发送方针对每一个接收到的ACK估算TCP连接的往返时间。发送方将一个32位的数值填充到时间戳数值字段（TSV或TSval）作为第一部分，接收方则将收到的时间戳数值原封不动的填充到第二部分的时间戳回显重试字段（TSER或TSecr）。借助时间戳选项，能够获得往返时间相对精确的测量结果，同时还可以作为序列号的一个扩展，作为防回绕序列号。（所谓回绕就是一个数值增大到上限后重新从最小值开始计数）</p>
+</li>
+</ul>
+<h2 id="3-tcp连接管理">3. TCP连接管理</h2>
+<p><img src="/img/image-20200210213656465.png" alt="image-20200210213656465"></p>
+<h3 id="31-为什么是三次握手"><strong>3.1 为什么是三次握手</strong>？</h3>
+<p>如果是两次握手，B不知道A是否建立了连接，比如A主动提出建立连接，但是因为网络原因，该报文段消失于网络中，于是A重传了一个SYN报文段，并在传输完信息后断开了连接，若此时，之前的SYN报文段来到了B，则B建立了连接，但其实A是空闲状态的。</p>
+<h3 id="32-为什么是四次挥手"><strong>3.2 为什么是四次挥手</strong>？</h3>
+<p>因为TCP连接是全双工的。</p>
+<h3 id="33-连接建立超时"><strong>3.3 连接建立超时</strong></h3>
+<p>客户端TCP为了建立连接频繁地发送SYN报文段，在首个报文段发送后3秒发送第二个，6秒发送第三个，12秒发送第四个，这一行为称之为指数回退。</p>
+<h3 id="34-初始序列号"><strong>3.4 初始序列号</strong></h3>
+<p>一个TCP报文段同时具备连接的4元组与当前活动窗口的序列号才会在通信过程中被对方认为是正确的，这也体现了TCP的脆弱性，为了抵御这一脆弱，一种方法是使初始序列号变得更加难以猜出。</p>
+<h3 id="35-tcp状态转换"><strong>3.5 TCP状态转换</strong></h3>
+<p><img src="/img/image-20200208230254019.png" alt="image-20200208230254019"></p>
+<p><img src="/img/image-20200208230314520.png" alt="image-20200208230314520"></p>
+<h4 id="351-time_wait状态"><strong>3.5.1 TIME_WAIT状态</strong></h4>
+<p>TIME_WAIT状态也称为2MSL等待状态，它有两个用途</p>
+<ol>
+<li>能够让TCP重新发送最终的ACK，以避免出现丢失的情况</li>
+<li>2MSL时，通讯双方将该连接定义为不可重复使用，更严厉的，如果一个端口处于2MSL，则该端口不可被再次使用，这可以吞掉吃到的数据包，防止干扰新的连接</li>
+</ol>
+<h4 id="352-fin_wait_2状态"><strong>3.5.2 FIN_WAIT_2状态</strong></h4>
+<p>因为半关闭的存在，FIN_WAIT_2和CLOSE_WAIT状态会继续保持下去，为了防止这种无限制的等待过程，会设置一个计时器，如果计时器超时时连接是空闲的，那么TCP连接就会转移到CLOSED状态。</p>
+<h3 id="36-重置报文段">3.6 重置报文段</h3>
+<ol>
+<li>针对不存在的端口的连接请求，在发送SYN后，会收到一条带有R的报文段</li>
+<li>主动终止一条连接，发送一条带有R的报文段，重置报文段不会令通信另一端做出任何响应。</li>
+<li>半开连接：服务器直接down掉，重新开机后，客户端发送消息，服务器回复一条重置报文段结束掉连接。</li>
+</ol>
+<h3 id="37-tcp的路径最大传输单元发现">3.7 TCP的路径最大传输单元发现</h3>
+<ol>
+<li>在一个连接建立时，TCP使用对外接口的最大传输单元的最小值，或者根据通信对方声明的最大段大小来选择发送方的最大段大小</li>
+<li>TCP通过这条连接发送的所有IPv4数据报都会对DF位字段进行设置</li>
+<li>如果收到了PTB消息，TCP就会减少段的大小，然后用修改过的段大小进行重传</li>
+<li>减少段大小的数值一段时间后需要尝试一个更大的数</li>
+</ol>
+<h2 id="4-tcp超时与重传">4. TCP超时与重传</h2>
+<p>有两种方式的重传：第一种称为基于计时器的<strong>超时重传</strong>，TCP在发送数据时会设置一个计时器，并设置一个阈值（RTO）若计时器超时时仍未收到数据确认信息，则会引发超时重传。另一种方式称为<strong>快速重传</strong>，若TCP累计确认无法返回新的ACK，或者当ACK包含选择确认信息表明出现失序报文段时，发送端会推断出丢包的范围并且进行重传。</p>
+<h3 id="41-带时间戳选项的rtt测量"><strong>4.1 带时间戳选项的RTT测量</strong></h3>
+<p><img src="/img/image-20200210113052567.png" alt="image-20200210113052567"></p>
+<ol>
+<li>接收端发送一个ACK，并更新LastACK</li>
+<li>当接收到新数据时，如果序列号==LastACK，记录下该报文段的TSV，记为TsRecent</li>
+<li>返回ACK报文段时，将TsRecent写入TSER，并更新LastACK</li>
+<li>发送端将收到的ACK报文段中的TSER减TCP时钟，即可得到一个RTT样本</li>
+</ol>
+<h3 id="42-设置重传超时rto"><strong>4.2 设置重传超时（RTO）</strong></h3>
+<p>网络是一个动态的过程，我们需要根据RTT（往返时间估计）来设定一个合理的RTO值，如果RTO过小，会在网络中引入不必要的重复数据。如果RTO过大，则使得整个网络的利用率下降。因此，如何设置合理的RTO值变得至关重要。常用的方法有经典方法、标准方法。</p>
+<h3 id="43-基于计时器的重传"><strong>4.3 基于计时器的重传</strong></h3>
+<p>在设计计时器前，需记录被计时的报文段序列号，若及时收到了该报文段的ACK，那么计时器被取消。之后发送端发送一个新的数据包时，需设定一个新的计时器。</p>
+<p>TCP将超时重传视为相当重要的事件，当发生该情况时，它通过降低当前数据发送率来对此进行快速响应。有两种方法：第一种基于拥塞控制机制减小发送窗口的大小；另一种方法为每当一个重传报文被再次重传时，增大RTO的退避因子（使得RTO值变大）</p>
+<h3 id="44-快速重传"><strong>4.4 快速重传</strong></h3>
+<p>快速重传的前提是当接收到失序报文段时，TCP需要立即生成确认信息，当失序数据到达时，重复ACK应立即返回，不能延迟发送。</p>
+<p>重复ACK到达发送端表明先前发送的单签期盼的包可能丢失，或者延迟到达，TCP等待一定数目重复ACK，来决定数据是否丢失并触发快速重传（重复ACK阈值，dupthresh）。</p>
+<p>快速重传算法可以概括如下：TCP发送端在观测到至少dupthresh个重复ACK后，即重传可能丢失的数据分组，而不必等到重传计时器超时。根据除服ACK推断的丢包通常与网络拥塞有关，因此伴随快速重传应触发拥塞控制机制。</p>
+<p>在重传发生时，发送端在执行重传前已发送的最大序列号称为恢复点，TCP在接收到序列号等于或大于恢复点的ACK时，才会被认为从重传中恢复。如果收到的ACK大于之前收到的最大ACK值，但不足以到达恢复点，这种类型的ACK被称为<strong>部分ACK</strong>，当部分ACK到达时，TCP发送端立即发送可能丢失的报文段。如果拥塞控制机制允许，也可以同时发送新的数据。</p>
+<h3 id="45-带选择确认的重传"><strong>4.5 带选择确认的重传</strong></h3>
+<p>在SYN阶段，发送方和接收方会商讨双方是否支持SACK，每个SACK段都用来描述收到的失序数据块，在每个ACK报文段中，SACK最多有3块。</p>
+<p>发送端基于接收到的SACK块来进行丢失重传，该过程被称为选择性重传。当发送端收到了SACK或重复ACK，它可以选择发送新数据或重传就数据，最简单的方法是使发送端首先填补接收端的空缺，然后再继续发送新数据。（若拥塞控制机制允许）</p>
+<p>但要注意，接收端可能提供一个SACK告诉发送端已成功接收一定序列号范围的数据，而之后做出变更，由于这个原因，SACK发送端不能再收到一个SACK后立即清空其重传缓存中的数据；只有当接收端的普通TCP ACK号大于其最大序列号值时，才可清除。</p>
+<h3 id="46-伪超时于重传"><strong>4.6 伪超时于重传</strong></h3>
+<p>过早的判定超时，会导致伪超时。处理伪超时包括检测算法与响应算法。检测算法用于判断某个基于计时器的超时是否真实，一旦认定出现伪超时执行响应算法，撤销或减轻该超时带来的影响。</p>
+<ol>
+<li>
+<p><del>重复SACK扩展（DSACK）</del>（没看懂）</p>
+</li>
+<li>
+<p>Eifel检测算法</p>
+<p>它需要使用TCP的TSOPT，当发送一个重传后，保存其TSV值。当接受到相应分组的ACK后，检查该ACK的TSER部分，若TSER值小于之前存储的TSV值，则可判定该ACK对应的是原始传输分组，即该重传为伪重传。</p>
+</li>
+<li>
+<p>前移RTO恢复</p>
+<p>在超时重传后收到第一个ACK时，TCP会发送新数据，之后再想响应后一个到达的ACK。如果其中有一个为重复ACK，则认为此次重传没有问题。如果这两个都不是重复ACK，则表示该重传是伪重传。</p>
+</li>
+<li>
+<p><del>Eifel响应算法</del>（没看懂）</p>
+</li>
+</ol>
+<h3 id="47-包失序"><strong>4.7 包失序</strong></h3>
+<p>如果失序发生在反向ACK链路，就会使得TCP发送端窗口快速前移。由于TCP的拥塞控制行为，这种情况会导致发送端出现不必要的流量突发行为，影响可用网络带宽。</p>
+<p>如果失序发生在正向链路，当失序程度很大，发送端会因为收到多个重复ACK而触发快速重传。幸运的是，严重的包失序并不常见，并且可以通过动态调整dupthresh来避免因包失序导致的伪重传。</p>
+<p><img src="/img/image-20200210162639503.png" alt="image-20200210162639503"></p>
+<h3 id="48-重复"><strong>4.8 重复</strong></h3>
+<p><img src="/img/image-20200210163110857.png" alt="image-20200210163110857"></p>
+<p>发送5，6包之后仍收到A3，会引发快速重传，但是利用SACK就可以简单地忽略这个问题，因为该情况下，SACK没有空缺。</p>
+<p><strong>重新组包</strong></p>
+<p>当TCP超时重传，它并不需要完全重传相同的报文段。TCP允许执行重新组包，发送一个更大的报文段来提高性能。</p>
+<h2 id="5-tcp数据流与窗口管理">5. TCP数据流与窗口管理</h2>
+<h3 id="51-交互式通信"><strong>5.1 交互式通信</strong></h3>
+<p>交互式数据传输的报文段通常小于SMSS（发送最大报文段），例如在SSH中，每在客户端输一个字符，都会发送一个数据报，然后接收端返回一个ACK；之后接收端再返回一个回显，发送端再返回一个ACK。通常，第2和第3段可以合并，称之为捎带延时确认。</p>
+<p><img src="/img/image-20200211101603757.png" alt="image-20200211101603757"></p>
+<h3 id="52-延时确认"><strong>5.2 延时确认</strong></h3>
+<p>在许多情况下，TCP不对每一个到来的数据包都返回ACK，累积确认可以允许TCP延迟一段时间发送ACK，一边将ACK和相同方向上需要传的数据结合发送。TCP不能任意时长的延迟ACK；否则对方会误认为数据丢失而出现不必要的重传。</p>
+<h3 id="53-nagle算法"><strong>5.3 Nagle算法</strong></h3>
+<p>小包会造成相当高的网络传输代价，因此要避免这种情况发生。Nagle算法要求，当一个TCP连接中有在传数据，晓得报文段（长度小于SMSS）就不能发送，直到所有的在传数据都收到ACK。并且，在收到ACK后，TCP需要收集这些小数据，将其整合到一个报文段中发送。这种方法迫使TCP遵循停等规程——只有等接收到所有在传数据的ACK后才能继续发送。</p>
+<p>Nagle算法传输的包数目更少而长度更长，但同时传输时延也更长。</p>
+<p>如果延时ACK与Nagle算法结合起来，可能会导致死锁。一边延时ACK，等待更多的数据一起返回，一边没有收到ACK则不再发送数据。这种死锁不是永久的，在延时ACK计时器超时后，死锁会解除。</p>
+<p><img src="/img/image-20200211102550638.png" alt="image-20200211102550638"></p>
+<h3 id="54-流量控制与窗口管理">5.4 流量控制与窗口管理</h3>
+<p>窗口通告数值表示发送该窗口信息的通信方为即将到来的新数据预留的存储空间。当TCP应用程序空闲时，就会排队处理这些数据，致使窗口大小字段保持不变。当系统处理速度较慢，或者程序忙于执行其他操作，到来的数据返回ACK后，就需要排队等待被读取或“消耗”。若这种排队状况持续，新数据的可用存储空间就会减小，窗口大小值也随之减小。最终，若应用程序一直不处理这些数据，没有空间来存储新数据，将窗口通告设为0。</p>
+<h4 id="541-滑动窗口">5.4.1 滑动窗口</h4>
+<p>TCP连接的每一端都可收发数据。连接的收发数据量是通过一组窗口结构来维护的。每个TCP活动连接的两端都维护一个<strong>发送窗口结构</strong>和<strong>接收窗口结构</strong>。</p>
+<p><img src="/img/image-20200211111230819.png" alt="image-20200211111230819"></p>
+<p>由接收端通告的窗口称为<strong>提供窗口</strong>(awnd)。可用窗口即它可以立即发送的数据量。其计算方法为提供窗口大小减去在传数据值。</p>
+<p>用三种术语来描述窗口左右边界的运动：</p>
+<ol>
+<li>关闭，即窗口左边界右移，当已发送数据得到ACK确认时，窗口会减小。</li>
+<li>打开，即窗口右边界右移，使得可发送数据量增大。当接收端确认数据得到处理，可用缓存变大，窗口也随之变大。</li>
+<li>收缩，窗口右边界左移，RFC不支持这一做法，但TCP必须要处理这一问题。</li>
+</ol>
+<p>当得到的ACK号增大而窗口大小保持不变时，我们就说窗口向前“滑动”。窗口大小可能减小，但是窗口的右边界不会左移，以此避免窗口收缩。</p>
+<p>接收端也维护一个窗口结构，但比发送端窗口简单。该窗口可以保证其接收数据的正确性。对接收端而言，到达序列号小于左窗口边界，被认为是重复数据而丢弃，超过右边界的则超出处理范围，也被丢弃。使用SACK选项，窗口内的其他报文段也可以被确认，但只有当数据序列号等于左边界时，窗口才能向前滑动。</p>
+<p><img src="/img/image-20200211141403330.png" alt="image-20200211141403330"></p>
+<h4 id="542-零窗口与tcp持续计时器">5.4.2 零窗口与TCP持续计时器</h4>
+<p>TCP通过接收端的通告窗口来实现流量控制，当窗口值变为0时，可以阻止发送端继续发送数据。当接收端重新获得可用空间时，会给发送端传输一个窗口更新，告知其可继续发送数据。这样的窗口更新通常都不包含数据（纯ACK），不能保证其传输的可靠性。如果一个包含窗口更新的ACK丢失，通信双方都会一直处于等待状态，为了防止这种死锁发生，发送端会采用一个<strong>持续计时器</strong>查询接收端，看其窗口是否增长。持续计时器会触发<strong>窗口探测</strong>的传输，强制要求接收端返回ACK。窗口探测包含至少一个字节的数据（往往会捎带更多的数据），采用TCP可靠传输。其捎带的数据是否会被接收，取决于接收端的可用缓存空间大小。</p>
+<p>与TCP重传计时器类似，采用指数时间退避来计算持续计时器的超时。</p>
+<h4 id="543-糊涂窗口综合征">5.4.3 糊涂窗口综合征</h4>
+<p>基于窗口的流量控制机制，尤其是不使用大小固定的报文段的情况，会出现糊涂窗口综合征。当出现该问题时，交换数据段大小不是全长而是一些较小的数据段。</p>
+<p>TCP连接的两端都可能导致SWS的出现：接收端的通告窗口较小（没有等到窗口变大才通告），发送端发送的数据段较小（没有等待将其他数据组合成一个更大的报文段）。</p>
+<p>要避免SWS现象，必须在发送端或接收端实现相关规则。</p>
+<ol>
+<li>
+<p>对于接收端而言，不应通告小的窗口值，在窗口可增至一个全场的报文段或接收端缓存空间的一半之前（取两者较小者），不能通告比上次窗口更大的窗口值，只有当窗口至少为一个MSS或超过总接收缓存的四分之一才响应窗口探测（不响应的表现为保持0窗口）。当应用程序处理接收到的数据使得缓存增大，以及接收端需要强制响应窗口探测时会用到该条规则。</p>
+</li>
+<li>
+<p>对于发送端来说，不应该发送小的报文段，只有至少满足以下提哦啊见之一时才能传输报文段：</p>
+<ol>
+<li>全长的报文段可以发送</li>
+<li>数据段长度≥接收端通告过的最大窗口值的一半，可以发送</li>
+<li>满足以下任一条件 (a)某一ACK不是目前期盼的（即没有未经确认的在传数据）（b）该连接禁用Nagle算法</li>
+</ol>
+</li>
+</ol>
+<h4 id="544-大容量缓存与自动调优">5.4.4 大容量缓存与自动调优</h4>
+<p>较小的接收缓存的TCP应用的吞吐性能较差，很多TCP协议栈中上层应用不能指定接收缓存大小，即使指定了也会被忽视，而是由操作系统来指定一个<strong>较大的固定值或者动态变化的计算值</strong>。</p>
+<p>在较新的Windows版本，或者Linux中，支持接收窗口自动调优。某个连接的在传数据值（连接的带宽延时积）需要不断被估算，如果剩余缓存空间足够，通告窗口值不能小于这个值。这种方法使得TCP达到其最大可用吞吐率，而不必<strong>提前</strong>在发送端或接收端设置过大的缓存。</p>
+<h2 id="6-tcp拥塞控制">6. TCP拥塞控制</h2>
+<p>路由器因无法处理高速到达的流量而被迫丢弃数据信息的现象称为拥塞。整个网络的所有计算机都要一起努力，避免网络中出现拥塞现象。</p>
+<h3 id="61-tcp拥塞检测">6.1 TCP拥塞检测</h3>
+<p>对于TCP发送方而言，没有一个精确的方法去知晓中间路由器的状态，在TCP中，丢包被用作判断拥塞发生与否的指标。当发生丢包时，若只发生重传操作，无疑加剧了网络的拥塞情况。因此在重传之外，还会进行拥塞控制。</p>
+<h3 id="62-减缓tcp发送">6.2 减缓TCP发送</h3>
+<p>基于对网络传输能力的估计，可以在发送端引入一个窗口控制变量，确保发送窗口大小不超过接收端接受能力和网络传输能力，即TCP发送端的发送速率等于接收速率和传输速率两者中较小的值。反映传输能力的变量称为拥塞窗口，记为cwnd。因此发送端的实际窗口为：
+$$
+W=min(cwnd,awnd)
+$$
+我们希望W的值能够接近带宽延迟积，也称为最佳窗口大小，其值等于RTT与链路中最小通行速率的乘积。（形象一些，窗口大小合适使管路充满数据）</p>
+<h3 id="63-慢启动">6.3 慢启动</h3>
+<p>新的TCP连接建立或检测到超时重传导致的丢包时，需要执行慢启动。初始阶段，cwnd设为初始窗口。每接收到一个“好的ACK响应”（ACK号大于之前收到的ACK），慢启动以min（N,SMSS）增加cwnd值（N为ACK确认的数据大小，SMSS是MTU和MSS中较小的那一个）。</p>
+<h3 id="64-拥塞避免">6.4 拥塞避免</h3>
+<p>当cwnd增长到一个阈值后，TCP进入拥塞避免阶段。cwnd每次增长值近似于成功传输的数据段大小。（线性增长）</p>
+<h3 id="65-标准tcp">6.5 标准TCP</h3>
+<p>在TCP连接建立之初首先是慢启动阶段（cwnd=IW），ssthresh通常取一较大值（至少为awnd），当接收到一个好的ACK，cwnd会相应更新：
+$$
+cwnd+=SMSS (若cwnd&lt;ssthresh)慢启动\<br>
+cwnd+=SMSS*SMSS/cwnd(若cwnd&gt;ssthresh)拥塞避免
+$$
+当收到三次重复ACK，会执行快速重传以及快速恢复：</p>
+<ol>
+<li>ssthresh更新为ssthresh=max(在外数据/2,2*SMSS)</li>
+<li>启用快速重传，将cwnd设为（ssthresh+3*SMSS）</li>
+<li>每接收一个重复ACK，cwnd值暂时增加1SMSS</li>
+<li>当接收到一个好的ACK，cwnd重设为ssthresh</li>
+</ol>
+<p>若发生重传超时，则触发慢启动。</p>
+<p><img src="/img/image-20200213112734708.png" alt="image-20200213112734708"></p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>
