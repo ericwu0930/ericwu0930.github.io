@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="HTTP协议" />
+    <meta property="og:title" content="HTTP协议" />
+    <meta property="twitter:title" content="HTTP协议" />
+    
+
+    
+    <meta name="description" content="整理自《图解HTTP》">
+    <meta property="og:description" content="整理自《图解HTTP》" />
+    <meta property="twitter:description" content="整理自《图解HTTP》" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>HTTP协议-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/http/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" title="计算机网络">
+                            计算机网络
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                    </div>
+                    <h1>HTTP协议</h1>
+                    <h2 class="subheading">计算机网络学习笔记之三</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Sunday, February 16, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-http的初步认识">1. Http的初步认识</a>
+      <ul>
+        <li><a href="#11-http的诞生">1.1 Http的诞生</a></li>
+        <li><a href="#12-各种协议与http协议的关系">1.2 各种协议与HTTP协议的关系</a></li>
+        <li><a href="#13-uri和url">1.3 URI和URL</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-http协议结构">2. HTTP协议结构</a>
+      <ul>
+        <li><a href="#21-http概述">2.1 HTTP概述</a></li>
+        <li><a href="#22-http报文结构">2.2 HTTP报文结构</a></li>
+        <li><a href="#23-请求uri定位资源">2.3 请求URI定位资源</a></li>
+        <li><a href="#24-告知服务器意图的http方法">2.4 告知服务器意图的HTTP方法</a></li>
+        <li><a href="#25-持久连接节省通信量">2.5 持久连接节省通信量</a></li>
+        <li><a href="#26-使用cookie的状态管理">2.6 使用Cookie的状态管理</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-http报文内的http信息">3 HTTP报文内的HTTP信息</a>
+      <ul>
+        <li><a href="#31-请求报文以及响应报文的结构">3.1 请求报文以及响应报文的结构</a></li>
+        <li><a href="#32-编码提升传输速率">3.2 编码提升传输速率</a></li>
+        <li><a href="#34-发送多种数据的多部分对象集合">3.4 发送多种数据的多部分对象集合</a></li>
+        <li><a href="#35-获取部分内容的范围请求">3.5 获取部分内容的范围请求</a></li>
+        <li><a href="#36-内容协商返回最合适的内容">3.6 内容协商返回最合适的内容</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-http状态码">4. HTTP状态码</a>
+      <ul>
+        <li><a href="#41-2xx成功">4.1 2XX成功</a></li>
+        <li><a href="#42-3xx重定向">4.2 3XX重定向</a></li>
+        <li><a href="#43-4xx客户端错误">4.3 4XX客户端错误</a></li>
+        <li><a href="#44-5xx服务器错误">4.4 5XX服务器错误</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-与http协作的web服务器">5 与HTTP协作的Web服务器</a>
+      <ul>
+        <li><a href="#51-用单台虚拟主机实现多个域名">5.1 用单台虚拟主机实现多个域名</a></li>
+        <li><a href="#52-代理">5.2 代理</a></li>
+        <li><a href="#53-网关">5.3 网关</a></li>
+        <li><a href="#54-隧道">5.4 隧道</a></li>
+        <li><a href="#55-缓存">5.5 缓存</a></li>
+      </ul>
+    </li>
+    <li><a href="#6-http首部略">6. HTTP首部（略）</a>
+      <ul>
+        <li><a href="#通用首部字段">通用首部字段</a></li>
+        <li><a href="#请求首部字段">请求首部字段</a></li>
+        <li><a href="#3pohtgpnghttpss2ax1xcom202002163pohtgpng">3pohTg.png</a></li>
+        <li><a href="#响应首部字段">响应首部字段</a></li>
+        <li><a href="#实体首部字段">实体首部字段</a></li>
+        <li><a href="#为cookie服务的首部字段">为Cookie服务的首部字段</a></li>
+      </ul>
+    </li>
+    <li><a href="#7-确保web安全的https">7 确保Web安全的HTTPS</a>
+      <ul>
+        <li><a href="#71-http的缺点">7.1 HTTP的缺点</a></li>
+        <li><a href="#72-http加密认证完整性保护https">7.2 HTTP+加密+认证+完整性保护=HTTPS</a></li>
+        <li><a href="#73-https的安全通信机制">7.3 HTTPS的安全通信机制</a></li>
+        <li><a href="#74-https的缺点">7.4 HTTPS的缺点</a></li>
+      </ul>
+    </li>
+    <li><a href="#8-确认访问用户身份的认证">8 确认访问用户身份的认证</a>
+      <ul>
+        <li><a href="#81-basic认证">8.1 BASIC认证</a></li>
+        <li><a href="#82-基于表单认证">8.2 基于表单认证</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <h2 id="1-http的初步认识">1. Http的初步认识</h2>
+<h3 id="11-http的诞生">1.1 Http的诞生</h3>
+<p>CERN的蒂姆·伯纳斯-李博士提出一种让全球研究者共享知识的设想：借助多文档之间互相关联形成的超文本，连成可相互参阅的WWW（World Wide Web），WWW由HTML作为语言，HTTP作为文档传递协议，以URL标记文档所在地构成。</p>
+<h3 id="12-各种协议与http协议的关系">1.2 各种协议与HTTP协议的关系</h3>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pInVe.png" alt="3pInVe.png"></p>
+<h3 id="13-uri和url">1.3 URI和URL</h3>
+<p>统一资源标志符URI就是在某一规则下能把一个资源独一无二地标识出来。当然我们可以通过地址的形式将该资源标识出来，也就是说我们熟知的URL统一资源定位符。因此URL是URI的一个子集。</p>
+<p>URI的格式如下</p>
+<p><strong>&lt;协议&gt;://&lt;主机&gt;:&lt;端口&gt;/&lt;路径&gt;</strong></p>
+<p>其中主机名可以用域名来表示也可以用IPv4地址，端口号若胜率则自动选择默认端口号。</p>
+<h2 id="2-http协议结构">2. HTTP协议结构</h2>
+<h3 id="21-http概述">2.1 HTTP概述</h3>
+<p>HTTP协议用于客户端和服务器端之间的通信，通过请求和响应的交换达成通信。HTTP是一种不保存状态，即<strong>无状态的协议</strong>，也就是说每当有新的请求发送到服务器时，服务器都会有对应的新响应产生，而不受过去状态的影响。这符合HTTP协议设计的初衷——简单。HTTP/1.1虽然是无状态协议，但为了实现期望的保持状态功能，于是引入了Cookie技术。</p>
+<h3 id="22-http报文结构">2.2 HTTP报文结构</h3>
+<p>HTTP报文大致可分为报文首部和报文主体两块。两块中间由空行（CR+LF）间隔。通常，并不一定要有报文主体。</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pI12t.png" alt="3pI12t.png"></p>
+<p>请求报文是由请求方法、 请求 URI、 协议版本、 可选的请求首部字段和内容实体构成的。</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pINVg.png" alt="3pINVg.png"></p>
+<p>响应报文基本上由协议版本、 状态码（表示请求成功或失败的数字代码）、 用以解释状态码的原因短语、 可选的响应首部字段以及实体主体构成。</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pIhGR.png" alt="3pIhGR.png"></p>
+<h3 id="23-请求uri定位资源">2.3 请求URI定位资源</h3>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pIoM6.png" alt="3pIoM6.png"></p>
+<p>当客户端请求访问资源而发送请求时，HTTP报文需要将URI包含在内。指定URI的方式有很多，如上图所示。可以在请求行中写明URI，或者可以在Host首部中写明网络域名或者IP地址。在Host首部中写出主机名还可以用来访问放在同一个IP地址的主机上不同的网站。</p>
+<p>除此之外，如果不是访问特定资源还是对服务器本身发起请求，可以用一个*来代替请求URI，例如查询HTTP服务器端支持的HTTP方法种类。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-http" data-lang="http"><span style="color:#a6e22e">OPTIONS</span> * <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</code></pre></div><h3 id="24-告知服务器意图的http方法">2.4 告知服务器意图的HTTP方法</h3>
+<ul>
+<li>
+<p>GET：获取资源</p>
+<p>GET 方法用来请求访问已被URI识别的资源 ，</p>
+</li>
+<li>
+<p>POST：传输实体主体</p>
+<p>用来给服务器传输数据，虽然GET方法也可以传输实体的主体，但通常使用POST，并且POST的主要目的不是获取响应的主体内容</p>
+</li>
+<li>
+<p>PUT：传输文件</p>
+<p>PUT 方法用来传输文件。 就像 FTP 协议的文件上传一样， 要求在请求报文的主体中包含文件内容， 然后保存到请求 URI 指定的位置。但是由于HTTP/1.1的PUT方法自身不带验证机制，任何人都可以上传文件，存在安全性问题，一般Web网站不适用该方法。</p>
+</li>
+<li>
+<p>HEAD：获得报文首部</p>
+<p>与GET方法一样，只是不返回报文主体部分。用于确认URI的有效性以及资源更新的日期时间等。</p>
+</li>
+<li>
+<p>DELETE：删除文件</p>
+<p>与PUT相反的方法。一般的Web网站同样不使用DELETE方法。</p>
+</li>
+<li>
+<p>OPTIONS：询问支持的方法</p>
+<p>上文已提。</p>
+</li>
+</ul>
+<h3 id="25-持久连接节省通信量">2.5 持久连接节省通信量</h3>
+<p>在HTTP协议的初始版本中，每进行一次HTTP通信就要断开一次TCP连接，例如访问一个多图的HTML页面的时候，每加载一张图都要建立TCP连接，然后断开连接，增加了通信量的开销。</p>
+<p>为了避免这一情况，在HTTP/1.1中提出了持久连接，只要任意一端没有明确提出断开连接，则保持TCP连接状态。</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pILIH.png" alt="3pILIH.png"></p>
+<p>持久连接使得多数请求以管线化方式发送称为可能。也就是不用等待响应就可以发送下一个请求。</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pIxzt.png" alt="3pIxzt.png"></p>
+<h3 id="26-使用cookie的状态管理">2.6 使用Cookie的状态管理</h3>
+<p>HTTP不保存状态，可以减少服务器的CPU及内存资源的消耗。但是不保存状态又会给用户访问页面带来许多麻烦。Cookie技术通过在请求和响应报文中写入Cookie信息来控制客户端的状态。</p>
+<p>Cookie 会根据从服务器端发送的响应报文内的一个叫做 Set-Cookie 的 首部字段信息，通知客户端保存 Cookie。当下次客户端再往该服务器 发送请求时，客户端会自动在请求报文中加入 Cookie 值后发送出 去。</p>
+<p>服务器端发现客户端发送过来的 Cookie 后，会去检查究竟是从哪一 个客户端发来的连接请求，然后对比服务器上的记录，最后得到之前的状态信息。</p>
+<h2 id="3-http报文内的http信息">3 HTTP报文内的HTTP信息</h2>
+<h3 id="31-请求报文以及响应报文的结构">3.1 请求报文以及响应报文的结构</h3>
+<p><img src="https://s2.ax1x.com/2020/02/16/3poVWn.png" alt="3poVWn.png"></p>
+<ul>
+<li>请求行：包含用于请求的方法，请求URI和HTTP版本</li>
+<li>状态行：包含表明响应结果的状态码，原因短语和HTTP版本</li>
+<li>首部字段：包含表示请求和响应的各种条件和属性的各类首部，一般有4种首部，分别是：通用首部、请求首部、响应首部和实体首部</li>
+<li>其他：可能包含HTTP里未定义的首部。</li>
+</ul>
+<h3 id="32-编码提升传输速率">3.2 编码提升传输速率</h3>
+<p>HTTP在传输数据时可以按照数据原貌直接传输，但也可以在传输过程中通过编码提升传输速率。但是，编码的操作需要计算机来完成，因此会消耗更多的CPU资源。</p>
+<h4 id="321-压缩传输的内容编码">3.2.1 压缩传输的内容编码</h4>
+<p>HTTP协议中有一种被称为内容编码的功能对数据进行压缩，然后传输。内容编码后的实体由客户端接收并负责解码。</p>
+<h4 id="322-分割发送的分块传输编码">3.2.2 分割发送的分块传输编码</h4>
+<p>在传输大容量数据时，通过把数据分割成多块，能够让浏览器逐步显示页面。这种把实体主体分块的功能称为<strong>分块传输编码</strong>。使用分块传输编码的实体会由接收的客户端负责解码，恢复到编码前的实体主体。</p>
+<h3 id="34-发送多种数据的多部分对象集合">3.4 发送多种数据的多部分对象集合</h3>
+<p>在HTTP协议中也采纳了多部分对象集合，发送的一份报文主题内可含有多类型实体。通常是在图片或文本文件等上传时使用。</p>
+<h3 id="35-获取部分内容的范围请求">3.5 获取部分内容的范围请求</h3>
+<p>如果下载过程中遇到网络中断情况，HTTP可以提供一种恢复机制。要实现该功能需要制定下载的实体范围。像这样，制定范围发送的请求叫做范围请求。针对范围请求，响应会返回状态码为206 Partial Content的响应报文。如果服务器端无法响应范围请求，则返回状态码200 OK和完整的实体内容。</p>
+<h3 id="36-内容协商返回最合适的内容">3.6 内容协商返回最合适的内容</h3>
+<p>内容协商机制是指客户端和服务器端就响应的资源内容进行交涉，然后提供给客户端最为适合的资源。内容协商会以响应资源的语言、字符集、编码方式等作为判断的基础。</p>
+<p>由服务器端进行内容协商，在服务器端自动处理，并不一定能筛选出最优内容。由客户端进行内容协商的方式，用户从浏览器显示的可选列表中手动选择。</p>
+<h2 id="4-http状态码">4. HTTP状态码</h2>
+<p>响应类别有以下5种。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="left">类别</th>
+<th align="left">原因短语</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1XX</td>
+<td align="left">信息性状态码</td>
+<td align="left">接收的请求正在处理</td>
+</tr>
+<tr>
+<td>2XX</td>
+<td align="left">成功状态码</td>
+<td align="left">请求正常处理完毕</td>
+</tr>
+<tr>
+<td>3XX</td>
+<td align="left">重定向状态码</td>
+<td align="left">需要进行附加操作以完成请求</td>
+</tr>
+<tr>
+<td>4XX</td>
+<td align="left">客户端错误状态码</td>
+<td align="left">服务器无法处理请求</td>
+</tr>
+<tr>
+<td>5XX</td>
+<td align="left">服务器错误状态码</td>
+<td align="left">服务器处理请求出错</td>
+</tr>
+</tbody>
+</table>
+<h3 id="41-2xx成功">4.1 2XX成功</h3>
+<ul>
+<li>
+<p>200 OK</p>
+<p>表示从客户端发来的请求在服务器端被正常处理了。在响应报文内，随状态码一起返回的信息因方法的不同而发生改变。</p>
+</li>
+<li>
+<p>204 No Content</p>
+<p>服务器接收的请求已成功处理，但在返回的响应报文中不含实体的主体部分。</p>
+</li>
+<li>
+<p>206 Partial Content</p>
+<p>客户端进行了范围请求，而服务器成功执行了这部分的GET请求。</p>
+</li>
+</ul>
+<h3 id="42-3xx重定向">4.2 3XX重定向</h3>
+<ul>
+<li>
+<p>301 Moved Permanently</p>
+<p>永久性重定向，表示请求的资源已被分配了新的URI，以后应使用资源现在所指的URI</p>
+</li>
+<li>
+<p>302 Found</p>
+<p><strong>临时性</strong>重定向，该状态码表示请求的资源已被分配新的URI，希望用户能使用新的URI访问。</p>
+</li>
+<li>
+<p>303 See Other</p>
+<p>该状态码表示由于请求对应的资源存在着另一个URI，应使用GET方法定向获取请求的资源。</p>
+</li>
+</ul>
+<blockquote>
+<p>当301、302、303响应状态码返回时，几乎所有的浏览器都会将POST改成GET，并删除请求报文内的主体，之后请求会自动再次发送。301、302标准是禁止POST方法改变成GET方法的，但实际使用时大家都会这么做。</p>
+</blockquote>
+<ul>
+<li>
+<p>304 Not Modified</p>
+<p>客户端发送附带条件的请求时，服务器端允许请求访问资源，但未满足条件。</p>
+</li>
+<li>
+<p>307 Temporary Redirect</p>
+<p>类似于302 Found。</p>
+</li>
+</ul>
+<h3 id="43-4xx客户端错误">4.3 4XX客户端错误</h3>
+<p>4XX的响应结果表明<strong>客户端是发生错误的原因所在。</strong></p>
+<ul>
+<li>
+<p>400 Bad Request</p>
+<p>该状态码表示请求报文中存在语法错误，需要修改请求的内容后再次发送请求。</p>
+</li>
+<li>
+<p>401 Unauthorized</p>
+<p>该状态码表示发送的请求需要通过HTTP认证（BASIC认证、DIGEST认证）的认证信息。</p>
+</li>
+<li>
+<p>403 Forbidden</p>
+<p>请求资源的访问被服务器拒绝，服务器没有必要给出详细理由。</p>
+</li>
+<li>
+<p>404 Not Found</p>
+<p>服务器无法找到请求的资源。</p>
+</li>
+<li>
+<p>405 Method Not Allowed</p>
+<p>服务器不支持请求的HTTP方法</p>
+</li>
+</ul>
+<h3 id="44-5xx服务器错误">4.4 5XX服务器错误</h3>
+<p>5XX的响应结果表明服务器本身发生错误。</p>
+<ul>
+<li>
+<p>500 Internal Server Error</p>
+<p>服务器端在执行请求时发生了错误。</p>
+</li>
+<li>
+<p>503 Service Unavailable</p>
+<p>服务器暂时处于超负荷或正在进行停机维护。</p>
+</li>
+</ul>
+<h2 id="5-与http协作的web服务器">5 与HTTP协作的Web服务器</h2>
+<p>一台Web服务器可搭建多个独立域名的Web网站，也可作为通信路径上的中转服务器提升传输速率。</p>
+<h3 id="51-用单台虚拟主机实现多个域名">5.1 用单台虚拟主机实现多个域名</h3>
+<p>一个web服务器上可以托管多个网站，HTTP如何区分请求访问的哪个网站？可以在服务器的网卡上绑定多个IP地址，然后给每个网站分配不同的ip。也可以都用同一个ip但是不同的端口号，访问的时候必须指明端口号。或者使用域名，给每个网站绑定一个域名，客户端访问的时候只能使用域名进行访问，绑定的域名我们称之为主机头。</p>
+<p>在互联网上，域名通过DNS服务映射到IP地址之后访问目标网络，可见，当请求发送到服务器时，已经是以IP地址形式访问了。因此在相同IP地址下，在发送HTTP请求时，必须在Host首部内完整指定主机名或域名的URI。</p>
+<h3 id="52-代理">5.2 代理</h3>
+<p>代理是一种有转发功能的应用程序，代理服务器基本行为就是接受客户端发送的请求后转发给其他服务器，代理不改变请求URI，会直接发送给原服务器。从源服务器返回的响应经过代理服务器后再转给客户端。</p>
+<p>使用礼物服务器可以利用缓存技术减少网络带宽的流量，组织内部针对特定网站的访问控制等。</p>
+<p>代理可以根据两个基准进行分类，一种是是否使用缓存，另一种是是否会修改报文。</p>
+<p><strong>缓存代理</strong>会预先将资源的副本保存在代理服务器上，当代理再次接收到相同资源的请求时，可以将之前的缓存作为相应返回。</p>
+<p>转发请求或响应时，不对报文做任何加工的代理类型称为<strong>透明代理</strong>。</p>
+<h3 id="53-网关">5.3 网关</h3>
+<p>网关能使通信线路上的服务器提供非HTTP协议服务。</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3powwD.png" alt="3powwD.png"></p>
+<h3 id="54-隧道">5.4 隧道</h3>
+<p>隧道可按要求建立起一条与其他服务器的通信线路，届时使用SSL等加密手段进行通信。隧道的目的是确保客户端能与服务器进行安全通信。</p>
+<h3 id="55-缓存">5.5 缓存</h3>
+<p>缓存是指代理服务器或客户端本地磁盘内保存的资源副本。 利用缓存可减少对源服务器的访问， 因此也就节省了通信流量和通信时间。</p>
+<h4 id="551-缓存的有效期限">5.5.1 缓存的有效期限</h4>
+<p>当服务器上资源更新时，代理服务器上缓存的资源就变成了“旧”资源，因此即使存在缓存，也会因为客户端的要求、 缓存的有效期等因素， 向源服务器确认资源的有效性。 若判断缓存失效， 缓存服务器将会再次从源服务器上获取“新”资源。</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3poDFH.png" alt="3poDFH.png"></p>
+<h4 id="552-客户端的缓存">5.5.2 客户端的缓存</h4>
+<p>缓存不仅可以存在缓存服务器内，也可以存在客户端浏览器中。与缓存服务器相同，当判定缓存过期后，会向源服务器确认资源的有效性。 若判断浏览器缓存失效， 浏览器会再次请求新资源。</p>
+<h2 id="6-http首部略">6. HTTP首部（略）</h2>
+<h3 id="通用首部字段">通用首部字段</h3>
+<p><img src="https://s2.ax1x.com/2020/02/16/3po2Of.png" alt="3po2Of.png"></p>
+<h3 id="请求首部字段">请求首部字段</h3>
+<h3 id="3pohtgpnghttpss2ax1xcom202002163pohtgpng"><img src="https://s2.ax1x.com/2020/02/16/3pohTg.png" alt="3pohTg.png"></h3>
+<h3 id="响应首部字段">响应首部字段</h3>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pxvWT.png" alt="3pxvWT.png"></p>
+<h3 id="实体首部字段">实体首部字段</h3>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pzPm9.png" alt="3pzPm9.png"></p>
+<h3 id="为cookie服务的首部字段">为Cookie服务的首部字段</h3>
+<p>管理服务器与客户端之间状态的Cookie，虽然没有编入标准化HTTP/1.1中，但在Web网站方面得到了广泛的应用。</p>
+<p>Cookie的工作机制是用户识别及状态管理。Web网站为了管理用户的状态会通过Web浏览器，把一些数据临时写入用户的计算机内，接着当用户访问该Web网站时，可通过通信方式取回之前发放的Cookie。</p>
+<h4 id="set-cookie">Set-Cookie</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NAME=VALUE</td>
+<td>赋予Cookie的名称和其值</td>
+</tr>
+<tr>
+<td>expires=DATE</td>
+<td>Cookie的有效期，如果省略，其有效期仅限于维持浏览器会话时间段内</td>
+</tr>
+<tr>
+<td>path=PATH</td>
+<td>将服务器上的文件目录作为Cookie的使用对象</td>
+</tr>
+<tr>
+<td>domain=域名</td>
+<td>作为Cookie使用对象的域名</td>
+</tr>
+<tr>
+<td>Secure</td>
+<td>仅在HTTPS安全通信时才会发送Cookie</td>
+</tr>
+<tr>
+<td>HttpOnly</td>
+<td>加以限制，使Cookie不能被JavaScript脚本访问</td>
+</tr>
+</tbody>
+</table>
+<h4 id="cookie">Cookie</h4>
+<p>首部字段Cookie会告知服务器，当客户端想获得HTTP状态管理支持时，就会在请求中包含从服务器接收到的Cookie。</p>
+<h2 id="7-确保web安全的https">7 确保Web安全的HTTPS</h2>
+<h3 id="71-http的缺点">7.1 HTTP的缺点</h3>
+<ul>
+<li>通信使用明文（不加密），内容会被窃听</li>
+<li>不验证通信方的身份，因此有可能遭遇伪装</li>
+<li>无法证明报文的完整性，所以有可能已遭篡改</li>
+</ul>
+<h3 id="72-http加密认证完整性保护https">7.2 HTTP+加密+认证+完整性保护=HTTPS</h3>
+<p>HTTPS不是应用层的一种新协议，只是HTTP的通信接口部分使用SSL和TLS协议代替。</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pzFT1.png" alt="3pzFT1.png"></p>
+<p>SSL使用的是一种混合加密技术，<a href="https://ericwu0930.github.io/post/security/" title="加密与安全机制">处理方式详见该博文</a>。</p>
+<h3 id="73-https的安全通信机制">7.3 HTTPS的安全通信机制</h3>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pzEY6.png" alt="3pzEY6.png"></p>
+<p><strong>步骤 1：</strong> 客户端通过发送 Client Hello 报文开始 SSL通信。 报文中包含客户端支持的 SSL的指定版本、 加密组件（Cipher Suite） 列表（所使用的加密算法及密钥长度等） 。<br>
+<strong>步骤 2：</strong> 服务器可进行 SSL通信时， 会以 Server Hello 报文作为应答。和客户端一样， 在报文中包含 SSL版本以及加密组件。 服务器的加密组件内容是从接收到的客户端加密组件内筛选出来的。</p>
+<p><strong>步骤 3：</strong> 之后服务器发送 Certificate 报文。 报文中包含公开密钥证书。</p>
+<p><strong>步骤 4：</strong> 最后服务器发送 Server Hello Done 报文通知客户端， 最初阶段的 SSL握手协商部分结束。</p>
+<p><strong>步骤 5：</strong> SSL第一次握手结束之后， 客户端以 Client Key Exchange 报文作为回应。 报文中包含通信加密中使用的一种被称为 Pre-master secret 的随机密码串。 该报文已用步骤 3 中的公开密钥进行加密。</p>
+<p><strong>步骤 6：</strong> 接着客户端继续发送 Change Cipher Spec 报文。 该报文会提示服务器， 在此报文之后的通信会采用 Pre-master secret密钥加密（可以理解为混合加密中已经被公钥加密的共享密钥）。</p>
+<p><strong>步骤 7：</strong> 客户端发送 Finished 报文。 该报文包含连接至今全部报文的整体校验值。 这次握手协商是否能够成功， 要以服务器是否能够正确解密该报文作为判定标准。</p>
+<p><strong>步骤 8：</strong> 服务器同样发送 Change Cipher Spec 报文。</p>
+<p><strong>步骤 9：</strong> 服务器同样发送 Finished 报文。</p>
+<p><strong>步骤 10</strong>： 服务器和客户端的 Finished 报文交换完毕之后， SSL连接就算建立完成。 当然， 通信会受到 SSL的保护。 从此处开始进行应用层协议的通信， 即发送 HTTP 请求。</p>
+<p><strong>步骤 11：</strong> 应用层协议通信， 即发送 HTTP 响应。</p>
+<p><strong>步骤 12：</strong> 最后由客户端断开连接。 断开连接时， 发送 close_notify 报文。 上图做了一些省略， 这步之后再发送 TCP FIN 报文来关闭与 TCP的通信。</p>
+<p>在以上流程中，应用层发送数据时会附加MAC，查知报文是否遭到篡改。</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pzmlD.png" alt="3pzmlD.png"></p>
+<h3 id="74-https的缺点">7.4 HTTPS的缺点</h3>
+<p>当使用SSL时，它的处理速度会变慢，其原因有二，一是通信慢，在正常的http基础上要进行SSL通信；二是处理速度慢，在服务器和客户端都需要进行加密和解密的运算处理。HTTPS要比HTTP慢2到100倍。</p>
+<h2 id="8-确认访问用户身份的认证">8 确认访问用户身份的认证</h2>
+<h3 id="81-basic认证">8.1 BASIC认证</h3>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pzuOH.png" alt="3pzuOH.png"></p>
+<p>客户端将用户名和密码中间用冒号连接，然后经过Base64编码处理，发送给服务器。Base64编码不是加密处理，不需要任何附加信息就可以对其解码，除此之外想再进行一次 BASIC 认证时，一般的浏览器却无法实现认证注销操作，且达不到多数Web网站期望的安全性登记，因此并不常用。</p>
+<h3 id="82-基于表单认证">8.2 基于表单认证</h3>
+<p>基于表单的认证方法并不是在HTTP协议中定义的，而是由Web应用程序各自实现的。通过服务器端的 Web 应用， 将客户端发送过来的用户ID和密码与之前登录过的信息做匹配来进行认证的。</p>
+<p>基于表单认证一般会使用Cookie来管理Session。</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pzdmj.png" alt="3pzdmj.png"></p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/tcp/" data-toggle="tooltip" data-placement="top" title="TCP:控制传输协议">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>

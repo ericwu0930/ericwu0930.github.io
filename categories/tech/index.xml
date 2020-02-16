@@ -6,10 +6,19 @@
     <description>Recent content in Tech on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 14 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 16 Feb 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/categories/tech/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>HTTP协议</title>
+      <link>https://ericwu0930.github.io/post/http/</link>
+      <pubDate>Sun, 16 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/http/</guid>
+      <description>1. Http的初步认识 1.1 Http的诞生 CERN的蒂姆·伯纳斯-李博士提出一种让全球研究者共享知识的设想：借助多文档之间互相关联形成的超文本，连</description>
+    </item>
     
     <item>
       <title>TCP:控制传输协议</title>
