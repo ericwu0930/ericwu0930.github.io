@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-	<meta name="generator" content="Hugo 0.64.1" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,15 +15,15 @@
     
 
     
-    <meta name="title" content="" />
-    <meta property="og:title" content="" />
-    <meta property="twitter:title" content="" />
+    <meta name="title" content="垃圾回收调优" />
+    <meta property="og:title" content="垃圾回收调优" />
+    <meta property="twitter:title" content="垃圾回收调优" />
     
 
     
-    <meta name="description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。">
-    <meta property="og:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
-    <meta property="twitter:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    <meta name="description" content="总结自《深入理解java虚拟机》">
+    <meta property="og:description" content="总结自《深入理解java虚拟机》" />
+    <meta property="twitter:description" content="总结自《深入理解java虚拟机》" />
     
 
     
@@ -35,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>Eric&#39;s Blog-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>垃圾回收调优-吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/">
+    <link rel="canonical" href="/post/gc_tuner/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -159,14 +158,41 @@
 
 
 
-<header class="intro-header" style="background-image: url('/img/roof.jpg')">
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('https://images.unsplash.com/photo-1494879540385-bc170b0878a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjc1MDg0fQ&auto=format&fit=crop&w=1650&q=80')
+    }
+</style>
+<header class="intro-header">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>Eric&#39;s Blog </h1>
-                    
-		    <span class="subheading">路在脚下，心向远方</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/jvm" title="JVM">
+                            JVM
+                        </a>
+                        
+                    </div>
+                    <h1>垃圾回收调优</h1>
+                    <h2 class="subheading">JVM学习笔记之二</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Saturday, November 30, 2019
+                        
+                        
+                        
+                    </span>
                 </div>
             </div>
         </div>
@@ -175,253 +201,108 @@
 
 
 
-  
-<div class="container">
-    <div class="row">
-        
-        
-   	    <div class="
-            col-lg-8 col-lg-offset-1
-            col-md-8 col-md-offset-1
-            col-sm-12
-            col-xs-12
-            post-container
-        ">
-            
 
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/http/">
-        <h2 class="post-title">
-            HTTP协议
-        </h2>
-	
-        <h3 class="post-subtitle">
-            计算机网络学习笔记之三
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            整理自《图解HTTP》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Sunday, February 16, 2020
-    
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/tcp/">
-        <h2 class="post-title">
-            TCP:控制传输协议
-        </h2>
-	
-        <h3 class="post-subtitle">
-            计算机网络学习笔记之一
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            整理自《TCP/IP详解卷一》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Friday, February 14, 2020
-    
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/security/">
-        <h2 class="post-title">
-            加密与安全机制
-        </h2>
-	
-        <h3 class="post-subtitle">
-            计算机网络学习笔记之二
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            整理自《图解HTTP》与《TCP/IP详解卷一》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Friday, February 14, 2020
-    
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/classload/">
-        <h2 class="post-title">
-            JVM类加载机制
-        </h2>
-	
-        <h3 class="post-subtitle">
-            JVM学习笔记之三
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            总结自《深入理解java虚拟机》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;&#34; Tuesday, December 10, 2019
-    
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/classloader/">
-        <h2 class="post-title">
-            类加载器与双亲委派模型
-        </h2>
-	
-        <h3 class="post-subtitle">
-            JVM学习笔记之三
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            总结自《深入理解java虚拟机》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Tuesday, December 10, 2019
-    
-    
-    </p>
-
-</div>
-<hr>
-
+<article>
+    <div class="container">
+        <div class="row">
 
             
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
 
-
-<ul class="pager">
-    
-    
-    <li class="next">
-        <a href="/page/2/">Older Posts &rarr;</a>
-    </li>
-    
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#一确定目标">一、确定目标</a></li>
+    <li><a href="#二最快的gc是不发生gc">二、最快的GC是不发生GC</a></li>
+    <li><a href="#三新生代调优">三、新生代调优</a></li>
+    <li><a href="#四老年代调优">四、老年代调优</a></li>
+    <li><a href="#五案例">五、案例</a></li>
+  </ul>
+</nav>
+                
+                <h2 id="一确定目标">一、确定目标</h2>
+<ul>
+<li>低延迟 CMS G1 ZGC ————对于互联网程序</li>
+<li>高吞吐量 ParalellGC ———对于科学运算</li>
+</ul>
+<h2 id="二最快的gc是不发生gc">二、最快的GC是不发生GC</h2>
+<p>当经常发生GC的时候，考虑下面几个问题</p>
+<ol>
+<li>数据是不是太多？</li>
+<li>数据表是否太臃肿？加载了不需要的数据；Integer占用24字节 而int只占用4字节</li>
+<li>是否存在内存泄漏？采用软引用、弱引用；使用第三方缓存实现 如Redis</li>
+</ol>
+<h2 id="三新生代调优">三、新生代调优</h2>
+<p>新生代的特点：</p>
+<ul>
+<li>所有的new操作的内存分配非常迅速，并且优先在TLAB（thread-local allocation buffer）中进行分配</li>
+<li>死亡对象的回收代价为零</li>
+<li>朝生夕死</li>
+<li>Minor GC时间远远低于Full GC
+新生代越大越好么？
+<img src="https://s2.ax1x.com/2020/02/25/3JI2QS.png" alt="3JI2QS.png">
+根据Oracle官方文档，如果新生代太小，会频繁的发生Minor GC；如果新生代太大，势必会减少老年代的大小，这样就会只触发Full GC，使得停顿时间过长。</li>
+<li>新生代的大小最好设置为能容纳【并发量*（请求-响应）】的数据</li>
+<li>幸存区大到能够保留【当前活跃对象+需要晋升对象】，如果幸存区过小，那么需要提前晋升对象，这样有个弊端，就是该对象如果已经成为垃圾，只能等到Full GC时才能被回收</li>
+<li>晋升阈值配置得当，让长时间存货对象尽快晋升，这是因为新生代使用复制算法耗时最长的就是复制过程
+-XX:MaxTenuringThreshold=threshold调整最大晋升阈值
+-XX:+PrintTenuringDistribution显示晋升详情</li>
+</ul>
+<h2 id="四老年代调优">四、老年代调优</h2>
+<p>以CMS为例</p>
+<ul>
+<li>CMS的老年代内存越大越好</li>
+<li>先不尝试做老年代调优，先尝试新生代调优</li>
+<li>观察发生Full GC老年代内存占用，将老年代内存预设调大1/4~1/3 -XX:CMSInitiatingOccupancyFraction=percent当老年代使用了percent时就调用CMS</li>
+</ul>
+<h2 id="五案例">五、案例</h2>
+<ul>
+<li>Full GC和Minor GC频繁 ————提升新生代大小，调高晋升阈值</li>
+<li>请求高峰期发生Full GC，单次暂停时间特别长（CMS）————使用-XX:+PrintGCDetails查看GC日志。重新标记时间过长 使用-XX:+CMSScavengeBeforeRemark在重新标记前先清理新生代</li>
+<li>老年代充裕的情况下，发生Full GC（jdk1.7）——由于方法区过小导致Full GC</li>
 </ul>
 
 
-       	</div>
-        
+                
 
-<div class="
-    col-lg-3 col-lg-offset-0
-    col-md-3 col-md-offset-0
-    col-sm-12
-    col-xs-12
-    sidebar-container
-">
-    
-    
-
-    
-	
-    <section class="visible-md visible-lg">
-	<hr><h5><a href="/top/about">ABOUT ME</a></h5>
-        <div class="short-about">
-            
-            <a href="/top/about">
-               <img src="/img/portrait.jpeg" alt="avatar" style="cursor: pointer" />
-            </a>
-            
-            
-                <p>Software Developer, Photographer and Life Adventurer</p>
-            
-           
-           <ul class="list-inline"> 
-               
-               
-               
-               
-               <li>
-                   <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-               <li>
-                   <a target="_blank" href="/img/we_chat.JPG">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               <li>
-                   <a target="_blank" href="https://github.com/ericwu0930/">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-               
-               <li>
-                   <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-            
-            
-               
-               
+                <hr>
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/post/gc/" data-toggle="tooltip" data-placement="top" title="JVM垃圾收集器">Next
+                            Post &rarr;</a>
+                    </li>
+                    
                 </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
             </div>
-    </section>
-	
-    
-    
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
 
-    
-    
-</div>
+                
+                
 
-	</div>
-</div>
-
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
 
 
 

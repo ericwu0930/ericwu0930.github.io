@@ -53,6 +53,31 @@
   </url>
   
   <url>
+    <loc>https://ericwu0930.github.io/tags/jvm/</loc>
+    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/classload/</loc>
+    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/classloader/</loc>
+    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/gc/</loc>
+    <lastmod>2019-11-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/gc_tuner/</loc>
+    <lastmod>2019-11-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://ericwu0930.github.io/search/placeholder/</loc>
     <priority>0</priority>
   </url>

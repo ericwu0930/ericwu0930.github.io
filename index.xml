@@ -39,6 +39,42 @@
     </item>
     
     <item>
+      <title>JVM类加载机制</title>
+      <link>https://ericwu0930.github.io/post/classload/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/classload/</guid>
+      <description>虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机</description>
+    </item>
+    
+    <item>
+      <title>类加载器与双亲委派模型</title>
+      <link>https://ericwu0930.github.io/post/classloader/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/classloader/</guid>
+      <description>在类加载过程的加载阶段，“通过一个类的全限定名来获取描述此类的二进制字节流”是通过“类加载器”来实现的。类加载器虽然只用于实现类的加载动作，</description>
+    </item>
+    
+    <item>
+      <title>JVM垃圾收集器</title>
+      <link>https://ericwu0930.github.io/post/gc/</link>
+      <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/gc/</guid>
+      <description>如果说收集算法是内存回收的方法论，那么垃圾收集器就是内存回收的具体实现。 一、串行 单线程 堆内存较小，适合个人电脑 -XX: +UseSerialGC=Serial+SerialOld 新生代使用复制算法，老年代</description>
+    </item>
+    
+    <item>
+      <title>垃圾回收调优</title>
+      <link>https://ericwu0930.github.io/post/gc_tuner/</link>
+      <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/gc_tuner/</guid>
+      <description>一、确定目标 低延迟 CMS G1 ZGC ————对于互联网程序 高吞吐量 ParalellGC ———对于科学运算 二、最快的GC是不发生GC 当经常发生GC的时候，考虑下面几个问题 数</description>
+    </item>
+    
+    <item>
       <title></title>
       <link>https://ericwu0930.github.io/search/placeholder/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>

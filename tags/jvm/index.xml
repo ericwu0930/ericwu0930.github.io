@@ -1,42 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Eric&#39;s Blog</title>
-    <link>https://ericwu0930.github.io/post/</link>
-    <description>Recent content in Posts on Eric&#39;s Blog</description>
+    <title>JVM on Eric&#39;s Blog</title>
+    <link>https://ericwu0930.github.io/tags/jvm/</link>
+    <description>Recent content in JVM on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 16 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 10 Dec 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://ericwu0930.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ericwu0930.github.io/tags/jvm/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>HTTP协议</title>
-      <link>https://ericwu0930.github.io/post/http/</link>
-      <pubDate>Sun, 16 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/post/http/</guid>
-      <description>1. Http的初步认识 1.1 Http的诞生 CERN的蒂姆·伯纳斯-李博士提出一种让全球研究者共享知识的设想：借助多文档之间互相关联形成的超文本，连</description>
-    </item>
-    
-    <item>
-      <title>TCP:控制传输协议</title>
-      <link>https://ericwu0930.github.io/post/tcp/</link>
-      <pubDate>Fri, 14 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/post/tcp/</guid>
-      <description>1. TCP概述 不同于UDP，TCP提供一种面向连接的、可靠的字节流服务，没有由TCP自动插入的记录标志或消息边界，TCP根本不会解读字节流里的</description>
-    </item>
-    
-    <item>
-      <title>加密与安全机制</title>
-      <link>https://ericwu0930.github.io/post/security/</link>
-      <pubDate>Fri, 14 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/post/security/</guid>
-      <description>加密是为了满足以下需求：在不安全的信道上保护所传输信息的机密性、完整性以及可认证性。有两种重要的加密算法——对称密钥与非对称密钥。 对称密钥 在</description>
-    </item>
     
     <item>
       <title>JVM类加载机制</title>
