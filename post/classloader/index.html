@@ -235,7 +235,8 @@
 <span style="color:#f92672">{</span>
     <span style="color:#66d9ef">synchronized</span> <span style="color:#f92672">(</span>getClassLoadingLock<span style="color:#f92672">(</span>name<span style="color:#f92672">)</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
         <span style="color:#75715e">// First, check if the class has already been loaded
-</span><span style="color:#75715e"></span>        Class<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span><span style="color:#f92672">&gt;</span> c <span style="color:#f92672">=</span> findLoadedClass<span style="color:#f92672">(</span>name<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</span><span style="color:#75715e"></span>        
+        Class<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span><span style="color:#f92672">&gt;</span> c <span style="color:#f92672">=</span> findLoadedClass<span style="color:#f92672">(</span>name<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>c <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
             <span style="color:#66d9ef">long</span> t0 <span style="color:#f92672">=</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">nanoTime</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
             <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
@@ -293,7 +294,8 @@
     	drivers <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
     <span style="color:#75715e">//1)使用ServiceLoader机制加载驱动，即SPI
-</span><span style="color:#75715e"></span>    AccessController<span style="color:#f92672">.</span><span style="color:#a6e22e">doPrivileged</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> PrivilegedAction<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">void</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+</span><span style="color:#75715e"></span>    
+    AccessController<span style="color:#f92672">.</span><span style="color:#a6e22e">doPrivileged</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> PrivilegedAction<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">void</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
     	<span style="color:#66d9ef">public</span> Void <span style="color:#a6e22e">run</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
             ServiceLoader<span style="color:#f92672">&lt;</span>Driver<span style="color:#f92672">&gt;</span> loadedDrivers <span style="color:#f92672">=</span>ServiceLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>Driver<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
             Iterator<span style="color:#f92672">&lt;</span>Driver<span style="color:#f92672">&gt;</span> driversIterator <span style="color:#f92672">=</span> loadedDrivers<span style="color:#f92672">.</span><span style="color:#a6e22e">iterator</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
@@ -310,7 +312,8 @@
 	println<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;DriverManager.initialize: jdbc.drivers = &#34;</span> <span style="color:#f92672">+</span> drivers<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     
 	<span style="color:#75715e">// 2）使用 jdbc.drivers 定义的驱动名加载驱动
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>drivers <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span><span style="color:#f92672">|</span> drivers<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span><span style="color:#75715e"></span>    
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>drivers <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span><span style="color:#f92672">|</span> drivers<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
         <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span> 
     String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> driversList <span style="color:#f92672">=</span> drivers<span style="color:#f92672">.</span><span style="color:#a6e22e">split</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;:&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
@@ -338,7 +341,8 @@ Iterator<span style="color:#f92672">&lt;</span>接口类型<span style="color:#f
 <p>接着看ServiceLoader.load方法：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>S<span style="color:#f92672">&gt;</span> ServiceLoader<span style="color:#f92672">&lt;</span>S<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;</span>S<span style="color:#f92672">&gt;</span> service<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
     <span style="color:#75715e">//获取线程上下文类加载器
-</span><span style="color:#75715e"></span>    ClassLoader c1<span style="color:#f92672">=</span>Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getContextClassLoader</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</span><span style="color:#75715e"></span>    
+    ClassLoader c1<span style="color:#f92672">=</span>Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getContextClassLoader</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#66d9ef">return</span> ServiceLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>service<span style="color:#f92672">,</span>c1<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>线程上下文类加载器是当前线程使用的类加载器，默认就是应用程序类加载器。换句话说，一个由Bootstrap ClassLoader加载的代码中包含有需要下层类加载加载的对象。使用java.lang.Thread类的getContextClassLoader()方法调用应用程序类加载器。</p>
@@ -365,10 +369,12 @@ Iterator<span style="color:#f92672">&lt;</span>接口类型<span style="color:#f
             Files<span style="color:#f92672">.</span><span style="color:#a6e22e">copy</span><span style="color:#f92672">(</span>Paths<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>path<span style="color:#f92672">)</span><span style="color:#f92672">,</span> os<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 
             <span style="color:#75715e">// 得到字节数组
-</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span> bytes <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span><span style="color:#a6e22e">toByteArray</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</span><span style="color:#75715e"></span>            
+            <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span> bytes <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span><span style="color:#a6e22e">toByteArray</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 
             <span style="color:#75715e">// byte[] -&gt; *.class
-</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">return</span> defineClass<span style="color:#f92672">(</span>name<span style="color:#f92672">,</span> bytes<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> bytes<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</span><span style="color:#75715e"></span>            
+            <span style="color:#66d9ef">return</span> defineClass<span style="color:#f92672">(</span>name<span style="color:#f92672">,</span> bytes<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> bytes<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 
         <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
             e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
