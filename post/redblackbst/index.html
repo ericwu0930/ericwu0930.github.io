@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="红黑二叉树" />
+    <meta property="og:title" content="红黑二叉树" />
+    <meta property="twitter:title" content="红黑二叉树" />
+    
+
+    
+    <meta name="description" content="总结自《算法》第四版">
+    <meta property="og:description" content="总结自《算法》第四版" />
+    <meta property="twitter:description" content="总结自《算法》第四版" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>红黑二叉树-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/redblackbst/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E7%AE%97%E6%B3%95" title="算法">
+                            算法
+                        </a>
+                        
+                    </div>
+                    <h1>红黑二叉树</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Tuesday, March 3, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-2-3查找树">1. 2-3查找树</a>
+      <ul>
+        <li><a href="#11-插入">1.1 插入</a></li>
+      </ul>
+    </li>
+    <li><a href="#2红黑二叉查找树">2.红黑二叉查找树</a>
+      <ul>
+        <li><a href="#21-插入">2.1 插入</a></li>
+        <li><a href="#22--删除">2.2  删除</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-总结">3. 总结</a></li>
+  </ul>
+</nav>
+                
+                <p>在一棵含有N个结点的树种，我们希望树高为~lgN，这样我们就能保证所有查找都能在~lgN次比较内结束，就和二分查找一样。但是在动态插入种保证树的完美平衡代价太高了，于是引入了一种新的查找结构——红黑树。同时为了更好的理解红黑树，在讲解红黑树之前先了解另一种树结构2-3查找树。</p>
+<h2 id="1-2-3查找树">1. 2-3查找树</h2>
+<p>2-3查找树有两种结点，一个键两个链接的结点称为2-结点，两个键三个链接的结点称为3-结点。2-结点和3-结点中的每条链接都对应着其中保存的键所分割的一个区间。一棵完美平衡的2-3查找树中的所有空链接到根结点的距离都应该是相同的，如下图所示。2-3查找树的查找过程与二叉搜索树类似，在此不再赘述。</p>
+<p><img src="https://s2.ax1x.com/2020/03/03/35FzHx.png" alt="35FzHx.png"></p>
+<h3 id="11-插入">1.1 插入</h3>
+<p>在插入操作时，我们始终要记住一点，为了保证2-3查找树的完美平衡性，要避免因插入操作而导致的子树高度的增长。</p>
+<p>如果需要向2-结点插入新键，为了保持2-3查找树的完美平衡性，我们不会像二叉查找树一样，将节点挂在树的底部，而是选择将2-结点扩展成3-结点。</p>
+<p>如果我们需要向3-结点中插入新键，我们先暂时使其扩展成一个4-结点，然后再让其中间的结点变成父节点，生成两个链接分别与较小值和较大值相连。这一操作使得子树高度+1，与我们理念相悖，为此，我们需要将该子树融合到它的父节点中。</p>
+<p><img src="https://s2.ax1x.com/2020/03/03/35AdeI.png" alt="35AdeI.png"></p>
+<p>如下左图所示，如果一个临时4-结点的父节点是一个2-结点，那么只需要把E结点插入到其父节点使其变成一个3-结点即可。如下右图所示，如果一个临时4-结点的父节点是一个3-结点，那么将其父节点变成一个临时4-结点继续向上融合，直到找到一个2-结点。</p>
+<!-- raw HTML omitted -->
+<p>如果从插入结点到根节点全都是3-结点，根节点变成一个临时4-结点，此时我们将根节点分裂成三个结点构成的二叉树，此时2-3查找树实现了高度+1,。由此可见，2-3查找树的生长方向是根节点的方向。</p>
+<h2 id="2红黑二叉查找树">2.红黑二叉查找树</h2>
+<p>对于2-3查找树，尽管我们可以用不同的数据类型表示2-结点和3-结点并写出所需代码，但是实际实现起来并不方便，为此我们用另一种方式实现2-3查找树——红黑二叉查找树。</p>
+<p>红黑二叉查找树基本思想是用标准的二叉查找树和一些额外的信息（用来表示3-结点）来表示2-3树。我们将数中的连接分为两种类型：我们用一条左斜的红色连接相连的两个2-结点构成一个3-结点，用黑连接表示2-3树中的普通链接。一棵红黑二叉查找树和2-3树是一一对应的。</p>
+<!-- raw HTML omitted -->
+<p>每个结点都有一个指向它的链接，我们将该链接的颜色保存在结点的一个布尔类型的成员变量color中，Node的数据结构如下所示。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> RED <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> BLACK <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Node</span>
+<span style="color:#f92672">{</span>
+    Key key<span style="color:#f92672">;</span>
+    Value value<span style="color:#f92672">;</span>
+    Node left<span style="color:#f92672">,</span>right<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">int</span> N<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">boolean</span> color<span style="color:#f92672">;</span>
+    
+    Node<span style="color:#f92672">(</span>Key key<span style="color:#f92672">,</span> Value val<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> N<span style="color:#f92672">,</span> <span style="color:#66d9ef">boolean</span> color<span style="color:#f92672">)</span>
+    <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">key</span> <span style="color:#f92672">=</span>key<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">val</span> <span style="color:#f92672">=</span>val<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">N</span> <span style="color:#f92672">=</span> N<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">=</span>color<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isRed</span><span style="color:#f92672">(</span>Node x<span style="color:#f92672">)</span>
+</code></pre></div><h3 id="21-插入">2.1 插入</h3>
+<p>切记，<strong>插入过程中都是用红链连接新键</strong>。为了保证红黑树只存在左斜红链，后续好需要做些调整，但这是后续步骤。</p>
+<h4 id="211-旋转操作">2.1.1 旋转操作</h4>
+<p>所谓的后续操作，都是旋转操作的组合，旋转操作有左旋和右旋之分。不管是左旋还是右旋，都会返回重置后的父节点。</p>
+<p><strong>左旋</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Node <span style="color:#a6e22e">rotateLeft</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+    Node x<span style="color:#f92672">=</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">;</span>
+    h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">=</span>x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">;</span>
+    x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">=</span>h<span style="color:#f92672">;</span>
+    x<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">=</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">;</span>
+    h<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">=</span>RED<span style="color:#f92672">;</span>
+    x<span style="color:#f92672">.</span><span style="color:#a6e22e">N</span><span style="color:#f92672">=</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">N</span><span style="color:#f92672">;</span>
+    h<span style="color:#f92672">.</span><span style="color:#a6e22e">N</span><span style="color:#f92672">=</span>1<span style="color:#f92672">+</span>size<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">+</span>size<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">return</span> x<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><img src="https://s2.ax1x.com/2020/03/03/35kyrR.png" alt="35kyrR.png"></p>
+<p><strong>右旋</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Node <span style="color:#a6e22e">rotateRight</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+    Node x<span style="color:#f92672">=</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">;</span>
+    h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">=</span>x<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">;</span>
+    x<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">=</span>h<span style="color:#f92672">;</span>
+    x<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">=</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">;</span>
+    h<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">=</span>RED<span style="color:#f92672">;</span>
+    x<span style="color:#f92672">.</span><span style="color:#a6e22e">N</span><span style="color:#f92672">=</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">N</span><span style="color:#f92672">;</span>
+    h<span style="color:#f92672">.</span><span style="color:#a6e22e">N</span><span style="color:#f92672">=</span>1<span style="color:#f92672">+</span>size<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">+</span>size<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">return</span> x<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><img src="https://s2.ax1x.com/2020/03/03/35kRIK.png" alt="35kRIK.png"></p>
+<h4 id="212-向2-结点插入新键">2.1.2 向2-结点插入新键</h4>
+<p>回忆2-3查找树插入过程，在2-3查找树中向2-结点插入元素，2-结点变成一个3-结点，同理，如果待插入的元素比2-结点元素小，则原2-结点产生一个左斜红链链接新元素；如果待插入元素比2-结点大，则原2-结点产生一个右斜红链链接，链接新元素。但是在红黑二叉树中，不允许有右斜红链接的存在，所以我们需要对其进行一步操作，<strong>左旋</strong>（具体实现稍后解释），如图所示。</p>
+<p><img src="https://s2.ax1x.com/2020/03/03/35khGD.png" alt="35khGD.png"></p>
+<h4 id="213-向3-结点插入新键">2.1.3 向3-结点插入新键</h4>
+<p>在2-3树中向3-结点插入元素，3-结点先变成一个临时的4-结点，然后分裂成一个棵二叉树，该二叉树的根节点与原3-结点的父节点进行融合。在红黑树中的插入过程也要实现这一过程。我们先不考虑融合这一过程，只讨论如何将4-结点变成一个棵二叉树。我们将其分为3种情况：</p>
+<ol>
+<li>
+<p>新键最大：用一根右斜红链直接与新键链接</p>
+<p><img src="https://s2.ax1x.com/2020/03/03/35kTsA.png" alt="35kTsA.png"></p>
+</li>
+<li>
+<p>新键最小：用一根左斜红链连接到最左边的结点上，此时出现两条连续的左斜红链，只需对上层红链进行右旋处理</p>
+<p><img src="https://s2.ax1x.com/2020/03/03/35kbZt.png" alt="35kbZt.png"></p>
+</li>
+<li>
+<p>新键介于两者之间：见图，先左旋，再右旋</p>
+<p><img src="https://s2.ax1x.com/2020/03/03/35kLIf.png" alt="35kLIf.png"></p>
+</li>
+</ol>
+<p>接下来我们再来考虑如何实现2-3树中的“融合”这一操作。首先，先生成的二叉树左右两个链接一定是黑色的；同时，为了将新二叉树的中结点送入父节点，我们需要将中结点到父节点的连接变红，实现过程由flipColors（）完成（flipColors在后面还有其他作用，这里给出最终形式）。这意味着在父节点中继续插入一个新键，我们继续把它当做在一结点中插入新键操作，可见这是一个递归操作。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">flipColors</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+    h<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">=</span><span style="color:#f92672">!</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">;</span>
+    h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">=</span><span style="color:#f92672">!</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">;</span>
+    h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">=</span><span style="color:#f92672">!</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>将以上总结起来考虑，在沿着插入点到根节点的路径向上移动时在所经过的每个结点中顺序完成以下操作，我们就能完成插入操作：</p>
+<ol>
+<li>如果右子结点是红色的而左子结点是黑色的，进行左旋转</li>
+<li>如果左子结点是红色的且它的左子节点也是红色，进行右旋转</li>
+<li>如果左右子结点均为红色，进行颜色转换（红色结点变黑色，黑色边红色）</li>
+</ol>
+<p>实现如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RedBlackBST</span><span style="color:#f92672">&lt;</span>Key <span style="color:#66d9ef">extends</span> Comparable<span style="color:#f92672">&lt;</span>Key<span style="color:#f92672">&gt;</span><span style="color:#f92672">,</span> Value<span style="color:#f92672">&gt;</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> Node root<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Node</span><span style="color:#f92672">;</span> <span style="color:#75715e">//语法不严谨，表示定义一个内部类
+</span><span style="color:#75715e"></span>    
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isRed</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">rotateLeft</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">rotateRight</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">flipColors</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">size</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>Key key<span style="color:#f92672">,</span>Value val<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        root<span style="color:#f92672">=</span>put<span style="color:#f92672">(</span>root<span style="color:#f92672">,</span>key<span style="color:#f92672">,</span>val<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        root<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span><span style="color:#f92672">=</span>BLACK<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    
+    <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">,</span> Key key<span style="color:#f92672">,</span> Value val<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>h <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Node<span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> val<span style="color:#f92672">,</span> 1<span style="color:#f92672">,</span> RED<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        
+        <span style="color:#66d9ef">int</span> cmp<span style="color:#f92672">=</span>key<span style="color:#f92672">.</span><span style="color:#a6e22e">compareTo</span><span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">key</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>cmp<span style="color:#f92672">&lt;</span>0<span style="color:#f92672">)</span>
+            h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">=</span>put<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">,</span>key<span style="color:#f92672">,</span>val<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>cmp<span style="color:#f92672">&gt;</span>0<span style="color:#f92672">)</span>
+            h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">=</span>put<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">,</span>key<span style="color:#f92672">,</span>val<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">else</span>
+            h<span style="color:#f92672">.</span><span style="color:#a6e22e">val</span><span style="color:#f92672">=</span>val<span style="color:#f92672">;</span>
+        
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span><span style="color:#f92672">(</span><span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span>
+            h<span style="color:#f92672">=</span>rotateLeft<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span>
+            h<span style="color:#f92672">=</span>rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span>
+            flipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        
+        h<span style="color:#f92672">.</span><span style="color:#a6e22e">N</span><span style="color:#f92672">=</span>size<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">+</span>size<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">+</span>1<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> h<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h3 id="22--删除">2.2  删除</h3>
+<p>删除操作相比插入操作还要复杂，我们可以思考一下，如果我们要删除的结点是一个2-结点，那么删除这个结点的时候就会破坏红黑树的平衡性。为了避免这一情况，我们需要在自顶向下寻找待删除的结点时，将2-结点进行一定转换，变成3-结点或者4-结点，这样就可以保证我们需要删除的结点在一个3-结点中；然后，我们还需要自下向上，将我们产生的临时4-结点分解。</p>
+<p>在自顶向下的过程中，如何对2-结点进行变换呢？这里分两种情况：</p>
+<ol>
+<li>直系兄弟结点不是2-结点，通过父节点从兄弟结点传递一个结点到本结点（如下图，c被移动到了父节点，父节点中的b移动到了当前结点），此时变成一个3-结点</li>
+<li>直系兄弟也是一个2-结点，则与父节点和直系兄弟结点一同生成一个4-结点（问：只从父节点借一个结点形成一个3-结点行不行？答：不行，如下图，只借用b，c往哪里挂？）</li>
+</ol>
+<p><img src="https://s2.ax1x.com/2020/03/03/35kvRg.png" alt="35kvRg.png"></p>
+<h4 id="删除最小键">删除最小键</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">moveRedLeft</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+	<span style="color:#75715e">//当前节点的左右子节点都是2-节点，左右节点需要从父节点中借一个节点
+</span><span style="color:#75715e"></span>    
+    <span style="color:#75715e">//如果该节点的右节点的左节点是红色节点，说明兄弟节点不是2-节点，可以从兄弟节点中借一个
+</span><span style="color:#75715e"></span>        moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>     <span style="color:#75715e">// 从父节点中借一个
+</span><span style="color:#75715e"></span>    
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>    <span style="color:#75715e">// 判断兄弟节点，如果是红节点，从兄弟节点中借一个
+</span><span style="color:#75715e"></span>            h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span> rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+            h <span style="color:#f92672">=</span> rotateLeft<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+            moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>  <span style="color:#75715e">//  在从兄弟节点借了一个以后，我们就需要还一个节点给父节点了，因为一开始从父节点那里借了一个(其实是结点的传递)
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> h<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">deleteMin</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span><span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>root<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> <span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>root<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+            root<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span> <span style="color:#f92672">=</span> Red<span style="color:#f92672">;</span>   <span style="color:#75715e">//考虑根节点+左右分支都是黑链这一情况
+</span><span style="color:#75715e"></span>            
+        <span style="color:#f92672">}</span>
+        root <span style="color:#f92672">=</span> deleteMin<span style="color:#f92672">(</span>root<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        root<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span> <span style="color:#f92672">=</span> Black<span style="color:#f92672">;</span>  <span style="color:#75715e">// 借完以后，我们将根节点的颜色复原
+</span><span style="color:#75715e"></span>        
+    <span style="color:#f92672">}</span>
+    
+    <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">deleteMin</span><span style="color:#f92672">(</span>Node x<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span><span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> <span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span>    <span style="color:#75715e">// 判断x的左节点是不是2-节点
+</span><span style="color:#75715e"></span>            x <span style="color:#f92672">=</span> moveRedLeft<span style="color:#f92672">(</span>x<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span> <span style="color:#f92672">=</span> deleteMin<span style="color:#f92672">(</span>x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> balance<span style="color:#f92672">(</span>x<span style="color:#f92672">)</span><span style="color:#f92672">;</span>  <span style="color:#75715e">//   解除临时组成的4-节点
+</span><span style="color:#75715e"></span>        
+    <span style="color:#f92672">}</span>
+    
+    <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">balance</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> <span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span> h<span style="color:#f92672">=</span>rotateLeft<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span> h<span style="color:#f92672">=</span>rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span>    flipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        h<span style="color:#f92672">.</span><span style="color:#a6e22e">total</span> <span style="color:#f92672">=</span> size<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">+</span>size<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">+</span>1<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> h<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h4 id="删除最大键">删除最大键</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">moveRedRight</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>         <span style="color:#75715e">// 在这里对于兄弟节点的判断都是.left，因为红色节点只会出现在左边
+</span><span style="color:#75715e"></span>            
+            h<span style="color:#f92672">=</span>rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+            moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> h<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">deleteMax</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span><span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>root<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> isRed<span style="color:#f92672">(</span>root<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+            root<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span> <span style="color:#f92672">=</span> Red<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        root <span style="color:#f92672">=</span> deleteMax<span style="color:#f92672">(</span>root<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        root<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span> <span style="color:#f92672">=</span> Black<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    
+    <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">deleteMax</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>             
+        <span style="color:#75715e">/* 考虑下面这种情况，如果没有这一步右旋会发生什么？ （当需要从父结点借结点时，会被父结点“拉上去”而导致不				平衡） 
+</span><span style="color:#75715e">         *          5,6
+</span><span style="color:#75715e">         *      1,2     9       
+</span><span style="color:#75715e">        */</span>                                         
+            h <span style="color:#f92672">=</span> rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span><span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> <span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+            h <span style="color:#f92672">=</span> moveRedRight<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span> deleteMax<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> balance<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h4 id="删除">删除</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">delete</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> key<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span><span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>root<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> <span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>root<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+            root<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span> <span style="color:#f92672">=</span> Red<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        root <span style="color:#f92672">=</span> delete<span style="color:#f92672">(</span>root<span style="color:#f92672">,</span>key<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        root<span style="color:#f92672">.</span><span style="color:#a6e22e">color</span> <span style="color:#f92672">=</span> Black<span style="color:#f92672">;</span>
+ <span style="color:#f92672">}</span> 
+    
+    <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">delete</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> key<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>key<span style="color:#f92672">&lt;</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">key</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>          <span style="color:#75715e">// 当目标键小于当前键的时候，我们做类似于寻找最小是的操作，向树左边移动，合并父子结点来消除2-结点
+</span><span style="color:#75715e"></span>            
+            <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> <span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+                h <span style="color:#f92672">=</span> moveRedLeft<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+            h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span> <span style="color:#f92672">=</span> delete<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">,</span>key<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span><span style="color:#66d9ef">else</span><span style="color:#f92672">{</span>  <span style="color:#75715e">// 当目标键大于当前键的时候，我们向右移动，并做与deleteMax相同的操作，如果相同的话，我们使用和二叉树的删除一样的操作，获取当前键的右子树的最小健，然后交换，并将目标键删除
+</span><span style="color:#75715e"></span>            
+            <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+                h <span style="color:#f92672">=</span> rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>key<span style="color:#f92672">.</span><span style="color:#a6e22e">compareTo</span><span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">key</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> h<span style="color:#f92672">.</span><span style="color:#a6e22e">key</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>    <span style="color:#75715e">// 找到目标
+</span><span style="color:#75715e"></span>                
+                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span><span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+                h <span style="color:#f92672">=</span> moveRedRight<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>key <span style="color:#f92672">=</span><span style="color:#f92672">=</span> h<span style="color:#f92672">.</span><span style="color:#a6e22e">key</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+                h<span style="color:#f92672">.</span><span style="color:#a6e22e">val</span> <span style="color:#f92672">=</span> get<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">,</span>min<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">key</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                h<span style="color:#f92672">.</span><span style="color:#a6e22e">key</span> <span style="color:#f92672">=</span> min<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">key</span><span style="color:#f92672">;</span>
+                h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span> deleteMin<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">else</span> h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span> delete<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">,</span>key<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> balance<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h2 id="3-总结">3. 总结</h2>
+<p>红黑树几乎是完全平衡的，但是我们在查找的时候完全没有用到颜色这个性质，那么所谓的红黑到底有什么作用？颜色是起到动态调整的作用的，在二叉树中最极端的情况是以有序的方式插入元素，，最后得到的树高就等于插入的元素个数N，但是这在红黑树中不会发生。一棵大小为N的红黑树的高度不会找过2lgN，简单地推理一下，红黑树的最坏情况是它所对应的2-3树中构成最左边的路径结点全部都是3-结点，该长度为只包含2-结点的路径长度（~lgN）的2倍。</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/http/" data-toggle="tooltip" data-placement="top" title="HTTP协议">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
