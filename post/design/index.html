@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="设计模式学习笔记" />
+    <meta property="og:title" content="设计模式学习笔记" />
+    <meta property="twitter:title" content="设计模式学习笔记" />
+    
+
+    
+    <meta name="description" content="总结自《Head First 设计模式》">
+    <meta property="og:description" content="总结自《Head First 设计模式》" />
+    <meta property="twitter:description" content="总结自《Head First 设计模式》" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>设计模式学习笔记-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/design/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('https://live.staticflickr.com/2817/32736014784_80afdc7630_k.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F" title="设计模式">
+                            设计模式
+                        </a>
+                        
+                    </div>
+                    <h1>设计模式学习笔记</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Wednesday, December 18, 2019
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#一singleton单例模式">一、Singleton单例模式</a></li>
+    <li><a href="#二strategy策略模式">二、Strategy策略模式</a></li>
+    <li><a href="#三工厂模式">三、工厂模式</a>
+      <ul>
+        <li><a href="#1简单工厂">1.简单工厂</a></li>
+        <li><a href="#2工厂方法">2.工厂方法</a></li>
+        <li><a href="#3抽象工厂">3.抽象工厂</a></li>
+      </ul>
+    </li>
+    <li><a href="#四责任链">四、责任链</a></li>
+    <li><a href="#五调停者">五、调停者</a></li>
+    <li><a href="#六装饰者">六、装饰者</a></li>
+    <li><a href="#七代理模式">七、代理模式</a></li>
+  </ul>
+</nav>
+                
+                <blockquote>
+<p>设计模式归根到底都是多态的变种</p>
+</blockquote>
+<h2 id="一singleton单例模式">一、Singleton单例模式</h2>
+<p>只需要一个实例存在，比如PropertyMgr，即阻止别人随意new该对象</p>
+<p>Key: 把构造方法设为私有的</p>
+<p>做成单例之后，其他类使用该类可以直接拿来用，不用作为属性引入，进一步降低了耦合度</p>
+<blockquote>
+<p>耦合度级别：继承、聚合（作为属性）、关联（出现在方法中）</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e">*饿汉式
+</span><span style="color:#75715e">*类加载到内存后，就实例化一个单利，JVM保证是线程安全的
+</span><span style="color:#75715e">*简单实用 推荐
+</span><span style="color:#75715e">*唯一缺点：不管你用不用，都会被加载 Class.forName() 因为INSTANCE是静态变量，所以会被执行
+</span><span style="color:#75715e">**/</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr01</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Mgr01 INSTANCE <span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr01<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr01</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr01 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span> <span style="color:#66d9ef">return</span> INSTANCE<span style="color:#f92672">;</span> <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">*懒汉式
+</span><span style="color:#75715e">*克服了饿汉式，但线程不安全
+</span><span style="color:#75715e">**/</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr03</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr03</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Mgr03 INSTANCE<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr03 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+            INSTANCE<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr03<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> INSTANCE<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">*改进懒汉式
+</span><span style="color:#75715e">*效率降低
+</span><span style="color:#75715e">**/</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr04</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr04</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Mgr04 INSTANCE<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">synchronized</span> Mgr04 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+            INSTANCE<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr03<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> INSTANCE<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">*尽可能减小同步块，提高运行速度
+</span><span style="color:#75715e">*较完美的写法
+</span><span style="color:#75715e">**/</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr06</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr04</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Mgr04 INSTANCE<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">synchronized</span> Mgr04 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span> <span style="color:#75715e">//双锁检查
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">synchronized</span><span style="color:#f92672">(</span>Mgr04<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+                    INSTANCE<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr06<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> INSTANCE<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">*静态内部类的写法
+</span><span style="color:#75715e">*最完美写法
+</span><span style="color:#75715e">*加载Mgr07时，并不会加载其内部类
+</span><span style="color:#75715e">**/</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr07</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr07</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr07Holder</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> Mgr07 INSTANCE<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr07<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr07 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> Mgr07Holder<span style="color:#f92672">.</span><span style="color:#a6e22e">INSTANCE</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">/**
+</span><span style="color:#75715e">*完美中的完美
+</span><span style="color:#75715e">*枚举单例
+</span><span style="color:#75715e">**/</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> Mgr08<span style="color:#f92672">{</span>
+    INSTANCE<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr08</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h2 id="二strategy策略模式">二、Strategy策略模式</h2>
+<p>策略模式有两点主要思想，其一是<strong>将变化部分与不变部分分离</strong>，其二是<strong>面向接口编程而不是面向实现编程</strong>，以《Head First设计模式》中的例子，可以比较清晰的阐述清楚以上两点。</p>
+<p>例如我们我们收到一个客户要求，需要生产各种鸭子（绿头鸭、唐老鸭、可达鸭&hellip;），我们自然而然的就想到了，首先设计一个鸭子的超类，其具有一些鸭子共有的属性以及行为，然后让其他的子类对其进行继承，但此时遇到一个问题，并非所有的鸭子都会飞，并且每一种鸭子的叫声也不一样。为了解决这个问题，我们只能不断的改写每一个鸭子子类中的方法，更大的问题是，当有新的鸭子产品继承自鸭子超类时，都要被迫检查可能需要覆盖的fly()和quark()。</p>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o4cBn.png" alt="3o4cBn.png"></p>
+<p>然后我们又想到，能否创建两个接口Flyable和Quackable，然后让鸭子的子类根据实际情况去继承这些接口们，然后各自实现接口的功能。</p>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o4fhT.png" alt="3o4fhT.png"></p>
+<p>显然，这也不是什么好主意，为了实现每一种接口，需要重复的代码更多，那如何从根本上解决这一问题呢？</p>
+<p>鸭子类中会发生变化的只有fly()和quack()这两类行为，策略设计模式中有这样一条设计原则，**找到应用中可能需要变化之处，把它们独立出来，不要和哪些不需要变化的代码混在一起。**于是，我们将这两种行为从鸭子类中分离出来。</p>
+<p>接下来又是新的问题，这两种被分离出来的行为要以何种的形式存在呢，以及鸭子类如何与这两类行为发生联系？此时就引出了第二条设计原则，**针对接口编程，而不是针对实现编程。**这句话更确切的说是“变量的声明类型应该是超类型，通常是一个抽象类或者是一个接口，如此，只要是具体实现此超类型的类所产生的对象，都可以指定给这个变量”</p>
+<p>在Duck类中，我们利用接口代表每一种行为，而不是将行为的实现（即函数）绑定其中。既然在Duck类中，我们用接口代表每种行为，那么被分离出来的行为当然是以接口的形式存在，比如FlyBehavior和QuackBehavior。然后不同飞的方式（包括不能飞），不同叫的方式都可以作为这两种接口的实现类，然后让Duck中的行为接口指向这些实现类即可</p>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o453F.png" alt="3o453F.png"></p>
+<p>所以话说回来，到底什么是<strong>策略模式</strong>呢？以及在何时使用该模式呢？我的理解是当完成一件事情可以有多种策略（或者说成方法更好理解）时，就可以使用策略模式，其主要步骤是将该行为分离抽象为接口，完成该方法的不同策略实现这个接口，然后在拥有该行为的类中声明该接口的变量，指向实际的类。</p>
+<p>举个例子，在学Java基础时，我们一定对Comparator以及Comparable这两个比较器接口不陌生，但是身边很多同学不理解这两个接口到底有什么区别。我个人的理解，Comparable就像是Flyable或者Quackable这类接口，我们需要为每一种需要比较的类写其实现，行为的实现还是和类牢牢的绑定在一起。而Comparator则是真真切切使用了<strong>策略模式</strong>的思想，关于比较这一行为，有不同的策略，拿人来说，可以以高矮进行比较，也可以拿胖瘦进行比较，我们完全可以通过实现Comparator这个接口，实现这些策略，然后传入到Sort类中进行比较，这大大提高了程序的弹性，这也就是<strong>策略模式</strong>的魅力所在</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Comparable</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compareTo</span><span style="color:#f92672">(</span>T o<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Comparator</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compare</span><span style="color:#f92672">(</span>T o1<span style="color:#f92672">,</span> T o2<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h2 id="三工厂模式">三、工厂模式</h2>
+<p>任何可以产生对象的方法或类，都可以称之为工厂。单例也是一种工厂，为什么有了new之后，还要有工厂？是为了灵活控制生产过程，权限、修饰、日志等。</p>
+<h3 id="1简单工厂">1.简单工厂</h3>
+<p><a href="https://imgchr.com/i/3o4LAx"><img src="https://s2.ax1x.com/2020/03/04/3o4LAx.png" alt="3o4LAx.png"></a></p>
+<p>简单工厂更像是一种编程习惯，由于在Pizza店中，pizza的种类是会随时改变的，而Pizza的制作流程（烘烤、切片、包装）是不变的，因此一种显而易见的方法就是将改变的部分分离封装起来。使其变成一种工厂。</p>
+<h3 id="2工厂方法">2.工厂方法</h3>
+<p>定义了创建对象的接口，但由子类决定实例化哪个类，工厂方法把实例化操作推迟到子类。</p>
+<p>下图中，Factory 有一个 doSomething() 方法，这个方法需要用到一个产品对象，这个产品对象由 factoryMethod() 方法创建。该方法是抽象的，需要由子类去实现。</p>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o4x3D.png" alt="3o4x3D.png"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Factory</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> Product <span style="color:#a6e22e">factoryMethod</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doSomething</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Product product <span style="color:#f92672">=</span> factoryMethod<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#75715e">// do something with the product (产品的使用)
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ConcreteFactory</span> <span style="color:#66d9ef">extends</span> Factory<span style="color:#f92672">{</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> Product <span style="color:#a6e22e">factoryMethod</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ConcreteProduct<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>可以看到，工厂方法帮助我们将产品的“实现”从“使用”中解耦，如果增加产品或者改变产品的实现，并不会影响到产品的使用。</p>
+<p>观察下面这幅图，这幅图表明了这三个类之间的依赖关系。我们可以发现不管是高层组件，还是低层组件全都依赖于抽象类，这也就是<strong>依赖倒置</strong>的设计原则——“要依赖抽象，不要依赖具体类”。</p>
+<p>在面向过程的编程中，上层调用下层，上层依赖于下层，当下层剧烈变动时上层也要跟着变动，这就会导致模块的复用性降低而且大大提高了开发的成本。</p>
+<p>面向对象的开发很好的解决了这个问题，一般情况下抽象的变化概率很小，让用户程序依赖于抽象，实现的细节也依赖于抽象。即使实现细节不断变动，只要抽象不变，客户程序就不需要变化。这大大降低了客户程序与实现细节的耦合度。</p>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o5PHI.png" alt="3o5PHI.png"></p>
+<h3 id="3抽象工厂">3.抽象工厂</h3>
+<p>抽象工厂提供一个接口，用于创建一类产品族。</p>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o5mvQ.png" alt="3o5mvQ.png"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">AbstractFactory</span><span style="color:#f92672">{</span>
+    AbstractProductA <span style="color:#a6e22e">createProductA</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    AbstractProductB <span style="color:#a6e22e">createProductB</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> ConcreteFactory1 <span style="color:#66d9ef">implements</span> AbstractFactory<span style="color:#f92672">{</span>
+    AbstractProductA <span style="color:#a6e22e">createProductA</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span> <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ProductA1<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span> <span style="color:#f92672">}</span>
+    AbstractProductB <span style="color:#a6e22e">createProductB</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span> <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ProductB1<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span> <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>抽象工厂的每个方法实际上看起来都是工厂方法。每个方法都声明为抽象的，而子类的方法覆盖这些方法来创建某些对象。</p>
+<h2 id="四责任链">四、责任链</h2>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o5KDs.png" alt="3o5KDs.png"></p>
+<p>创建一个责任链类，该类也继承自Handler接口，然后其中含有一个List集合，用来存储各种ConcreteHandler，这样对于一个请求，责任链中的每一个对象都可以依次检查请求，并进行处理，或者将它传给链中的下一个对象。</p>
+<h2 id="五调停者">五、调停者</h2>
+<p>用调停者来集中相关对象之间复杂的沟通和控制方式，例如Bob打盹的时候会点击打盹按钮，他的闹钟开始告诉咖啡壶煮咖啡；等咖啡煮完再……，总之就是各个对象之间紧耦合，彼此之间有着错综复杂的关系</p>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o5Mbn.png" alt="3o5Mbn.png"></p>
+<p>在这个系统中加入一个调停者，每个对象都会在自己的状态改变时，告诉调停者；每个对象也都会对调停者所发出的请求作出回应。中介者中包含着所有的控制逻辑。</p>
+<p><!-- raw HTML omitted --></p>
+<h2 id="六装饰者">六、装饰者</h2>
+<p>装饰者模式通常用在给某些类做“装饰”时，比如给坦克类加血条、加等级显示，给咖啡类加各种调料。以咖啡为例，咖啡中会有多种调料，比如糖、奶泡、摩卡&hellip;如果给添加了不同调料的咖啡创建类并继承自咖啡类，将会出现非常多的类：摩卡奶泡卡布奇诺，奶泡卡布奇诺，摩卡卡布奇诺&hellip;我们称之为类爆炸。为了避免这一情况，我们使用装饰者设计模式。</p>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o5J8U.png" alt="3o5J8U.png"></p>
+<p>装饰者模式的设计要点：</p>
+<ol>
+<li>装饰者和被装饰者有相同的超类型</li>
+<li>装饰者持有内层实例对象</li>
+<li>重新方法，可以在内层对象的行为前/后加上自己的行为</li>
+</ol>
+<p>在Java源码中，最典型的使用装饰者的例子是Java I/O</p>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o50V1.png" alt="3o50V1.png"></p>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o562D.png" alt="3o562D.png"></p>
+<h2 id="七代理模式">七、代理模式</h2>
+<p>代理模式为另一个对象提供一个替身或占位符以控制对这个对象的访问，被代理的对象可以是远程的对象、创建开销大的对象或需要安全控制的对象。</p>
+<p><img src="https://s2.ax1x.com/2020/03/04/3o5WqA.png" alt="3o5WqA.png"></p>
+<p>Java.lang.reflect.Proxy类实现了一种代理模式，我们称之为动态代理。该类中使用一个静态方法newProxyInstance返回代理对象。该方法需要传入三个参数。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Object <span style="color:#a6e22e">newProxyInstance</span><span style="color:#f92672">(</span>ClassLoader loader<span style="color:#f92672">,</span> Class<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span> interfaces<span style="color:#f92672">,</span> InvocationHandler h<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IllegalArgumentException
+<span style="color:#75715e">//loader为一个ClassLoader对象，定义了由哪个ClassLoader对象来对生成的代理对象进行加载
+</span><span style="color:#75715e"></span><span style="color:#75715e">//interfaces:为一个Interface对象的数组，表示的是我将要给我需要代理的对象提供一组什么接口，如果我提供了一组接口给它，那么这个代理对象就宣称实现了该接口(多态)，这样我就能调用这组接口中的方法了
+</span><span style="color:#75715e"></span><span style="color:#75715e">//h为一个InvocationHandler对象，表示的是当我这个动态代理对象在调用方法的时候，会关联到哪一个InvocationHandler对象上
+</span></code></pre></div><p>其中第三个参数InvocationHandler是一个帮助proxy的类（接口），proxy会把调用转发给它处理。InvocationHandler接口中有一个函数invoke，其形式如下</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">invoke<span style="color:#f92672">(</span>Object proxy<span style="color:#f92672">,</span> Method method<span style="color:#f92672">,</span> Object<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#75715e">//proxy为调用方法的代理对象
+</span><span style="color:#75715e"></span><span style="color:#75715e">//method是调用方法的一个反射
+</span><span style="color:#75715e"></span><span style="color:#75715e">//args则是调用方法的参数
+</span><span style="color:#75715e"></span><span style="color:#75715e">//InvocationHandler将请求转发给RealSubject,因此实现InvocationHandler的类中应该持有被代理的对象
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">return</span> method<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>被代理的对象<span style="color:#f92672">,</span>args<span style="color:#f92672">)</span>
+</code></pre></div><p>所谓动态代理，是因为在运行时才会把类创建出来。</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/classload/" data-toggle="tooltip" data-placement="top" title="JVM类加载机制">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/security/" data-toggle="tooltip" data-placement="top" title="加密与安全机制">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
