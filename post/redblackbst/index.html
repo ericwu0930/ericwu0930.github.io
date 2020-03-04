@@ -70,7 +70,7 @@
 
     
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
@@ -381,14 +381,11 @@
 <h4 id="删除最小键">删除最小键</h4>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">moveRedLeft</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
 	<span style="color:#75715e">//当前节点的左右子节点都是2-节点，左右节点需要从父节点中借一个节点
-</span><span style="color:#75715e"></span>    
-    <span style="color:#75715e">//如果该节点的右节点的左节点是红色节点，说明兄弟节点不是2-节点，可以从兄弟节点中借一个
-</span><span style="color:#75715e"></span>    
-        moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>     <span style="color:#75715e">// 从父节点中借一个
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//如果该节点的右节点的左节点是红色节点，说明兄弟节点不是2-节点，可以从兄弟节点中借一个
+</span><span style="color:#75715e"></span>        moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>     <span style="color:#75715e">// 从父节点中借一个
 </span><span style="color:#75715e"></span>    
         <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>    <span style="color:#75715e">// 判断兄弟节点，如果是红节点，从兄弟节点中借一个
-</span><span style="color:#75715e"></span>            
-            h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span> rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</span><span style="color:#75715e"></span>            h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span> rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
             h <span style="color:#f92672">=</span> rotateLeft<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
             moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>  <span style="color:#75715e">//  在从兄弟节点借了一个以后，我们就需要还一个节点给父节点了，因为一开始从父节点那里借了一个(其实是结点的传递)
 </span><span style="color:#75715e"></span>        <span style="color:#f92672">}</span>
@@ -425,9 +422,8 @@
 </code></pre></div><h4 id="删除最大键">删除最大键</h4>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">moveRedRight</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
         moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>         <span style="color:#75715e">// 在这里对于兄弟节点的判断都是.left，因为红色节点只会出现在左边
-</span><span style="color:#75715e"></span>            
-            h<span style="color:#f92672">=</span>rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>         <span style="color:#75715e">// 在这里对于兄弟节点的判断都是.left，因为红色节点只会出现在左边  
+</span><span style="color:#75715e"></span>            h<span style="color:#f92672">=</span>rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
             moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         <span style="color:#f92672">}</span>
         <span style="color:#66d9ef">return</span> h<span style="color:#f92672">;</span>
@@ -442,7 +438,7 @@
     
     <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">deleteMax</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
         <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>             
-        <span style="color:#75715e">/* 考虑下面这种情况，如果没有这一步右旋会发生什么？ （当需要从父结点借结点时，会被父结点“拉上去”而导致不				平衡） 
+        <span style="color:#75715e">/* 考虑下面这种情况，如果没有这一步右旋会发生什么？ （当需要从父结点借结点时，会被父结点“拉上去”而导致不平衡） 
 </span><span style="color:#75715e">         *          5,6
 </span><span style="color:#75715e">         *      1,2     9       
 </span><span style="color:#75715e">        */</span>                                         
@@ -468,8 +464,7 @@
     
     <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">delete</span><span style="color:#f92672">(</span>Node h<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> key<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
         <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>key<span style="color:#f92672">&lt;</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">key</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>          <span style="color:#75715e">// 当目标键小于当前键的时候，我们做类似于寻找最小是的操作，向树左边移动，合并父子结点来消除2-结点
-</span><span style="color:#75715e"></span>            
-            <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
                 <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
             <span style="color:#f92672">}</span>
             <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> <span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
@@ -477,8 +472,7 @@
             <span style="color:#f92672">}</span>
             h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span> <span style="color:#f92672">=</span> delete<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">,</span>key<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         <span style="color:#f92672">}</span><span style="color:#66d9ef">else</span><span style="color:#f92672">{</span>  <span style="color:#75715e">// 当目标键大于当前键的时候，我们向右移动，并做与deleteMax相同的操作，如果相同的话，我们使用和二叉树的删除一样的操作，获取当前键的右子树的最小健，然后交换，并将目标键删除
-</span><span style="color:#75715e"></span>            
-            <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
                 h <span style="color:#f92672">=</span> rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
             <span style="color:#f92672">}</span>
             <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>key<span style="color:#f92672">.</span><span style="color:#a6e22e">compareTo</span><span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">key</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> h<span style="color:#f92672">.</span><span style="color:#a6e22e">key</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>    <span style="color:#75715e">// 找到目标
