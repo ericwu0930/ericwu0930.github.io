@@ -383,10 +383,12 @@
 	<span style="color:#75715e">//当前节点的左右子节点都是2-节点，左右节点需要从父节点中借一个节点
 </span><span style="color:#75715e"></span>    
     <span style="color:#75715e">//如果该节点的右节点的左节点是红色节点，说明兄弟节点不是2-节点，可以从兄弟节点中借一个
-</span><span style="color:#75715e"></span>        moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>     <span style="color:#75715e">// 从父节点中借一个
+</span><span style="color:#75715e"></span>    
+        moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>     <span style="color:#75715e">// 从父节点中借一个
 </span><span style="color:#75715e"></span>    
         <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>isRed<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>    <span style="color:#75715e">// 判断兄弟节点，如果是红节点，从兄弟节点中借一个
-</span><span style="color:#75715e"></span>            h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span> rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</span><span style="color:#75715e"></span>            
+            h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span> <span style="color:#f92672">=</span> rotateRight<span style="color:#f92672">(</span>h<span style="color:#f92672">.</span><span style="color:#a6e22e">right</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
             h <span style="color:#f92672">=</span> rotateLeft<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
             moveflipColors<span style="color:#f92672">(</span>h<span style="color:#f92672">)</span><span style="color:#f92672">;</span>  <span style="color:#75715e">//  在从兄弟节点借了一个以后，我们就需要还一个节点给父节点了，因为一开始从父节点那里借了一个(其实是结点的传递)
 </span><span style="color:#75715e"></span>        <span style="color:#f92672">}</span>
@@ -406,7 +408,8 @@
     <span style="color:#66d9ef">private</span> Node <span style="color:#a6e22e">deleteMin</span><span style="color:#f92672">(</span>Node x<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
         <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
         <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span><span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> <span style="color:#f92672">!</span>isRed<span style="color:#f92672">(</span>x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span>    <span style="color:#75715e">// 判断x的左节点是不是2-节点
-</span><span style="color:#75715e"></span>            x <span style="color:#f92672">=</span> moveRedLeft<span style="color:#f92672">(</span>x<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</span><span style="color:#75715e"></span>            
+            x <span style="color:#f92672">=</span> moveRedLeft<span style="color:#f92672">(</span>x<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span> <span style="color:#f92672">=</span> deleteMin<span style="color:#f92672">(</span>x<span style="color:#f92672">.</span><span style="color:#a6e22e">left</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         <span style="color:#66d9ef">return</span> balance<span style="color:#f92672">(</span>x<span style="color:#f92672">)</span><span style="color:#f92672">;</span>  <span style="color:#75715e">//   解除临时组成的4-节点
 </span><span style="color:#75715e"></span>        
