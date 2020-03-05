@@ -6,10 +6,19 @@
     <description>Recent content in JVM on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 25 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/tags/jvm/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Java内存区域</title>
+      <link>https://ericwu0930.github.io/post/mem/</link>
+      <pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/mem/</guid>
+      <description>Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的“高墙”，墙外面的人想进去，墙里面的人却想出来 1. 运行时数据区域 程序计数器：当前</description>
+    </item>
     
     <item>
       <title>Java类中数据域初始化顺序</title>

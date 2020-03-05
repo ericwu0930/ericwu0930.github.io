@@ -63,12 +63,17 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/post/classinit/</loc>
-    <lastmod>2019-12-25T00:00:00+00:00</lastmod>
+    <loc>https://ericwu0930.github.io/post/mem/</loc>
+    <lastmod>2020-01-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/tags/jvm/</loc>
+    <lastmod>2020-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/classinit/</loc>
     <lastmod>2019-12-25T00:00:00+00:00</lastmod>
   </url>
   

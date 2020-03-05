@@ -15,15 +15,15 @@
     
 
     
-    <meta name="title" content="加密与安全机制" />
-    <meta property="og:title" content="加密与安全机制" />
-    <meta property="twitter:title" content="加密与安全机制" />
+    <meta name="title" content="Java内存区域" />
+    <meta property="og:title" content="Java内存区域" />
+    <meta property="twitter:title" content="Java内存区域" />
     
 
     
-    <meta name="description" content="整理自《图解HTTP》与《TCP/IP详解卷一》">
-    <meta property="og:description" content="整理自《图解HTTP》与《TCP/IP详解卷一》" />
-    <meta property="twitter:description" content="整理自《图解HTTP》与《TCP/IP详解卷一》" />
+    <meta name="description" content="整理自《深入理解Java虚拟机》">
+    <meta property="og:description" content="整理自《深入理解Java虚拟机》" />
+    <meta property="twitter:description" content="整理自《深入理解Java虚拟机》" />
     
 
     
@@ -34,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>加密与安全机制-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>Java内存区域-吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/post/security/">
+    <link rel="canonical" href="/post/mem/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -171,8 +171,8 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" title="计算机网络">
-                            计算机网络
+                        <a class="tag" href="/tags/jvm" title="JVM">
+                            JVM
                         </a>
                         
                         <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
@@ -180,15 +180,15 @@
                         </a>
                         
                     </div>
-                    <h1>加密与安全机制</h1>
-                    <h2 class="subheading">计算机网络学习笔记之二</h2>
+                    <h1>Java内存区域</h1>
+                    <h2 class="subheading">JVM学习笔记</h2>
                     <span class="meta">
                         Posted by 
                         
                                  &#34;Eric&#34;
                          
                         on 
-                        Friday, February 14, 2020
+                        Saturday, January 18, 2020
                         
                         
                         
@@ -218,45 +218,79 @@
                 </header>
                 <nav id="TableOfContents">
   <ul>
-    <li>
-      <ul>
-        <li><a href="#对称密钥">对称密钥</a></li>
-        <li><a href="#非对称密钥">非对称密钥</a></li>
-        <li><a href="#数字签名过程">数字签名过程</a></li>
-        <li><a href="#消息认证码">消息认证码</a></li>
-      </ul>
-    </li>
+    <li><a href="#1-运行时数据区域">1. 运行时数据区域</a></li>
+    <li><a href="#2-对象的创建">2. 对象的创建</a></li>
+    <li><a href="#对象的内存布局">对象的内存布局</a></li>
+    <li><a href="#3-对象的访问定位">3. 对象的访问定位</a></li>
+    <li><a href="#4java内存区与变迁">4.Java内存区与变迁</a></li>
   </ul>
 </nav>
                 
-                <p>加密是为了满足以下需求：在不安全的信道上保护所传输信息的机密性、完整性以及可认证性。有两种重要的加密算法——对称密钥与非对称密钥。</p>
-<p><img src="https://i.loli.net/2020/02/14/ZqFWaQbjPp4Jo5X.png" alt="image-20200214191330790.png"></p>
-<h3 id="对称密钥">对称密钥</h3>
-<p>在对称密钥系统中，由于加密与解密的算法相同，它们的密钥也是相同的。多年来，最流行的对称密码算法是数据加密标准（DES）。DES是一种分组密码，也就是说每次对固定数目的比特块进行操作。DES使用64比特的数据块与56位的密钥。如今被更高级的AES所取代，AES的不同版本提供了长度不同的密钥，比如128位，192位以及256位，即AES-128，AES-192以及AES-256。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pWPZd.png" alt="3pWPZd.png"></p>
-<p>它加密过程效率高，但是密钥的分配和保存是一个问题，在互联网上转发密钥时，如果通信被监听那么密钥就可落入攻击者者手中，加密也就丧失了意义。</p>
-<h3 id="非对称密钥">非对称密钥</h3>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pfWcT.png" alt="3pfWcT.png"></p>
-<p>上图过程是加密的过程，因为公钥是可以公开的，那么任何人都可以给私钥的拥有者发送信息，而接受者无法追溯信息的来源。如果这个过程翻过来，就变成了一个认证过程。例如A用自己的私钥加密了一个邮件（<strong>用私钥加密也被称为签名</strong>），发送给B，B有A的公钥，知道该信息一定来源于A，因为只有A有A的私钥。但是这样，该信息就丧失了加密的属性，因为大家都有A的公钥。</p>
-<p>如何即实现加密，又实现认证呢？</p>
-<p>仍然是A给B发信息，先用A的私钥进行加密，然后再用B的公钥加密，传递给B。这样技能够认证消息经A授权，又能够保证其对B的机密性。</p>
-<p>非对称加密的过程效率比较低，在混合密码系统中，用非对称密钥对一会话密钥进行加密（对称的），然后用会话密钥对文件进行加密。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pWZz8.png" alt="3pWZz8.png"></p>
-<h3 id="数字签名过程">数字签名过程</h3>
-<p>非对称加密还是存在一些问题，那就是无法证明公开密钥本身就是货真价实的公开密钥，比如正准备和某台服务器建立公开密钥加密方式下的通信，如何证明收到的公开密钥就是原本预想的那台服务器发型的公开密钥。或许在公开密钥传输途中，真正的公开密钥已经被攻击者替换掉了。</p>
-<p>数字签名的功能可用于维护信息的可认证性与不可抵赖性。证书的办法过程如下图所示。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pWnsg.png" alt="3pWnsg.png"></p>
-<h3 id="消息认证码">消息认证码</h3>
-<p>消息认证码（简称为MAC，有时候也叫MIC）用于保证消息的完整性。</p>
-<p><a href="https://imgchr.com/i/3pW3iq"><img src="https://s2.ax1x.com/2020/02/16/3pW3iq.md.png" alt="3pW3iq.md.png"></a></p>
-<p>以上图为例，介绍消息认证过程。A公司要给B公司发送一个文件，为了保证文件的完整性，A公司首先对文件用加密散列函数进行处理，得到一个固定大小的摘要（或指纹）。加密列散函数需要满足三个特征：</p>
+                <blockquote>
+<p>Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的“高墙”，墙外面的人想进去，墙里面的人却想出来</p>
+</blockquote>
+<h2 id="1-运行时数据区域">1. 运行时数据区域</h2>
+<p><img src="https://s2.ax1x.com/2020/03/05/37rmuV.png" alt="37rmuV.png"></p>
+<ul>
+<li>程序计数器：当前线程所执行的字节码的行号指示器，为线程私有，程序计数器是唯一一个不会出现 OutOfMemoryError 的内存区域</li>
+<li>Java虚拟机栈：线程私有，生命周期与线程相同。每个java方法运行时都会创建一个栈帧，每个栈帧中会用于存放局部变量表，操作数栈，动态链接，方法出口等信息；当进入一个方法时，这个方法需要多大的局部变量时完全确定的。如果线程请求的栈深度大于虚拟机所允许的深度，会抛出StackOverflowError异常；如果虚拟机栈允许动态扩展，扩展时无法申请到足够的内存时，就会抛出OutOfMemoryError异常。</li>
+<li>本地方法栈：为虚拟机使用到的<code>Native</code>方法服务，与操作系统有关 ，不是java编写的方法，比如Object类中的clone()方法</li>
+<li>Java堆：被所有的线程共享的一块内存区域，唯一目的是存放对象实例（<code>new</code>出来的对象），它是垃圾收集器管理的主要区域，因此很多时候也被称为“GC堆”。从内存回收的角度来看，由于现在收集器基本都采用分代收集算法，所以Java堆可以继续细分为：新生代和老年代；其中新生代可以被进一步划分。关于每一部分的用途会在GC中具体说明。如果在堆中没有内存完成实例分配，并且堆也无法再扩展时，将会抛出<code>OutOfMemoryError</code>异常
+<img src="https://s2.ax1x.com/2020/03/05/37rMEF.png" alt="37rMEF.png"></li>
+<li>Java方法区：被各个线程所共享的内存区域，它用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据，很多人更愿意把方法去称为“永生代”（Permanent Generation），主要是因为GC一般会分代收集垃圾，为了不需要在方法区中另外指定额外的垃圾回收机制，于是将本属于堆的分代概念延伸到方法区，并将方法区等同于“永生代”。</li>
+<li>运行时常量池：属于方法区的一部分。Class文件中除了有类的版本、字段、方法、接口等描述信息外，还有一项信息是常量池，用于存放编译期生成的各种字面量和<strong>符号引用</strong>（？），这部分内容在类加载后进入方法区的运行时常量池中存放。</li>
+</ul>
+<hr>
 <ol>
-<li>原像不可计算性：在给定摘要而未知消息的情况下，很难计算出消息得值。</li>
-<li>原像不相同性：找到一对消息内容不同，但摘要相同是很困难的。</li>
-<li>抗碰撞性：找出一对摘要相同，但消息不同是十分困难的。</li>
+<li><strong>为了简述Java内存中，各个区域存放什么东西，举出下图这一例子</strong>
+<img src="https://s2.ax1x.com/2020/03/05/37r83R.png" alt="37r83R.png">
+Jvm首先将两个Class加载到方法区，具体细节在此不列出，然后jvm会寻找含有main方法的类，并将main方法压栈，开始执行。
+<code>new</code>出来的对象都会在堆中，例如new一个class，在栈中的变量会指向一个堆中的对象实例，堆中的变量都会被初始化，成员方法存储一个地址，指向方法区中的成员方法。</li>
+<li><strong>由上图其实也可以引出局部变量和成员变量的区别</strong>
+<ol>
+<li>
+<p>定义位置不同：局部变量在函数内，成员变量在函数外</p>
+</li>
+<li>
+<p>内存中位置不同：局部变量在栈中，随方法生，随方法灭；成员变量在堆中，随<code>new</code>生（对象实例被创建），随<code>GC</code>灭（对象被垃圾回收，不可控）</p>
+</li>
+<li>
+<p>默认值不一样：局部变量必须赋初值，成员变量有默认的初始值</p>
+</li>
+<li>
+<p>作用范围不一样：局部变量作用域方法内，成员变量作用于整个类内。
+个人感觉，3、4点都是由2点导致的。</p>
+</li>
 </ol>
-<p>其中一种常用的加密列散算法是MD5算法。它的输出是一个128位的摘要。使用A的私钥对这份摘要进行签名。然后A公司将文件，摘要以及A的公钥一起发给B。</p>
-<p>B使用同样的加密散列函数得到一个摘要。使用A的公钥对签名的摘要进行处理，然后将这两份摘要进行比对，如果一致，则可断定文件没有得到篡改。</p>
+</li>
+</ol>
+<hr>
+<h2 id="2-对象的创建">2. 对象的创建</h2>
+<p><img src="https://s2.ax1x.com/2020/03/05/37rNDK.png" alt="37rNDK.png"></p>
+<ol>
+<li><strong>类加载检查</strong>：检查这个指令的参数是否能在常量池中定位到一个类的符号引用，并检查这个符号引用代表的类是否被加载、解析和初始化过。（？看完类加载再回来补充）</li>
+<li><strong>分配内存</strong>：有两种分配方式，“指针碰撞”和“空闲链表”；如果堆中内存是规整的，分配内存的过程仅仅是把指针向空闲内存区域那边移动一段与对象大小相等的距离，这称之为“指针碰撞”；如果内存不规整，虚拟机必须维护一个列表，记录哪些内存块是可用的，这称之为“空闲链表”。选择哪种分配方式由Java堆是否规整决定，而Java对是否规整又取决于采用的垃圾收集器是否带有压缩整理的功能。
+在分配内存时，还需考虑线程安全问题，例如，正在给A分配内存，指针还没来得及修改，对象B又同时使用了原来的指针来分配内存。有两种解决方案，一种是保证更新操作的原子性；另一种是把内存分配动作按照线程划分在不同的空间之中进行，即每个线程在Java堆中预先分配一小块内存，称之为本地线程分配缓冲（TLAB）</li>
+<li><strong>初始化零值</strong>：内存分配完成后，虚拟机需要将分配到的内存空间都初始化为零值（不包括对象头），这一步操作保证了对象的实例字段在 Java 代码中可以不赋初始值就直接使用，程序能访问到这些字段的数据类型所对应的零值。</li>
+<li><strong>设置对象头</strong>：所谓对象头就是指明对象属于哪个类、如何才能找到类的元数据信息、对象的哈希码、对象的CG分代年龄等信息</li>
+<li><strong>执行init方法</strong>：从虚拟机的角度，一个新的对象已经产生，但从Java程序的角度来看，对象创建才刚刚开始——<!-- raw HTML omitted -->方法还没有执行，个人理解，<!-- raw HTML omitted -->方法即类对象的构造函数。</li>
+</ol>
+<h2 id="对象的内存布局">对象的内存布局</h2>
+<p>在HotSpot虚拟机中，对象在内存中存储的布局可以分为三块区域：<strong>对象头、实例数据和对齐填充</strong>。</p>
+<p>对于对象头而言，又分为两个部分，第一部分称为“Mark Word”，存储对象自身的运行时数据，如哈希码、GC分代年龄等；另一部分称为“类型指针”，对象指向它的类元数据的指针，并不是所有的虚拟机实现都必须在对象数据上保留类型指针，换句话说，查找对象的元数据信息并不一定要经过对象本身（具体含义见对象的访问定位）；如果对象是一个Java数组，在对象头中还必须有一块用于记录数组长度的数据。</p>
+<p>实例数据是对象真正存储的有效信息，也是在程序代码中所定义的各种类型的字段内容，无论是从父类继承下来的，还是在子类中定义的，都需要记录起来 。</p>
+<p>对齐填充是为了满足虚拟机自动内存管理系统要求对象起始地址必须是8个字节的整数倍。</p>
+<h2 id="3-对象的访问定位">3. 对象的访问定位</h2>
+<p>两种对象的访问方式:</p>
+<ol>
+<li>句柄访问：reference存储的是对象的句柄地址，Java堆中会划分出一块内存来作为句柄池，此时，查找对象的元数据信息不会经过对象本身
+<img src="https://s2.ax1x.com/2020/03/05/37rwUe.jpg" alt="37rwUe.jpg"></li>
+<li>直接指针访问，reference中存储的直接是对象地址
+<img src="https://s2.ax1x.com/2020/03/05/37rgDf.jpg" alt="37rgDf.jpg"></li>
+</ol>
+<h2 id="4java内存区与变迁">4.Java内存区与变迁</h2>
+<p>在JDK1.8中，将方法区移除，取而代之的是称之为元空间的内存区域，且该区域直接在本机内存上。</p>
+<!-- raw HTML omitted -->
 
 
                 
@@ -265,13 +299,13 @@
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/post/mem/" data-toggle="tooltip" data-placement="top" title="Java内存区域">&larr;
+                        <a href="/post/classinit/" data-toggle="tooltip" data-placement="top" title="Java类中数据域初始化顺序">&larr;
                             Previous Post</a>
                     </li>
                     
                     
                     <li class="next">
-                        <a href="/post/tcp/" data-toggle="tooltip" data-placement="top" title="TCP:控制传输协议">Next
+                        <a href="/post/security/" data-toggle="tooltip" data-placement="top" title="加密与安全机制">Next
                             Post &rarr;</a>
                     </li>
                     

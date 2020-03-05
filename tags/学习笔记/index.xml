@@ -48,6 +48,15 @@
     </item>
     
     <item>
+      <title>Java内存区域</title>
+      <link>https://ericwu0930.github.io/post/mem/</link>
+      <pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/mem/</guid>
+      <description>Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的“高墙”，墙外面的人想进去，墙里面的人却想出来 1. 运行时数据区域 程序计数器：当前</description>
+    </item>
+    
+    <item>
       <title>设计模式学习笔记</title>
       <link>https://ericwu0930.github.io/post/design/</link>
       <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
