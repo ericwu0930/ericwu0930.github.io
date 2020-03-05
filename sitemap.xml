@@ -93,23 +93,33 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/post/classload/</loc>
-    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ericwu0930.github.io/post/classloader/</loc>
     <lastmod>2019-12-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/post/gc/</loc>
+    <loc>https://ericwu0930.github.io/post/classload/</loc>
+    <lastmod>2019-12-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/gc_4/</loc>
+    <lastmod>2019-12-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/gc_3/</loc>
+    <lastmod>2019-12-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/gc_2/</loc>
     <lastmod>2019-11-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/post/gc_tuner/</loc>
-    <lastmod>2019-11-30T00:00:00+00:00</lastmod>
+    <loc>https://ericwu0930.github.io/post/gc_1/</loc>
+    <lastmod>2019-11-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>

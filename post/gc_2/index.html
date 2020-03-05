@@ -15,9 +15,9 @@
     
 
     
-    <meta name="title" content="JVM类加载机制" />
-    <meta property="og:title" content="JVM类加载机制" />
-    <meta property="twitter:title" content="JVM类加载机制" />
+    <meta name="title" content="JVM垃圾收集器" />
+    <meta property="og:title" content="JVM垃圾收集器" />
+    <meta property="twitter:title" content="JVM垃圾收集器" />
     
 
     
@@ -34,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>JVM类加载机制-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>JVM垃圾收集器-吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/post/classload/">
+    <link rel="canonical" href="/post/gc_2/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -161,7 +161,7 @@
 
 <style type="text/css">
     header.intro-header {
-        background-image: url('https://images.unsplash.com/photo-1437422061949-f6efbde0a471?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80')
+        background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80')
     }
 </style>
 <header class="intro-header">
@@ -180,15 +180,15 @@
                         </a>
                         
                     </div>
-                    <h1>JVM类加载机制</h1>
-                    <h2 class="subheading">JVM类加载笔记之一</h2>
+                    <h1>JVM垃圾收集器</h1>
+                    <h2 class="subheading">GC学习笔记之二</h2>
                     <span class="meta">
                         Posted by 
                         
                                  &#34;Eric&#34;
                          
                         on 
-                        Tuesday, December 3, 2019
+                        Saturday, November 30, 2019
                         
                         
                         
@@ -218,77 +218,105 @@
                 </header>
                 <nav id="TableOfContents">
   <ul>
-    <li><a href="#一概述">一、概述</a></li>
-    <li><a href="#二类加载的过程">二、类加载的过程</a>
+    <li><a href="#一串行">一、串行</a></li>
+    <li><a href="#二吞吐量优先单位时间stw的时间最短">二、吞吐量优先（单位时间STW的时间最短）</a></li>
+    <li><a href="#三响应时间优先单次stw的时间最短">三、响应时间优先（单次STW的时间最短）</a></li>
+    <li><a href="#四g1垃圾收集器">四、G1垃圾收集器</a>
       <ul>
-        <li><a href="#21-加载">2.1 加载</a></li>
-        <li><a href="#22-验证">2.2 验证</a></li>
-        <li><a href="#23-准备">2.3 准备</a></li>
-        <li><a href="#24-解析">2.4 解析</a></li>
-        <li><a href="#25-初始化">2.5 初始化</a></li>
+        <li><a href="#41-适用场景">4.1 适用场景</a></li>
+        <li><a href="#42-相关jvm参数">4.2 相关JVM参数</a></li>
+        <li><a href="#43-g1垃圾回收阶段">4.3 G1垃圾回收阶段</a></li>
+        <li><a href="#44-young-collection跨带引用问题">4.4 Young Collection跨带引用问题</a></li>
+        <li><a href="#45-重新标记阶段">4.5 重新标记阶段</a></li>
       </ul>
     </li>
   </ul>
 </nav>
                 
-                <p>虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制。（不要把类加载和类加载中的一步“加载”混淆）</p>
-<h2 id="一概述">一、概述</h2>
-<p><img src="https://s2.ax1x.com/2020/02/25/3JodpV.png" alt="3JodpV.png"></p>
-<p>类的整个生命周期包括：加载，验证，准备，解析，初始化，使用，卸载7个阶段，其中验证、准备、解析3个部分统称为链接。</p>
-<h2 id="二类加载的过程">二、类加载的过程</h2>
-<h3 id="21-加载">2.1 加载</h3>
-<p>“加载”是“类加载”过程的一个阶段，在加载阶段，虚拟机需要完成以下三件事情：</p>
-<ol>
-<li>
-<p>通过一个类的全限定名来获取定义此类的二进制字节流。</p>
-</li>
-<li>
-<p>将这个字节流所代表的静态存储结构转化为方法区(元空间)的运行时数据结构，内部采用C++的instanceKlass描述Java类，但是InstanceKlass不能被Java对象直接访问，必须先访问镜像对象，以此作为桥梁，再访问instanceKlass</p>
-</li>
-<li>
-<p>在堆中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口</p>
-<p><img src="https://s2.ax1x.com/2020/02/25/3Jorm4.png" alt="3Jorm4.png"></p>
-<p>上述过程可以用上图来表示，在jdk1.8之后，方法区被移至Metaspace。在元空间中，类文件用C++的instanceKlass这种数据结构来描述，其中有一项<code>_java_mirror</code>指向储存在堆中class对象，堆中的class对象同样也持有指向instanceKlass的指针。
-每个实例对象都有对象头，其中有一部分是类型指针，该指针指向该类的class对象。</p>
-</li>
-</ol>
-<h3 id="22-验证">2.2 验证</h3>
-<p>验证是连接阶段的第一步，目的是确保Class文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全。</p>
-<h3 id="23-准备">2.3 准备</h3>
-<p>为static变量分配内存空间，设置默认值</p>
+                <blockquote>
+<p>如果说收集算法是内存回收的方法论，那么垃圾收集器就是内存回收的具体实现。</p>
+</blockquote>
+<p><img src="http://static.zybuluo.com/Rico123/9hswys8w1pqy0ch06vmlbqi2/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8.jpg" alt="垃圾收集器.jpg-64.2kB"></p>
+<h2 id="一串行">一、串行</h2>
 <ul>
-<li>在jdk1.8中，static变量随class对象存储在堆中</li>
-<li>static变量分配空间和赋值是两个步骤，分配空间在准备阶段完成，赋值在之后的初始化阶段完成（之前介绍的cinit方法）</li>
-<li>如果static变量是final的<strong>基本类型</strong>，以及<strong>字符串常量</strong>，那么编译阶段就能确定，赋值在准备阶段完成</li>
-<li>如果static变量是final的引用类型，那么赋值也会在初始化阶段完成</li>
+<li>单线程</li>
+<li>堆内存较小，适合个人电脑</li>
+<li>-XX: +UseSerialGC=Serial+SerialOld</li>
+<li>新生代使用复制算法，老年代使用标记-整理算法，但工作模式相似</li>
+<li>只使用一个CPU或一条收集线程去完成垃圾收集工作，必须暂停其他所有的工作线程，直到它收集结束。</li>
 </ul>
-<p>简而言之，这一阶段为static变量以及static final引用类型的对象分配空间赋“零值”，为static final基本类型对象分配空间且赋值</p>
-<h3 id="24-解析">2.4 解析</h3>
-<p>将常量池内的符号引用替换为直接引用的过程</p>
-<hr>
+<p><img src="https://s2.ax1x.com/2020/02/25/3JfX5V.png" alt="3JfX5V.png"></p>
+<h2 id="二吞吐量优先单位时间stw的时间最短">二、吞吐量优先（单位时间STW的时间最短）</h2>
 <ul>
-<li>符号引用：符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能无歧义地定位到目标即可。符号引用于虚拟机实现的内存布局无关，引用的目标不一定已经加载到内存中。</li>
-<li>直接引用：可以是直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄。直接引用和虚拟机实现的内存布局相关，同一个符号引用载不同虚拟机实例上翻译出来的直接引用一般不会相同。如果有了直接引用，那引用的目标必定已经在内存中存在。</li>
+<li>多线程</li>
+<li>堆内存较大，需要多核cpu支持</li>
+<li>单位时间内，stop the world时间最短，即运行用户代码的时间/CPU总消耗时间的比值最小。</li>
+<li>-XX:+UseParallelGC ~ -XX:+UseParallelOldGC两款搭配使用，开启其中一个另一个随即开启</li>
+<li>-XX:ParallelGCThreads=n调整参与垃圾回收的线程数</li>
+<li>-XX:+UseAdaptiveSizePolicy动态调整伊甸园和幸存者区的比例以及晋升阈值</li>
+<li>-XX:GCTimeRatio=ratio，ratio默认为99，含义为垃圾回收的时间不能超过总时间的0.01（1/(1+99)），根据这个指标调整堆大小（调大堆使GC频率下降）</li>
+<li>-XX:MaxGCPauseMillis=ms，最大垃圾回收时间，如果超过了这个时间那么将堆缩小。与上面的参数是矛盾的</li>
 </ul>
-<hr>
-<h3 id="25-初始化">2.5 初始化</h3>
-<p>初始化阶段即调用<!-- raw HTML omitted -->()，<!-- raw HTML omitted -->()是由编译器自动收集类中所有类变量的赋值动作和静态语句快中的语句合并产生的，收集顺序按照在源文件中出现的顺序决定。<strong>对于定义在静态语句块之后的变量，静态语句块可以赋值，但是不能访问。</strong></p>
-<p>Java虚拟机规范中没有强制约束什么时候开始加载，但是规定了必须立即对类进行“初始化”的场景：</p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3Jh9KJ.png" alt="3Jh9KJ.png"></p>
+<h2 id="三响应时间优先单次stw的时间最短">三、响应时间优先（单次STW的时间最短）</h2>
+<ul>
+<li>多线程</li>
+<li>堆内存较大，需要多核cpu支持</li>
+<li>尽可能让<strong>单次</strong>stop the world时间最短</li>
+<li>-XX:+UseConcMarkSweepGC ~ -XX:+UseParNewGC（前者是老年代，基于标记-清除算法，后者是新生代，搭配使用，如果并发失败，随即从CMS垃圾回收器退化到SerialOld）；Conc is short for Concurrent，即并发，在垃圾收集器的上下文语境中，并发是指用户线程和垃圾收集线程同时执行（但不一定同时执行），而并行是指多条垃圾收集线程并行工作，用户线程出于等待状态。</li>
+<li>整个过程分为4个步骤，包括：<strong>初始标记、并发标记、重新标记、并发清除</strong>。初始标记很快，只是标记一下GC Roots能直接关联到的对象，速度很快，并发标记阶段就是进行GC Roots Tracing的过程，重新标记阶段是为了修正并发标记期间因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录。耗时最长的并发标记和并发清除过程收集器线程可以与用户线程并行工作，所以整体上说，CMS收集器的内存回收过程与用户线程一起并发执行。</li>
+<li>-XX:ConcGCThreads=threads并发垃圾回收线程数，建议设置为cpu核心数的四分之一</li>
+<li>-XX:+CMSScavengeBeforeRemark在重新标记的时，新生代的对象可能会引用老年代的对象，但是有些新生代是要被马上回收的，为了避免做无用功，可以在发生Full GC的时候先进行一次Minor GC（ParNewGC）</li>
+</ul>
+<p><img src="https://s2.ax1x.com/2020/02/25/3Jhmxe.png" alt="3Jhmxe.png"></p>
+<p>CMS收集器有以下几个缺点：</p>
 <ol>
-<li>main方法所在的类，会被首先初始化</li>
-<li>首次访问这个类的静态变量或静态方法时</li>
-<li>class.forName</li>
-<li>子类初始化，如果父类还没初始化，会引发</li>
-<li>首次new一个类对象的时候。</li>
+<li>CMS收集器对CPU资源非常敏感，会占用CPU数量，降低程序的运行速度，在CPU数量低时尤其明显</li>
+<li>无法处理浮动垃圾，所谓浮动垃圾就是CMS在进行并行清理的时候，伴随程序运行而产生的新的垃圾，这部分垃圾只能留待下一次GC时清理掉。由于垃圾收集阶段用户线程还需要运行，需要预留足够的内存空间给用户线程使用，通过 -XX:CMSInitiatingOccupancyFraction=percent设置触发CMS时的内存占比。如果占比过高，会导致“Concurrent Mode Failure”,虚拟机会临时启动Serial Old收集器来重新进行老年代垃圾收集，这样会导致停顿时间很长。</li>
+<li>收集结束后会有大量空间碎片产生，对大对象分配带来很大麻烦。</li>
 </ol>
-<p>以上五种情况被称为类的主动引用。除此之外，所有引用类的方式都不会出发初始化，成为被动引用，有以下几种情况：</p>
+<h2 id="四g1垃圾收集器">四、G1垃圾收集器</h2>
+<h3 id="41-适用场景">4.1 适用场景</h3>
+<ul>
+<li>同时注重吞吐量（Throughput）和低延迟（Low latency），默认的暂停目标是200ms</li>
+<li>超大堆内存，会将堆划分为多个大小相等的Region，每个区域都可以被独立地作为Eden区，Survivor区以及老年代</li>
+<li>整体是标记+整理算法，两个区域之间是复制算法</li>
+</ul>
+<h3 id="42-相关jvm参数">4.2 相关JVM参数</h3>
+<ul>
+<li>-XX:+UseG1GC启用G1，在JDK1.9之后默认</li>
+<li>-XX:G1HeapRegionSize=size</li>
+<li>-XX:MaxGCPauseMillis=time</li>
+</ul>
+<h3 id="43-g1垃圾回收阶段">4.3 G1垃圾回收阶段</h3>
+<p>G1在进行垃圾回收时，会在这三种状态之间循环</p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3JhGPf.png" alt="3JhGPf.png"></p>
 <ol>
-<li>类对象.class不会触发初始化（在加载阶段就已经生成了<code>_java_mirror</code>对象，不需要初始化）</li>
-<li>创建该类的数组不会触发初始化</li>
-<li>类加载器的loadClass方法</li>
-<li>Class.forName的参数2位false时</li>
-<li>访问类的static final静态常量（基本类型和字符串）不会初始化</li>
+<li>
+<p>Young Collection</p>
+<p>新生代的垃圾回收有通过以下三张图来表示。新生代垃圾回收会发生Stop the world，在这个时候也会进行GC Root的初始化标记，并通过复制算法，将幸存者拷贝到幸存区；经过一段时间之后，再次发生新生代垃圾回收时，幸存区中的对象如果达到晋升年龄，则被移到老年区（O），如果年龄不够，且幸存，则连同Eden区中幸存对象一起被拷贝进幸存区</p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3JhYRS.jpg" alt="3JhYRS.jpg"></p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3Jhtxg.jpg" alt="3Jhtxg.jpg"></p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3Jh2M4.png" alt="3Jh2M4.png"></p>
+</li>
+<li>
+<p>Young Collection+CM（Concurrent marking）
+当老年代占用堆空间的比例到达阈值时，进行并发标记（不会STW），由下面的JVM参数决定阈值
+-XX: InitiatingHeapOccupancyPercent=percent（默认45%）</p>
+</li>
+<li>
+<p>Mixed Collection
+会对E、S、O进行全面垃圾回收，在发生混合标记的时候，会进行最终标记，此时会Stop the world。对新生的垃圾回收如之前所述，但对老年代的垃圾回收则会根据设定的暂停时间，筛选回收价值最高的Region，如下图，虚框的O区都是需要回收的老年代，但是为了满足停顿要求，会有选择的筛选一部分，换句话说G1收集器是可预测停顿的。
+-XX:MaxGCPauseMillis=ms可设置暂停时间</p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3JhLsH.jpg" alt="3JhLsH.jpg"></p>
+</li>
 </ol>
+<h3 id="44-young-collection跨带引用问题">4.4 Young Collection跨带引用问题</h3>
+<p>如果老年代的对象对新生代有引用，那么要找新生代对象的根对象。在老年代中，根对象存活的比较多，那么在遍历的时候就要消耗大量的时间。为了加快时间，使用卡表与Remembered Set，如下图所示，老年代有一个卡表，其中粉红色区域即为存在跨代引用的区域，称之为脏卡，在新生代，有一个Remembered Set记录incoming reference，在对新生代进行垃圾回收时，即可通过Remembered Set找到脏卡，然后根据脏卡进行GC Root，节省了时间。</p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3Jhxot.jpg" alt="3Jhxot.jpg"></p>
+<h3 id="45-重新标记阶段">4.5 重新标记阶段</h3>
+<p>现在考虑这样一种情况，如下图所示，在并发标记阶段，C对象没有被强引用所引用，被当做垃圾，但是因为此时用户线程并发执行，又将A指向了C，G1如何处理这种情况呢？这时需要重新标记阶段。具体做法是当对象引用发生改变时，会触发一个写屏障（pre-write barrier），此时会将C对象放入一个名为satb_mark_queue的队列，之后会对其再判断。</p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3J4SFP.png" alt="3J4SFP.png"></p>
 
 
                 
@@ -297,13 +325,13 @@
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/post/gc_4/" data-toggle="tooltip" data-placement="top" title="垃圾回收调优">&larr;
+                        <a href="/post/gc_1/" data-toggle="tooltip" data-placement="top" title="JVM垃圾收集策略">&larr;
                             Previous Post</a>
                     </li>
                     
                     
                     <li class="next">
-                        <a href="/post/classloader/" data-toggle="tooltip" data-placement="top" title="类加载器与双亲委派模型">Next
+                        <a href="/post/gc_3/" data-toggle="tooltip" data-placement="top" title="JVM内存分配策略与GC时机">Next
                             Post &rarr;</a>
                     </li>
                     

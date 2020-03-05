@@ -15,9 +15,9 @@
     
 
     
-    <meta name="title" content="JVM类加载机制" />
-    <meta property="og:title" content="JVM类加载机制" />
-    <meta property="twitter:title" content="JVM类加载机制" />
+    <meta name="title" content="JVM垃圾收集策略" />
+    <meta property="og:title" content="JVM垃圾收集策略" />
+    <meta property="twitter:title" content="JVM垃圾收集策略" />
     
 
     
@@ -34,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>JVM类加载机制-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>JVM垃圾收集策略-吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/post/classload/">
+    <link rel="canonical" href="/post/gc_1/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -161,7 +161,7 @@
 
 <style type="text/css">
     header.intro-header {
-        background-image: url('https://images.unsplash.com/photo-1437422061949-f6efbde0a471?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80')
+        background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80')
     }
 </style>
 <header class="intro-header">
@@ -180,15 +180,15 @@
                         </a>
                         
                     </div>
-                    <h1>JVM类加载机制</h1>
-                    <h2 class="subheading">JVM类加载笔记之一</h2>
+                    <h1>JVM垃圾收集策略</h1>
+                    <h2 class="subheading">GC学习笔记之一</h2>
                     <span class="meta">
                         Posted by 
                         
                                  &#34;Eric&#34;
                          
                         on 
-                        Tuesday, December 3, 2019
+                        Friday, November 29, 2019
                         
                         
                         
@@ -218,77 +218,76 @@
                 </header>
                 <nav id="TableOfContents">
   <ul>
-    <li><a href="#一概述">一、概述</a></li>
-    <li><a href="#二类加载的过程">二、类加载的过程</a>
+    <li><a href="#哪些内存需要回收">哪些内存需要回收？</a></li>
+    <li><a href="#死亡前的自救">死亡前的自救</a></li>
+    <li><a href="#垃圾收集算法">垃圾收集算法</a></li>
+    <li><a href="#hotspot的算法实现">HotSpot的算法实现</a>
       <ul>
-        <li><a href="#21-加载">2.1 加载</a></li>
-        <li><a href="#22-验证">2.2 验证</a></li>
-        <li><a href="#23-准备">2.3 准备</a></li>
-        <li><a href="#24-解析">2.4 解析</a></li>
-        <li><a href="#25-初始化">2.5 初始化</a></li>
+        <li><a href="#枚举根节点">枚举根节点</a></li>
+        <li><a href="#安全点">安全点</a></li>
+        <li><a href="#安全区">安全区</a></li>
       </ul>
     </li>
   </ul>
 </nav>
                 
-                <p>虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制。（不要把类加载和类加载中的一步“加载”混淆）</p>
-<h2 id="一概述">一、概述</h2>
-<p><img src="https://s2.ax1x.com/2020/02/25/3JodpV.png" alt="3JodpV.png"></p>
-<p>类的整个生命周期包括：加载，验证，准备，解析，初始化，使用，卸载7个阶段，其中验证、准备、解析3个部分统称为链接。</p>
-<h2 id="二类加载的过程">二、类加载的过程</h2>
-<h3 id="21-加载">2.1 加载</h3>
-<p>“加载”是“类加载”过程的一个阶段，在加载阶段，虚拟机需要完成以下三件事情：</p>
+                <blockquote>
+<p>Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的“高墙”，墙外面的人想进去，墙里面的人却想出来</p>
+</blockquote>
+<p>GC要解决的问题无非是以下三个：</p>
 <ol>
-<li>
-<p>通过一个类的全限定名来获取定义此类的二进制字节流。</p>
-</li>
-<li>
-<p>将这个字节流所代表的静态存储结构转化为方法区(元空间)的运行时数据结构，内部采用C++的instanceKlass描述Java类，但是InstanceKlass不能被Java对象直接访问，必须先访问镜像对象，以此作为桥梁，再访问instanceKlass</p>
-</li>
-<li>
-<p>在堆中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口</p>
-<p><img src="https://s2.ax1x.com/2020/02/25/3Jorm4.png" alt="3Jorm4.png"></p>
-<p>上述过程可以用上图来表示，在jdk1.8之后，方法区被移至Metaspace。在元空间中，类文件用C++的instanceKlass这种数据结构来描述，其中有一项<code>_java_mirror</code>指向储存在堆中class对象，堆中的class对象同样也持有指向instanceKlass的指针。
-每个实例对象都有对象头，其中有一部分是类型指针，该指针指向该类的class对象。</p>
-</li>
+<li>哪些内存需要回收？</li>
+<li>什么时候回收？</li>
+<li>如何回收？</li>
 </ol>
-<h3 id="22-验证">2.2 验证</h3>
-<p>验证是连接阶段的第一步，目的是确保Class文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全。</p>
-<h3 id="23-准备">2.3 准备</h3>
-<p>为static变量分配内存空间，设置默认值</p>
+<p>本文将回答第一点和第三点问题。</p>
+<h2 id="哪些内存需要回收">哪些内存需要回收？</h2>
+<p>垃圾收集器在对堆进行回收前，第一件事情就是要确定这些对象之中，哪些还“存活”，哪些已经死去，这里有两种常用的判断算法，引用计数算法和可达性分析算法。</p>
 <ul>
-<li>在jdk1.8中，static变量随class对象存储在堆中</li>
-<li>static变量分配空间和赋值是两个步骤，分配空间在准备阶段完成，赋值在之后的初始化阶段完成（之前介绍的cinit方法）</li>
-<li>如果static变量是final的<strong>基本类型</strong>，以及<strong>字符串常量</strong>，那么编译阶段就能确定，赋值在准备阶段完成</li>
-<li>如果static变量是final的引用类型，那么赋值也会在初始化阶段完成</li>
-</ul>
-<p>简而言之，这一阶段为static变量以及static final引用类型的对象分配空间赋“零值”，为static final基本类型对象分配空间且赋值</p>
-<h3 id="24-解析">2.4 解析</h3>
-<p>将常量池内的符号引用替换为直接引用的过程</p>
-<hr>
-<ul>
-<li>符号引用：符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能无歧义地定位到目标即可。符号引用于虚拟机实现的内存布局无关，引用的目标不一定已经加载到内存中。</li>
-<li>直接引用：可以是直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄。直接引用和虚拟机实现的内存布局相关，同一个符号引用载不同虚拟机实例上翻译出来的直接引用一般不会相同。如果有了直接引用，那引用的目标必定已经在内存中存在。</li>
+<li>引用计数算法：Python使用了该算法，其原理为给对象中添加一个计数器，每当一个地方引用它时，计数器加1，引用失效时，计数器减1；任何时刻计数器为0的对象就是不可能再被使用的。但是一个缺点是无法解决对象之间相互循环引用的问题。如下图，objA中引用objB，objB引用objA。
+<img src="https://s2.ax1x.com/2020/03/05/3HSDiT.png" alt="3HSDiT.png"></li>
+<li>可达性分析算法：被Java、C#等语言所使用的，这个算法的基本思路是通过一系列称为“GC Roots”的对象作为起始点，从这些节点开始向下搜索，所走过的路径称为引用链，当一个对象到GC Roots没有任何引用链想连时，则证明此对象是不可用的。
+<img src="https://s2.ax1x.com/2020/03/05/3HSWe1.png" alt="3HSWe1.png">
+在Java中，可作为GC Roots的对象包括下面几种：虚拟机栈中引用的<strong>对象</strong>、方法区中类静态属性引用的<strong>对象</strong>、方法区中常量引用的<strong>对象</strong>、本地方法栈中引用的<strong>对象</strong></li>
 </ul>
 <hr>
-<h3 id="25-初始化">2.5 初始化</h3>
-<p>初始化阶段即调用<!-- raw HTML omitted -->()，<!-- raw HTML omitted -->()是由编译器自动收集类中所有类变量的赋值动作和静态语句快中的语句合并产生的，收集顺序按照在源文件中出现的顺序决定。<strong>对于定义在静态语句块之后的变量，静态语句块可以赋值，但是不能访问。</strong></p>
-<p>Java虚拟机规范中没有强制约束什么时候开始加载，但是规定了必须立即对类进行“初始化”的场景：</p>
-<ol>
-<li>main方法所在的类，会被首先初始化</li>
-<li>首次访问这个类的静态变量或静态方法时</li>
-<li>class.forName</li>
-<li>子类初始化，如果父类还没初始化，会引发</li>
-<li>首次new一个类对象的时候。</li>
-</ol>
-<p>以上五种情况被称为类的主动引用。除此之外，所有引用类的方式都不会出发初始化，成为被动引用，有以下几种情况：</p>
-<ol>
-<li>类对象.class不会触发初始化（在加载阶段就已经生成了<code>_java_mirror</code>对象，不需要初始化）</li>
-<li>创建该类的数组不会触发初始化</li>
-<li>类加载器的loadClass方法</li>
-<li>Class.forName的参数2位false时</li>
-<li>访问类的static final静态常量（基本类型和字符串）不会初始化</li>
-</ol>
+<h2 id="死亡前的自救">死亡前的自救</h2>
+<p>即使在可达性分析算法中不可达的对象，也并非是“非死不可”，这时候它们暂时出于“缓刑”阶段，真正宣告一个对象死亡，至少经历两次标记过程。
+如果对象在进行可达性分析后发现没有与GC Roots相连接的引用链，那它将会被第一次标记，并判断该对象是否有必要执行finalize()方法；
+如果有必要执行finalize()方法，那么对象将会放置在一个叫做F-Queue的队列之中，并在稍后由一个由虚拟机自动建立的、低优先级Finalizer线程去执行它。
+这里所谓的“执行”是指虚拟机会触发这个方法，但并不承诺会等待它运行结束。finalize()是对象逃脱死亡命运的最后一次机会，如果在finalize()中对象与任何一个对象建立了联系，那么在接下来的第二次标记时，就会被移出“即将回收”的集合。</p>
+<hr>
+<h2 id="垃圾收集算法">垃圾收集算法</h2>
+<ul>
+<li>
+<p>标记-清除算法：分为“标记”和“清除”两个阶段；有两个缺陷，一是效率不高，二是空间碎片太多
+<img src="https://s2.ax1x.com/2020/03/05/3HSIJO.png" alt="3HSIJO.png"></p>
+</li>
+<li>
+<p>复制算法：它将可用内存按容量划分为大小相等的两部分，如图所示分为A、B两个区，当A区域全部用完时，把存活的对象复制到B区，然后一次性清除掉A区，此时，内存分配时就不再考虑内存碎片等复杂情况了。而且新生代中的对象98%是朝生夕死的，并不需要按照1：1来划分内存空间。</p>
+<p>Hotspot虚拟机中Eden和Survivor的大小比例是8：1，将Eden区以及幸存区From中存活的对象复制到幸存区To中，将Eden和幸存区From中的对象全部清空，然后将幸存区From和幸存区To调换。</p>
+<p>如果Survivor空间不够用时需要依赖其他内存（老年代）进行分配担保，如果另外一块Survivor空间没有足够空间存放上一次新生代收集下来的存活对象，这些对象直接通过分配担保机制进入老年代。</p>
+<p>该算法适用于对象存活率较低的新生代。</p>
+<p><img src="https://s2.ax1x.com/2020/03/05/3HSHQH.png" alt="3HSHQH.png"></p>
+</li>
+<li>
+<p>标记-整理算法：如果对象存活率较高时，需要进行较多的复制操作，效率会变低。所以在老年代不选用这种算法。标记-整理算法的标记过程与标记-清理算法一致，但是清理过程是让所有存活的对象都向一端移动，然后直接清理掉端边界意外的内存。
+<img src="https://s2.ax1x.com/2020/03/05/3HSjTP.png" alt="3HSjTP.png"></p>
+</li>
+</ul>
+<hr>
+<h2 id="hotspot的算法实现">HotSpot的算法实现</h2>
+<h3 id="枚举根节点">枚举根节点</h3>
+<p>可作为GC Roots的节点主要在全局性的引用（例如常量或类静态属性）与执行上下文（例如栈帧中的本地变量表），由于方法区庞大以及在进行可达性分析的时候需要“Stop the world”，因此要求虚拟机在枚举根节点的时候需要快速。
+HotSpot虚拟机是准确式GC（虚拟机知道内存中存储的是地址还是数），所以当执行系统停顿下来的时候，虚拟机有办法直接得知哪些地方存放着对象引用。HotSpot使用一组称为OopMap的数据结构来记录对象内什么偏移量上是什么类型的数据计算出来。</p>
+<h3 id="安全点">安全点</h3>
+<ul>
+<li>安全点的选取：如果在每一条指令都生成对应的OopMap，那将会需要大量的额外空间，因此，HotSpot只在特定的位置记录这些信息，这些位置称为安全点。安全点的选定基本上是以程序“是否具有让程序长时间执行的特征”为标准进行选定的，例如方法调用、循环跳转、异常跳转等，所以具有这些功能的指令才会产生Safepoint。</li>
+<li>多线程同步停止：有两种方式，抢先式中断和主动式中断；抢先式中断在GC发生时，首先把所有线程全部中断，如果发现有线程中断的地方不在安全点上，就恢复线程，让它“跑”到安全点上，但是这种方法没有被主流虚拟机采用；主动式中断的思想是当GC需要中断线程的时候，仅简单的设置一个标志，各个线程主动去轮训这个标志，发现中断标志位真时就自己中断挂起。轮训标志的地方和安全点是重合的。</li>
+</ul>
+<h3 id="安全区">安全区</h3>
+<p>如果线程处于Sleep状态或者Blocked状态，这时候线程无法响应JVM的中断请求，“走”到安全的地方去中断挂起，这时候需要安全区。所谓安全区就是指在一段代码片段中，引用关系不会发生变化，在这个区域中的任意地方开始GC都是安全的。
+在线程执行到Safe Region中的代码时，首先标识自己已经进入了Safe Region，JVM就可以发起GC；当线程离开Safe Region时，它要检查系统是否完成了根节点的枚举（或是整个GC过程）。</p>
 
 
                 
@@ -296,14 +295,9 @@
                 <hr>
                 <ul class="pager">
                     
-                    <li class="previous">
-                        <a href="/post/gc_4/" data-toggle="tooltip" data-placement="top" title="垃圾回收调优">&larr;
-                            Previous Post</a>
-                    </li>
-                    
                     
                     <li class="next">
-                        <a href="/post/classloader/" data-toggle="tooltip" data-placement="top" title="类加载器与双亲委派模型">Next
+                        <a href="/post/gc_2/" data-toggle="tooltip" data-placement="top" title="JVM垃圾收集器">Next
                             Post &rarr;</a>
                     </li>
                     

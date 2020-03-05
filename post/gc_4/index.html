@@ -15,9 +15,9 @@
     
 
     
-    <meta name="title" content="JVM类加载机制" />
-    <meta property="og:title" content="JVM类加载机制" />
-    <meta property="twitter:title" content="JVM类加载机制" />
+    <meta name="title" content="垃圾回收调优" />
+    <meta property="og:title" content="垃圾回收调优" />
+    <meta property="twitter:title" content="垃圾回收调优" />
     
 
     
@@ -34,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>JVM类加载机制-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>垃圾回收调优-吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/post/classload/">
+    <link rel="canonical" href="/post/gc_4/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -161,7 +161,7 @@
 
 <style type="text/css">
     header.intro-header {
-        background-image: url('https://images.unsplash.com/photo-1437422061949-f6efbde0a471?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80')
+        background-image: url('https://images.unsplash.com/photo-1494879540385-bc170b0878a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjc1MDg0fQ&auto=format&fit=crop&w=1650&q=80')
     }
 </style>
 <header class="intro-header">
@@ -180,15 +180,15 @@
                         </a>
                         
                     </div>
-                    <h1>JVM类加载机制</h1>
-                    <h2 class="subheading">JVM类加载笔记之一</h2>
+                    <h1>垃圾回收调优</h1>
+                    <h2 class="subheading">GC学习笔记之四</h2>
                     <span class="meta">
                         Posted by 
                         
                                  &#34;Eric&#34;
                          
                         on 
-                        Tuesday, December 3, 2019
+                        Monday, December 2, 2019
                         
                         
                         
@@ -218,77 +218,55 @@
                 </header>
                 <nav id="TableOfContents">
   <ul>
-    <li><a href="#一概述">一、概述</a></li>
-    <li><a href="#二类加载的过程">二、类加载的过程</a>
-      <ul>
-        <li><a href="#21-加载">2.1 加载</a></li>
-        <li><a href="#22-验证">2.2 验证</a></li>
-        <li><a href="#23-准备">2.3 准备</a></li>
-        <li><a href="#24-解析">2.4 解析</a></li>
-        <li><a href="#25-初始化">2.5 初始化</a></li>
-      </ul>
-    </li>
+    <li><a href="#一确定目标">一、确定目标</a></li>
+    <li><a href="#二最快的gc是不发生gc">二、最快的GC是不发生GC</a></li>
+    <li><a href="#三新生代调优">三、新生代调优</a></li>
+    <li><a href="#四老年代调优">四、老年代调优</a></li>
+    <li><a href="#五案例">五、案例</a></li>
   </ul>
 </nav>
                 
-                <p>虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制。（不要把类加载和类加载中的一步“加载”混淆）</p>
-<h2 id="一概述">一、概述</h2>
-<p><img src="https://s2.ax1x.com/2020/02/25/3JodpV.png" alt="3JodpV.png"></p>
-<p>类的整个生命周期包括：加载，验证，准备，解析，初始化，使用，卸载7个阶段，其中验证、准备、解析3个部分统称为链接。</p>
-<h2 id="二类加载的过程">二、类加载的过程</h2>
-<h3 id="21-加载">2.1 加载</h3>
-<p>“加载”是“类加载”过程的一个阶段，在加载阶段，虚拟机需要完成以下三件事情：</p>
-<ol>
-<li>
-<p>通过一个类的全限定名来获取定义此类的二进制字节流。</p>
-</li>
-<li>
-<p>将这个字节流所代表的静态存储结构转化为方法区(元空间)的运行时数据结构，内部采用C++的instanceKlass描述Java类，但是InstanceKlass不能被Java对象直接访问，必须先访问镜像对象，以此作为桥梁，再访问instanceKlass</p>
-</li>
-<li>
-<p>在堆中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口</p>
-<p><img src="https://s2.ax1x.com/2020/02/25/3Jorm4.png" alt="3Jorm4.png"></p>
-<p>上述过程可以用上图来表示，在jdk1.8之后，方法区被移至Metaspace。在元空间中，类文件用C++的instanceKlass这种数据结构来描述，其中有一项<code>_java_mirror</code>指向储存在堆中class对象，堆中的class对象同样也持有指向instanceKlass的指针。
-每个实例对象都有对象头，其中有一部分是类型指针，该指针指向该类的class对象。</p>
-</li>
-</ol>
-<h3 id="22-验证">2.2 验证</h3>
-<p>验证是连接阶段的第一步，目的是确保Class文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全。</p>
-<h3 id="23-准备">2.3 准备</h3>
-<p>为static变量分配内存空间，设置默认值</p>
+                <h2 id="一确定目标">一、确定目标</h2>
 <ul>
-<li>在jdk1.8中，static变量随class对象存储在堆中</li>
-<li>static变量分配空间和赋值是两个步骤，分配空间在准备阶段完成，赋值在之后的初始化阶段完成（之前介绍的cinit方法）</li>
-<li>如果static变量是final的<strong>基本类型</strong>，以及<strong>字符串常量</strong>，那么编译阶段就能确定，赋值在准备阶段完成</li>
-<li>如果static变量是final的引用类型，那么赋值也会在初始化阶段完成</li>
+<li>低延迟 CMS G1 ZGC ————对于互联网程序</li>
+<li>高吞吐量 ParalellGC ———对于科学运算</li>
 </ul>
-<p>简而言之，这一阶段为static变量以及static final引用类型的对象分配空间赋“零值”，为static final基本类型对象分配空间且赋值</p>
-<h3 id="24-解析">2.4 解析</h3>
-<p>将常量池内的符号引用替换为直接引用的过程</p>
-<hr>
+<h2 id="二最快的gc是不发生gc">二、最快的GC是不发生GC</h2>
+<p>当经常发生GC的时候，考虑下面几个问题</p>
+<ol>
+<li>数据是不是太多？</li>
+<li>数据表是否太臃肿？加载了不需要的数据；Integer占用24字节 而int只占用4字节</li>
+<li>是否存在内存泄漏？采用软引用、弱引用；使用第三方缓存实现 如Redis</li>
+</ol>
+<h2 id="三新生代调优">三、新生代调优</h2>
+<p>新生代的特点：</p>
 <ul>
-<li>符号引用：符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能无歧义地定位到目标即可。符号引用于虚拟机实现的内存布局无关，引用的目标不一定已经加载到内存中。</li>
-<li>直接引用：可以是直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄。直接引用和虚拟机实现的内存布局相关，同一个符号引用载不同虚拟机实例上翻译出来的直接引用一般不会相同。如果有了直接引用，那引用的目标必定已经在内存中存在。</li>
+<li>所有的new操作的内存分配非常迅速，并且优先在TLAB（thread-local allocation buffer）中进行分配</li>
+<li>死亡对象的回收代价为零</li>
+<li>朝生夕死</li>
+<li>Minor GC时间远远低于Full GC
+新生代越大越好么？
+<img src="https://s2.ax1x.com/2020/02/25/3JI2QS.png" alt="3JI2QS.png">
+根据Oracle官方文档，如果新生代太小，会频繁的发生Minor GC；如果新生代太大，势必会减少老年代的大小，这样就会只触发Full GC，使得停顿时间过长。</li>
+<li>新生代的大小最好设置为能容纳【并发量*（请求-响应）】的数据</li>
+<li>幸存区大到能够保留【当前活跃对象+需要晋升对象】，如果幸存区过小，那么需要提前晋升对象，这样有个弊端，就是该对象如果已经成为垃圾，只能等到Full GC时才能被回收</li>
+<li>晋升阈值配置得当，让长时间存货对象尽快晋升，这是因为新生代使用复制算法耗时最长的就是复制过程
+-XX:MaxTenuringThreshold=threshold调整最大晋升阈值
+-XX:+PrintTenuringDistribution显示晋升详情</li>
 </ul>
-<hr>
-<h3 id="25-初始化">2.5 初始化</h3>
-<p>初始化阶段即调用<!-- raw HTML omitted -->()，<!-- raw HTML omitted -->()是由编译器自动收集类中所有类变量的赋值动作和静态语句快中的语句合并产生的，收集顺序按照在源文件中出现的顺序决定。<strong>对于定义在静态语句块之后的变量，静态语句块可以赋值，但是不能访问。</strong></p>
-<p>Java虚拟机规范中没有强制约束什么时候开始加载，但是规定了必须立即对类进行“初始化”的场景：</p>
-<ol>
-<li>main方法所在的类，会被首先初始化</li>
-<li>首次访问这个类的静态变量或静态方法时</li>
-<li>class.forName</li>
-<li>子类初始化，如果父类还没初始化，会引发</li>
-<li>首次new一个类对象的时候。</li>
-</ol>
-<p>以上五种情况被称为类的主动引用。除此之外，所有引用类的方式都不会出发初始化，成为被动引用，有以下几种情况：</p>
-<ol>
-<li>类对象.class不会触发初始化（在加载阶段就已经生成了<code>_java_mirror</code>对象，不需要初始化）</li>
-<li>创建该类的数组不会触发初始化</li>
-<li>类加载器的loadClass方法</li>
-<li>Class.forName的参数2位false时</li>
-<li>访问类的static final静态常量（基本类型和字符串）不会初始化</li>
-</ol>
+<h2 id="四老年代调优">四、老年代调优</h2>
+<p>以CMS为例</p>
+<ul>
+<li>CMS的老年代内存越大越好</li>
+<li>先不尝试做老年代调优，先尝试新生代调优</li>
+<li>观察发生Full GC老年代内存占用，将老年代内存预设调大1/4~1/3 -XX:CMSInitiatingOccupancyFraction=percent当老年代使用了percent时就调用CMS</li>
+</ul>
+<h2 id="五案例">五、案例</h2>
+<ul>
+<li>Full GC和Minor GC频繁 ————提升新生代大小，调高晋升阈值</li>
+<li>请求高峰期发生Full GC，单次暂停时间特别长（CMS）————使用-XX:+PrintGCDetails查看GC日志。重新标记时间过长 使用-XX:+CMSScavengeBeforeRemark在重新标记前先清理新生代</li>
+<li>老年代充裕的情况下，发生Full GC（jdk1.7）——由于方法区过小导致Full GC</li>
+</ul>
 
 
                 
@@ -297,13 +275,13 @@
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/post/gc_4/" data-toggle="tooltip" data-placement="top" title="垃圾回收调优">&larr;
+                        <a href="/post/gc_3/" data-toggle="tooltip" data-placement="top" title="JVM内存分配策略与GC时机">&larr;
                             Previous Post</a>
                     </li>
                     
                     
                     <li class="next">
-                        <a href="/post/classloader/" data-toggle="tooltip" data-placement="top" title="类加载器与双亲委派模型">Next
+                        <a href="/post/classload/" data-toggle="tooltip" data-placement="top" title="JVM类加载机制">Next
                             Post &rarr;</a>
                     </li>
                     

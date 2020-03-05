@@ -75,15 +75,6 @@
     </item>
     
     <item>
-      <title>JVM类加载机制</title>
-      <link>https://ericwu0930.github.io/post/classload/</link>
-      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/post/classload/</guid>
-      <description>虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机</description>
-    </item>
-    
-    <item>
       <title>类加载器与双亲委派模型</title>
       <link>https://ericwu0930.github.io/post/classloader/</link>
       <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
@@ -93,21 +84,48 @@
     </item>
     
     <item>
-      <title>JVM垃圾收集器</title>
-      <link>https://ericwu0930.github.io/post/gc/</link>
-      <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
+      <title>JVM类加载机制</title>
+      <link>https://ericwu0930.github.io/post/classload/</link>
+      <pubDate>Tue, 03 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://ericwu0930.github.io/post/gc/</guid>
-      <description>如果说收集算法是内存回收的方法论，那么垃圾收集器就是内存回收的具体实现。 一、串行 单线程 堆内存较小，适合个人电脑 -XX: +UseSerialGC=Serial+SerialOld 新生代使用复制算法，老年代</description>
+      <guid>https://ericwu0930.github.io/post/classload/</guid>
+      <description>虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机</description>
     </item>
     
     <item>
       <title>垃圾回收调优</title>
-      <link>https://ericwu0930.github.io/post/gc_tuner/</link>
+      <link>https://ericwu0930.github.io/post/gc_4/</link>
+      <pubDate>Mon, 02 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/gc_4/</guid>
+      <description>一、确定目标 低延迟 CMS G1 ZGC ————对于互联网程序 高吞吐量 ParalellGC ———对于科学运算 二、最快的GC是不发生GC 当经常发生GC的时候，考虑下面几个问题 数</description>
+    </item>
+    
+    <item>
+      <title>JVM内存分配策略与GC时机</title>
+      <link>https://ericwu0930.github.io/post/gc_3/</link>
+      <pubDate>Sun, 01 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/gc_3/</guid>
+      <description>Java技术体系中所提倡的自动内存管理最终可以归结为自动化地解决两个问题：给对象分配内存以及回收分配给对象的内存。 在GC的第一篇总结笔记中提</description>
+    </item>
+    
+    <item>
+      <title>JVM垃圾收集器</title>
+      <link>https://ericwu0930.github.io/post/gc_2/</link>
       <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://ericwu0930.github.io/post/gc_tuner/</guid>
-      <description>一、确定目标 低延迟 CMS G1 ZGC ————对于互联网程序 高吞吐量 ParalellGC ———对于科学运算 二、最快的GC是不发生GC 当经常发生GC的时候，考虑下面几个问题 数</description>
+      <guid>https://ericwu0930.github.io/post/gc_2/</guid>
+      <description>如果说收集算法是内存回收的方法论，那么垃圾收集器就是内存回收的具体实现。 一、串行 单线程 堆内存较小，适合个人电脑 -XX: +UseSerialGC=Serial+SerialOld 新生代使用复制算法，老年代</description>
+    </item>
+    
+    <item>
+      <title>JVM垃圾收集策略</title>
+      <link>https://ericwu0930.github.io/post/gc_1/</link>
+      <pubDate>Fri, 29 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/gc_1/</guid>
+      <description>Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的“高墙”，墙外面的人想进去，墙里面的人却想出来 GC要解决的问题无非是以下三个：</description>
     </item>
     
     <item>

@@ -221,6 +221,7 @@
     <li><a href="#问题出处">问题出处：</a></li>
     <li><a href="#问题剖析">问题剖析：</a></li>
     <li><a href="#解决办法">解决办法：</a></li>
+    <li><a href="#总结">总结：</a></li>
   </ul>
 </nav>
                 
@@ -231,8 +232,11 @@
 <p>但是在TankFrame中企图使用GameModel的静态方法getINSTANCE()得到实例的时候，总是报错，提示在初始化Tank（）对象的时候GameModel.getINSTANCE().add(this)有一个空指针异常。程序逻辑如下图所示：</p>
 <p><img src="https://s2.ax1x.com/2020/03/05/3T5nOJ.png" alt="3T5nOJ.png"></p>
 <p>此时，我瞬间反应过来，应该是在Tank的构造方法中调用GameModel.getINSTANCE()时，还没有完成对GameModel的实例化。所以，Java类中数据初始化的顺序到底是怎样进行的呢？</p>
-<p><img src="https://s2.ax1x.com/2020/03/05/3T51Fx.png" alt="3T51Fx.png"></p>
-<p><img src="https://s2.ax1x.com/2020/03/05/3T5YlD.png" alt="3T5YlD.png"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TankFrame</span> <span style="color:#66d9ef">extends</span> Frame<span style="color:#f92672">{</span>
+    GameModel gm <span style="color:#f92672">=</span> GameModel<span style="color:#f92672">.</span><span style="color:#a6e22e">getINSTANCE</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">.</span><span style="color:#f92672">.</span><span style="color:#f92672">.</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><img src="https://s2.ax1x.com/2020/03/05/3T5YlD.png" alt="3T5YlD.png"></p>
 <p><img src="https://s2.ax1x.com/2020/03/05/3T5DtP.png" alt="3T5DtP.png"></p>
 <h2 id="问题剖析">问题剖析：</h2>
 <p>首先我们要分清一个概念，类的初始化和对象的初始化。类的初始化发生在类加载时，在以下五种情况下可以发生类加载</p>
@@ -342,8 +346,26 @@
 <p>所以在调用GameModel.getINSTANCE()时进行的一系列动作如下图所示，为什么报错也就很明朗了</p>
 <p><a href="https://imgchr.com/i/3T5bX4"><img src="https://s2.ax1x.com/2020/03/05/3T5bX4.md.png" alt="3T5bX4.md.png"></a></p>
 <h2 id="解决办法">解决办法：</h2>
-<p><a href="https://imgchr.com/i/3TIVAI"><img src="https://s2.ax1x.com/2020/03/05/3TIVAI.md.png" alt="3TIVAI.md.png"></a></p>
-<p>在GameModel中先给成员变量myTank赋值为null，那么在创建GamModel对象时就不会创建Tank对象。待GameModel对象创建完成后，再使用init()函数，让myTank=new Tank( ).创建Tank对象，此时GameModel对象已经创建完成（单例），在Tank的构造方法中调用GameModel.getInstance.add(this)就不会报空指针异常了。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">static</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">try</span><span style="color:#f92672">{</span>
+        INSTANCE <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> GameModel<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        INSTANCE<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span><span style="color:#66d9ef">catch</span> <span style="color:#f92672">.</span><span style="color:#f92672">.</span><span style="color:#f92672">.</span>
+<span style="color:#f92672">}</span>
+
+Tank myTank<span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</code></pre></div><p>在GameModel中先给成员变量myTank赋值为null，那么在创建GamModel对象时就不会创建Tank对象。待GameModel对象创建完成后，再使用init()函数，让myTank=new Tank( ).创建Tank对象，此时GameModel对象已经创建完成（单例），在Tank的构造方法中调用GameModel.getInstance.add(this)就不会报空指针异常了。</p>
+<h2 id="总结">总结：</h2>
+<p>总结起来，不要把创建对象和类加载混为一谈，创建对象时会首先检查类是否被加载，如果没有则触发类加载的一系列行动。类加载时会涉及静态变量的初始化操作，而创建对象会涉及成员变量的初始化。</p>
+<p>稍微拓展一下，成员变量中能否持有自身类的对象，比如</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> A a<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> A<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>又比如，静态变量能否持有自身类对象</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> A a<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> A<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>答案是第一种情况会发生StackOverFlow，因为会陷入创建A对象的死循环；第二种情况是正常的，因为在类加载的初始化阶段，会创建一个A对象，此时虽然类加载并没有完成，但是也不会再次触发类加载，而是进入创建类对象的阶段。其实，第二种情况正是单例模式中所运用的。</p>
 
 
                 

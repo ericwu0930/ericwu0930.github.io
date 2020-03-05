@@ -15,15 +15,15 @@
     
 
     
-    <meta name="title" content="JVM类加载机制" />
-    <meta property="og:title" content="JVM类加载机制" />
-    <meta property="twitter:title" content="JVM类加载机制" />
+    <meta name="title" content="学习笔记" />
+    <meta property="og:title" content="学习笔记" />
+    <meta property="twitter:title" content="学习笔记" />
     
 
     
-    <meta name="description" content="总结自《深入理解java虚拟机》">
-    <meta property="og:description" content="总结自《深入理解java虚拟机》" />
-    <meta property="twitter:description" content="总结自《深入理解java虚拟机》" />
+    <meta name="description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。">
+    <meta property="og:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    <meta property="twitter:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
     
 
     
@@ -34,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>JVM类加载机制-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>学习笔记-吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/post/classload/">
+    <link rel="canonical" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -158,41 +158,14 @@
 
 
 
-
-<style type="text/css">
-    header.intro-header {
-        background-image: url('https://images.unsplash.com/photo-1437422061949-f6efbde0a471?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80')
-    }
-</style>
-<header class="intro-header">
+<header class="intro-header" style="background-image: url('/img/roof.jpg')">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <div class="post-heading">
-                    <div class="tags">
-                        
-                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
-                            学习笔记
-                        </a>
-                        
-                        <a class="tag" href="/tags/jvm" title="JVM">
-                            JVM
-                        </a>
-                        
-                    </div>
-                    <h1>JVM类加载机制</h1>
-                    <h2 class="subheading">JVM类加载笔记之一</h2>
-                    <span class="meta">
-                        Posted by 
-                        
-                                 &#34;Eric&#34;
-                         
-                        on 
-                        Tuesday, December 3, 2019
-                        
-                        
-                        
-                    </span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
+                <div class="site-heading">
+                    <h1>Eric&#39;s Blog </h1>
+                    
+		    <span class="subheading">路在脚下，心向远方</span>
                 </div>
             </div>
         </div>
@@ -201,135 +174,178 @@
 
 
 
-
-<article>
-    <div class="container">
-        <div class="row">
-
+  
+<div class="container">
+    <div class="row">
+        
+        
+   	    <div class="
+            col-lg-8 col-lg-offset-1
+            col-md-8 col-md-offset-1
+            col-sm-12
+            col-xs-12
+            post-container
+        ">
             
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                post-container">
 
-                
-                <header>
-                    <h2>TOC</h2>
-                </header>
-                <nav id="TableOfContents">
-  <ul>
-    <li><a href="#一概述">一、概述</a></li>
-    <li><a href="#二类加载的过程">二、类加载的过程</a>
-      <ul>
-        <li><a href="#21-加载">2.1 加载</a></li>
-        <li><a href="#22-验证">2.2 验证</a></li>
-        <li><a href="#23-准备">2.3 准备</a></li>
-        <li><a href="#24-解析">2.4 解析</a></li>
-        <li><a href="#25-初始化">2.5 初始化</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-                
-                <p>虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制。（不要把类加载和类加载中的一步“加载”混淆）</p>
-<h2 id="一概述">一、概述</h2>
-<p><img src="https://s2.ax1x.com/2020/02/25/3JodpV.png" alt="3JodpV.png"></p>
-<p>类的整个生命周期包括：加载，验证，准备，解析，初始化，使用，卸载7个阶段，其中验证、准备、解析3个部分统称为链接。</p>
-<h2 id="二类加载的过程">二、类加载的过程</h2>
-<h3 id="21-加载">2.1 加载</h3>
-<p>“加载”是“类加载”过程的一个阶段，在加载阶段，虚拟机需要完成以下三件事情：</p>
-<ol>
-<li>
-<p>通过一个类的全限定名来获取定义此类的二进制字节流。</p>
-</li>
-<li>
-<p>将这个字节流所代表的静态存储结构转化为方法区(元空间)的运行时数据结构，内部采用C++的instanceKlass描述Java类，但是InstanceKlass不能被Java对象直接访问，必须先访问镜像对象，以此作为桥梁，再访问instanceKlass</p>
-</li>
-<li>
-<p>在堆中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口</p>
-<p><img src="https://s2.ax1x.com/2020/02/25/3Jorm4.png" alt="3Jorm4.png"></p>
-<p>上述过程可以用上图来表示，在jdk1.8之后，方法区被移至Metaspace。在元空间中，类文件用C++的instanceKlass这种数据结构来描述，其中有一项<code>_java_mirror</code>指向储存在堆中class对象，堆中的class对象同样也持有指向instanceKlass的指针。
-每个实例对象都有对象头，其中有一部分是类型指针，该指针指向该类的class对象。</p>
-</li>
-</ol>
-<h3 id="22-验证">2.2 验证</h3>
-<p>验证是连接阶段的第一步，目的是确保Class文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全。</p>
-<h3 id="23-准备">2.3 准备</h3>
-<p>为static变量分配内存空间，设置默认值</p>
-<ul>
-<li>在jdk1.8中，static变量随class对象存储在堆中</li>
-<li>static变量分配空间和赋值是两个步骤，分配空间在准备阶段完成，赋值在之后的初始化阶段完成（之前介绍的cinit方法）</li>
-<li>如果static变量是final的<strong>基本类型</strong>，以及<strong>字符串常量</strong>，那么编译阶段就能确定，赋值在准备阶段完成</li>
-<li>如果static变量是final的引用类型，那么赋值也会在初始化阶段完成</li>
-</ul>
-<p>简而言之，这一阶段为static变量以及static final引用类型的对象分配空间赋“零值”，为static final基本类型对象分配空间且赋值</p>
-<h3 id="24-解析">2.4 解析</h3>
-<p>将常量池内的符号引用替换为直接引用的过程</p>
-<hr>
-<ul>
-<li>符号引用：符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能无歧义地定位到目标即可。符号引用于虚拟机实现的内存布局无关，引用的目标不一定已经加载到内存中。</li>
-<li>直接引用：可以是直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄。直接引用和虚拟机实现的内存布局相关，同一个符号引用载不同虚拟机实例上翻译出来的直接引用一般不会相同。如果有了直接引用，那引用的目标必定已经在内存中存在。</li>
-</ul>
-<hr>
-<h3 id="25-初始化">2.5 初始化</h3>
-<p>初始化阶段即调用<!-- raw HTML omitted -->()，<!-- raw HTML omitted -->()是由编译器自动收集类中所有类变量的赋值动作和静态语句快中的语句合并产生的，收集顺序按照在源文件中出现的顺序决定。<strong>对于定义在静态语句块之后的变量，静态语句块可以赋值，但是不能访问。</strong></p>
-<p>Java虚拟机规范中没有强制约束什么时候开始加载，但是规定了必须立即对类进行“初始化”的场景：</p>
-<ol>
-<li>main方法所在的类，会被首先初始化</li>
-<li>首次访问这个类的静态变量或静态方法时</li>
-<li>class.forName</li>
-<li>子类初始化，如果父类还没初始化，会引发</li>
-<li>首次new一个类对象的时候。</li>
-</ol>
-<p>以上五种情况被称为类的主动引用。除此之外，所有引用类的方式都不会出发初始化，成为被动引用，有以下几种情况：</p>
-<ol>
-<li>类对象.class不会触发初始化（在加载阶段就已经生成了<code>_java_mirror</code>对象，不需要初始化）</li>
-<li>创建该类的数组不会触发初始化</li>
-<li>类加载器的loadClass方法</li>
-<li>Class.forName的参数2位false时</li>
-<li>访问类的static final静态常量（基本类型和字符串）不会初始化</li>
-</ol>
-
-
-                
-
-                <hr>
-                <ul class="pager">
-                    
-                    <li class="previous">
-                        <a href="/post/gc_4/" data-toggle="tooltip" data-placement="top" title="垃圾回收调优">&larr;
-                            Previous Post</a>
-                    </li>
-                    
-                    
-                    <li class="next">
-                        <a href="/post/classloader/" data-toggle="tooltip" data-placement="top" title="类加载器与双亲委派模型">Next
-                            Post &rarr;</a>
-                    </li>
-                    
-                </ul>
-
-                
-<div id="disqus-comment"></div>
-
-
-
-            </div>
-            
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                sidebar-container">
-
-                
-                
-
-                
-                
-            </div>
+<div class="post-preview">
+    <a href="https://ericwu0930.github.io/post/gc_2/">
+        <h2 class="post-title">
+            JVM垃圾收集器
+        </h2>
+	
+        <h3 class="post-subtitle">
+            GC学习笔记之二
+        </h3>
+	
+        <div class="post-content-preview">
+	
+            总结自《深入理解java虚拟机》
+        
         </div>
-    </div>
-</article>
+    </a>
+    <p class="post-meta">
+    Posted by      &#34;Eric&#34; Saturday, November 30, 2019
+    
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://ericwu0930.github.io/post/gc_1/">
+        <h2 class="post-title">
+            JVM垃圾收集策略
+        </h2>
+	
+        <h3 class="post-subtitle">
+            GC学习笔记之一
+        </h3>
+	
+        <div class="post-content-preview">
+	
+            总结自《深入理解java虚拟机》
+        
+        </div>
+    </a>
+    <p class="post-meta">
+    Posted by      &#34;Eric&#34; Friday, November 29, 2019
+    
+    
+    </p>
+
+</div>
+<hr>
+
+
+            
+
+
+<ul class="pager">
+    
+    <li class="previous">
+        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/page/2/">&larr; 上一页</a>
+    </li>
+    
+    
+</ul>
+
+
+       	</div>
+        
+
+<div class="
+    col-lg-3 col-lg-offset-0
+    col-md-3 col-md-offset-0
+    col-sm-12
+    col-xs-12
+    sidebar-container
+">
+    
+    
+
+    
+	
+    <section class="visible-md visible-lg">
+	<hr><h5><a href="/top/about">ABOUT ME</a></h5>
+        <div class="short-about">
+            
+            <a href="/top/about">
+               <img src="/img/portrait.jpeg" alt="avatar" style="cursor: pointer" />
+            </a>
+            
+            
+                <p>Software Developer, Photographer and Life Adventurer</p>
+            
+           
+           <ul class="list-inline"> 
+               
+               
+               
+               
+               <li>
+                   <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                       <span class="fa-stack fa-lg">
+                           <i class="fa fa-circle fa-stack-2x"></i>
+                           <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                       </span>
+                   </a>
+               </li>
+               
+               
+               
+               <li>
+                   <a target="_blank" href="/img/we_chat.JPG">
+                       <span class="fa-stack fa-lg">
+                           <i class="fa fa-circle fa-stack-2x"></i>
+                           <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                       </span>
+                   </a>
+               </li>
+               
+               
+               <li>
+                   <a target="_blank" href="https://github.com/ericwu0930/">
+                       <span class="fa-stack fa-lg">
+                           <i class="fa fa-circle fa-stack-2x"></i>
+                           <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                       </span>
+                   </a>
+               </li>
+               
+               
+               
+               
+               <li>
+                   <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                       <span class="fa-stack fa-lg">
+                           <i class="fa fa-circle fa-stack-2x"></i>
+                           <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                       </span>
+                   </a>
+               </li>
+               
+               
+               
+            
+            
+               
+               
+                </ul>
+            </div>
+    </section>
+	
+    
+    
+
+    
+    
+</div>
+
+	</div>
+</div>
+
 
 
 
