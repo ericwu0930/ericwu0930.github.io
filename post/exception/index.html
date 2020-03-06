@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="异常处理背后的JVM原理" />
+    <meta property="og:title" content="异常处理背后的JVM原理" />
+    <meta property="twitter:title" content="异常处理背后的JVM原理" />
+    
+
+    
+    <meta name="description" content="整理自《深入理解Java虚拟机》">
+    <meta property="og:description" content="整理自《深入理解Java虚拟机》" />
+    <meta property="twitter:description" content="整理自《深入理解Java虚拟机》" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>异常处理背后的JVM原理-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/exception/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/jvm" title="JVM">
+                            JVM
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                    </div>
+                    <h1>异常处理背后的JVM原理</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Friday, March 6, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-异常分类">1. 异常分类</a></li>
+    <li><a href="#2-异常处理在jvm中的体现">2. 异常处理在JVM中的体现</a></li>
+    <li><a href="#3-finally的执行时机">3. finally的执行时机</a>
+      <ul>
+        <li><a href="#1-finally子句应该是在控制转移语句之前执行">1. finally子句应该是在控制转移语句之前执行</a></li>
+        <li><a href="#2-finally对返回值影响">2. finally对返回值影响</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <h1 id="异常处理背后的jvm原理">异常处理背后的JVM原理</h1>
+<h2 id="1-异常分类">1. 异常分类</h2>
+<p>Java体系中异常的组织分类如下图所示，所有异常类型的根类为 Throwable，具体包括两大类：Error 与 Exception。Error是指程序无法处理的错误，表示运行应用程序中较严重的问题；Exception是指程序本身可以处理的错误，具体可分为运行时异常（派生于RuntimeException）和其他异常。</p>
+<p>派生于RuntimeException的异常包含下面几种情况：</p>
+<ul>
+<li>错误的类型转换</li>
+<li>数组访问越界</li>
+<li>访问null指针</li>
+</ul>
+<p>“如果出现了RuntimeException异常，那一定是你的问题”，例如访问数组前一定要先检测数组下标是否越界；在使用变量之前检测是否为null来杜绝NullPointerException异常的发生。</p>
+<p>Error和RuntimeException是不受检查的异常，其他的所有异常都是受检查的异常。</p>
+<p><img src="http://static.zybuluo.com/Rico123/pgluejr2qhw1pihnh9ozrr57/%E5%BC%82%E5%B8%B8" alt="异常-52.7kB"></p>
+<h2 id="2-异常处理在jvm中的体现">2. 异常处理在JVM中的体现</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            i<span style="color:#f92672">=</span>10<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">//TODO: handle exception
+</span><span style="color:#75715e"></span>            i<span style="color:#f92672">=</span>20<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>字节码反编译后</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#f92672">)</span>V
+    flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0009<span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_STATIC
+    Code<span style="color:#f92672">:</span>
+      stack<span style="color:#f92672">=</span>1<span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span>3<span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span>1
+         0<span style="color:#f92672">:</span> iconst_0
+         1<span style="color:#f92672">:</span> istore_1
+         2<span style="color:#f92672">:</span> bipush        10
+         4<span style="color:#f92672">:</span> istore_1
+         5<span style="color:#f92672">:</span> <span style="color:#66d9ef">goto</span>          12
+         8<span style="color:#f92672">:</span> astore_2
+         9<span style="color:#f92672">:</span> bipush        20
+        11<span style="color:#f92672">:</span> istore_1
+        12<span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
+      Exception table<span style="color:#f92672">:</span>
+         from    to  target type
+             2     5     8   Class java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception
+		LineNumberTable<span style="color:#f92672">:</span>
+        line 6<span style="color:#f92672">:</span> 0
+        line 8<span style="color:#f92672">:</span> 2
+        line 12<span style="color:#f92672">:</span> 5
+        line 9<span style="color:#f92672">:</span> 8
+        line 11<span style="color:#f92672">:</span> 9
+        line 13<span style="color:#f92672">:</span> 12
+      StackMapTable<span style="color:#f92672">:</span> number_of_entries <span style="color:#f92672">=</span> 2
+        	  frame_type <span style="color:#f92672">=</span> 255 <span style="color:#75715e">/* full_frame */</span>
+          offset_delta <span style="color:#f92672">=</span> 8
+          locals <span style="color:#f92672">=</span> <span style="color:#f92672">[</span> <span style="color:#66d9ef">class</span> <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#960050;background-color:#1e0010">[</span><span style="color:#a6e22e">Ljava</span><span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> <span style="color:#f92672">]</span>
+          stack <span style="color:#f92672">=</span> <span style="color:#f92672">[</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">java</span><span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception <span style="color:#f92672">]</span>
+          frame_type <span style="color:#f92672">=</span> 3 <span style="color:#75715e">/* same */</span>
+</code></pre></div><p>Exception table中的一列表示try语句的范围，即2-4行（不包括第五行），如果发生的异常与Exception一致，则进入第8行。第8行的astore_2的含义是将异常对象的引用地址储存在e槽位上。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            i<span style="color:#f92672">=</span>10<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            i<span style="color:#f92672">=</span>20<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span><span style="color:#66d9ef">finally</span><span style="color:#f92672">{</span>
+            i<span style="color:#f92672">=</span>30<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>字节码反编译后</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#f92672">)</span>V
+    flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0009<span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_STATIC
+    Code<span style="color:#f92672">:</span>
+      stack<span style="color:#f92672">=</span>1<span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span>4<span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span>1
+         0<span style="color:#f92672">:</span> iconst_0
+         1<span style="color:#f92672">:</span> istore_1
+         2<span style="color:#f92672">:</span> bipush        10
+         4<span style="color:#f92672">:</span> istore_1
+         5<span style="color:#f92672">:</span> bipush        30
+         7<span style="color:#f92672">:</span> istore_1
+         8<span style="color:#f92672">:</span> <span style="color:#66d9ef">goto</span>          27
+        11<span style="color:#f92672">:</span> astore_2
+        12<span style="color:#f92672">:</span> bipush        20
+        14<span style="color:#f92672">:</span> istore_1
+        15<span style="color:#f92672">:</span> bipush        30
+        17<span style="color:#f92672">:</span> istore_1
+        18<span style="color:#f92672">:</span> <span style="color:#66d9ef">goto</span>          27
+        21<span style="color:#f92672">:</span> astore_3
+        22<span style="color:#f92672">:</span> bipush        30
+        24<span style="color:#f92672">:</span> istore_1
+        25<span style="color:#f92672">:</span> aload_3
+        26<span style="color:#f92672">:</span> athrow
+        27<span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
+      Exception table<span style="color:#f92672">:</span>
+         from    to  target type
+             2     5    11   Class java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception
+             2     5    21   any
+            11    15    21   any
+		LocalVariableTable<span style="color:#f92672">:</span>
+			Start   Length	Slot	Name	Signature
+			   12        3     2      e   Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception<span style="color:#f92672">;</span>
+				0        28     0    args <span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span>
+				2        26     1       i I
+</code></pre></div><p>finally中的代码被复制了三份，分别放入try流程，catch流程以及catch剩余异常类型流程</p>
+<h2 id="3-finally的执行时机">3. finally的执行时机</h2>
+<h3 id="1-finally子句应该是在控制转移语句之前执行">1. finally子句应该是在控制转移语句之前执行</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span> <span style="color:#f92672">{</span> 
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span> 
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;return value of getValue(): &#34;</span> <span style="color:#f92672">+</span> getValue<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span> 
+    <span style="color:#f92672">}</span> 
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getValue</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span> 
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span> 
+                <span style="color:#66d9ef">return</span> 0<span style="color:#f92672">;</span> 
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span> 
+                <span style="color:#66d9ef">return</span> 1<span style="color:#f92672">;</span> 
+            <span style="color:#f92672">}</span> 
+     <span style="color:#f92672">}</span> 
+ <span style="color:#f92672">}</span>
+<span style="color:#75715e">/* Output:
+</span><span style="color:#75715e">        return value of getValue(): 1
+</span><span style="color:#75715e"> */</span><span style="color:#75715e">//:~ 
+</span></code></pre></div><p>try块被执行，其finally子句一定会被执行，因此在return之前，会执行finally块中的return 1指令，自然后返回1；</p>
+<h3 id="2-finally对返回值影响">2. finally对返回值影响</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> result<span style="color:#f92672">=</span>test<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>result<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>10<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">try</span><span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span> i<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span><span style="color:#66d9ef">finally</span><span style="color:#f92672">{</span>
+            i<span style="color:#f92672">=</span>20<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+<span style="color:#75715e">// Output: print 10;
+</span></code></pre></div><p><img src="https://s2.ax1x.com/2020/03/06/3b6D2Q.png" alt="3b6D2Q.png"></p>
+<p>虽然在返回i之前，会首先执行finally子句块中的i=20这一步，但是在执行finally这一步之前，会将数据保存在本地变量表中，执行完finally块后，再将其从变量表中取出并返回。因此，尽管finally中改变了i的值，但是返回的是i的一个拷贝</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/redblackbst/" data-toggle="tooltip" data-placement="top" title="红黑二叉树">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>

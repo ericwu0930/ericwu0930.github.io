@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 03 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 06 Mar 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>异常处理背后的JVM原理</title>
+      <link>https://ericwu0930.github.io/post/exception/</link>
+      <pubDate>Fri, 06 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/exception/</guid>
+      <description>异常处理背后的JVM原理 1. 异常分类 Java体系中异常的组织分类如下图所示，所有异常类型的根类为 Throwable，具体包括两大类：Error</description>
+    </item>
     
     <item>
       <title>红黑二叉树</title>
@@ -66,12 +75,30 @@
     </item>
     
     <item>
+      <title>多态在JVM中的体现</title>
+      <link>https://ericwu0930.github.io/post/polymorphism/</link>
+      <pubDate>Thu, 19 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/polymorphism/</guid>
+      <description>在《Java核心技术卷一》一书中，对方法调用有着比较明确的阐述。书中写道，假设要调用x.f(args)，隐式参数x声明为类C的一个对象，调用</description>
+    </item>
+    
+    <item>
       <title>设计模式学习笔记</title>
       <link>https://ericwu0930.github.io/post/design/</link>
       <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/post/design/</guid>
       <description>设计模式归根到底都是多态的变种 一、Singleton单例模式 只需要一个实例存在，比如PropertyMgr，即阻止别人随意new该对象 Key: 把构</description>
+    </item>
+    
+    <item>
+      <title>JVM方法调用过程</title>
+      <link>https://ericwu0930.github.io/post/method/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/method/</guid>
+      <description>以Demo类中的main方法为例，讲解字节码在虚拟机运行的过程 public class Demo{ public static void main(String[] args) { int a=10; int b=Short.MAX_VALUE+1; int c=a+b; System.out.println(c); } } 通过javap反编译后的代码 eric@wuhaodeMacBook-Pro  ~/Desktop/jvM  javap -v Demo</description>
     </item>
     
     <item>

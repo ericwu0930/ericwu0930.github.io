@@ -224,13 +224,13 @@
   </ul>
 </nav>
                 
-                <p>在类加载过程的加载阶段，“通过一个类的全限定名来获取描述此类的二进制字节流”是通过“类加载器”来实现的。类加载器虽然只用于实现类的加载动作，但在Java程序中起到的作用不限于类加载阶段。比较连个类是否“相等”，只有在这两个类是由同一个类加载器加载的前提下才有意义。
+                <p>在类加载过程的加载阶段，“通过一个类的全限定名来获取描述此类的二进制字节流”是通过“类加载器”来实现的。类加载器虽然只用于实现类的加载动作，但在Java程序中起到的作用不限于类加载阶段。<code>比较连个类是否“相等”，只有在这两个类是由同一个类加载器加载的前提下才有意义。</code>
 在JDK1.8中有四种类加载器，如下图所示</p>
 <p><img src="https://s2.ax1x.com/2020/02/25/3JTeuF.png" alt="3JTeuF.png"></p>
 <p>注：启动类加载器是用c++编写的，无法查看源码；扩展的类加载器只能加载jar文件包</p>
 <h2 id="一双亲委派模式">一、双亲委派模式</h2>
 <p>所谓双亲委派，就是指用类加载器的loadClass方法时查找类的规则：如果一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每一个层次的类加载器都是如此，因此所有的加载请求最终都应该传送到顶层的启动类加载器中（Bootstrap），只有当父加载器反馈自己无法完成这个加载请求时，子加载器才会尝试自己去加载。
-使用双亲委派模型来组织类加载器之间的关系，使Java类随它的类加载器一起具备了带有优先级的层次关系。（例如java.lang.Object，无论哪一个类加载器加载这个类，最终都是由启动类加载器进行加载，因此Object类在程序的各种类加载环境中都是同一个类）</p>
+使用双亲委派模型来组织类加载器之间的关系，使<code>Java类随它的类加载器一起具备了带有优先级的层次关系</code>。（例如java.lang.Object，无论哪一个类加载器加载这个类，最终都是由启动类加载器进行加载，因此Object类在程序的各种类加载环境中都是同一个类）</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">protected</span> Class<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span><span style="color:#f92672">&gt;</span> loadClass<span style="color:#f92672">(</span>String name<span style="color:#f92672">,</span> <span style="color:#66d9ef">boolean</span> resolve<span style="color:#f92672">)</span><span style="color:#66d9ef">throws</span> ClassNotFoundException
 <span style="color:#f92672">{</span>
     <span style="color:#66d9ef">synchronized</span> <span style="color:#f92672">(</span>getClassLoadingLock<span style="color:#f92672">(</span>name<span style="color:#f92672">)</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
@@ -348,12 +348,15 @@ Iterator<span style="color:#f92672">&lt;</span>接口类型<span style="color:#f
 <li>想加载非classpath随意路径中的类文件</li>
 <li>都是通过接口来使用实现，希望解耦时，常用在框架设计</li>
 <li>这些类希望予以隔离，不同应用的同名类都可以加载，不冲突，常见于tomcat容器
-步骤：</li>
+步骤：
+<ul>
 <li>继承ClassLoader父类</li>
 <li>重写findClass方法（如果重写loadClass会破坏双亲委派机制）</li>
 <li>读取类文件的字节码</li>
 <li>调用父类的defineClass方法加载类</li>
 <li>使用者调用该类加载器的<code>loadClass</code>方法</li>
+</ul>
+</li>
 </ul>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClassLoader</span> <span style="color:#66d9ef">extends</span> ClassLoader <span style="color:#f92672">{</span>
     <span style="color:#a6e22e">@Override</span> <span style="color:#75715e">// name 就是类名称
@@ -390,7 +393,7 @@ Iterator<span style="color:#f92672">&lt;</span>接口类型<span style="color:#f
                     
                     
                     <li class="next">
-                        <a href="/post/design/" data-toggle="tooltip" data-placement="top" title="设计模式学习笔记">Next
+                        <a href="/post/method/" data-toggle="tooltip" data-placement="top" title="JVM方法调用过程">Next
                             Post &rarr;</a>
                     </li>
                     
