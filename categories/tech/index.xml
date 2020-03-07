@@ -6,10 +6,19 @@
     <description>Recent content in Tech on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 06 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 07 Mar 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/categories/tech/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>内部类</title>
+      <link>https://ericwu0930.github.io/post/innerclass/</link>
+      <pubDate>Sat, 07 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/innerclass/</guid>
+      <description>之前看过很多遍内部类，但总对其概念比较模糊，这次对其进行一个总结。 1. 内部类的特权 内部类指的是在一个类的内部所定义的类，类名不需要和源文件名相</description>
+    </item>
     
     <item>
       <title>异常处理背后的JVM原理</title>

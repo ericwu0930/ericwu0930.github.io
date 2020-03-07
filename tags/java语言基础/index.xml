@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java语言基础 on Eric&#39;s Blog</title>
+    <link>https://ericwu0930.github.io/tags/java%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/</link>
+    <description>Recent content in Java语言基础 on Eric&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 07 Mar 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://ericwu0930.github.io/tags/java%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>内部类</title>
+      <link>https://ericwu0930.github.io/post/innerclass/</link>
+      <pubDate>Sat, 07 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/innerclass/</guid>
+      <description>之前看过很多遍内部类，但总对其概念比较模糊，这次对其进行一个总结。 1. 内部类的特权 内部类指的是在一个类的内部所定义的类，类名不需要和源文件名相</description>
+    </item>
+    
+  </channel>
+</rss>
