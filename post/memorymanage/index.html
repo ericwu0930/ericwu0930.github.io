@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="内存管理" />
+    <meta property="og:title" content="内存管理" />
+    <meta property="twitter:title" content="内存管理" />
+    
+
+    
+    <meta name="description" content="整理自《深入理解计算机系统》与《现代操作系统》">
+    <meta property="og:description" content="整理自《深入理解计算机系统》与《现代操作系统》" />
+    <meta property="twitter:description" content="整理自《深入理解计算机系统》与《现代操作系统》" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>内存管理-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/memorymanage/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                    </div>
+                    <h1>内存管理</h1>
+                    <h2 class="subheading">操作系统学习笔记</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Monday, September 30, 2019
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-虚拟内存">1. 虚拟内存</a>
+      <ul>
+        <li><a href="#11-页表">1.1 页表</a></li>
+        <li><a href="#12-地址翻译">1.2 地址翻译</a></li>
+        <li><a href="#13-快表">1.3 快表</a></li>
+        <li><a href="#14-多级页表">1.4 多级页表</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-页面置换算法">2. 页面置换算法</a></li>
+    <li><a href="#3-工作集与抖动">3. 工作集与抖动</a></li>
+    <li><a href="#4-分段">4. 分段</a>
+      <ul>
+        <li><a href="#41-纯分段的实现">4.1 纯分段的实现</a></li>
+        <li><a href="#42-段页式">4.2 段页式</a></li>
+        <li><a href="#43-分段与分页的比较">4.3 分段与分页的比较</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <p>如果不对内存抽象，会面临两个问题。第一，用户程序可以很容易的破坏才做系统；第二，想要同时运行多个程序比较困难，需要对程序进行重定位。于是现代操作系统提出了一种对主存的抽象概念，叫做虚拟内存。</p>
+<p>虚拟内存提供了三个重要的能力：</p>
+<ol>
+<li>它将主存看成是一个存储在磁盘上的地址空间的高速缓存（地址空间即一套地址的集合）</li>
+<li>它为每个进程提供了一致的地址空间，从而简化了内存管理</li>
+<li>它保护了每个进程的地址空间不被进程破坏</li>
+</ol>
+<h2 id="1-虚拟内存">1. 虚拟内存</h2>
+<h3 id="11-页表">1.1 页表</h3>
+<p>虚拟内存的基本思想是：每个进程拥有独立的地址空间，这个空间被分为大小相等的多个块，称为<strong>页</strong>(Page)。这些页被映射到物理内存，在物理内存中对应的单元被称为<strong>页框</strong>，并不是所有的页都被放入主存中。为了建立从虚拟页到物理页之间的映射，我们需要一个名为<strong>页表</strong>的数据结构。</p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xbdvF.png" alt="3xbdvF.png"></p>
+<p>另外，操作系统为了提供手段来控制对内存系统的访问，在页表上增添了权限位。因为每次CPU生成一个地址时，地址反映硬件都会读一个页表项，因此很有效的实现了对内存访问的控制。</p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xbDb9.png" alt="3xbDb9.png"></p>
+<p>页面大小是操作系统可以选择的一个参数，页面过大或过小都不可以。</p>
+<p>如果页面过大，会使得内部碎片过多（分配的页面没有被充分使用）；如果页表过小，页表项势必会增多，从磁盘到内存传输页表的时间必然会增多，另外这也会使得TLB的命中率降低。</p>
+<h3 id="12-地址翻译">1.2 地址翻译</h3>
+<p>页表提供了从虚拟页到物理页的映射关系，那么如何实现从虚拟地址到物理地址的转换呢？</p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xb4DH.png" alt="3xb4DH.png"></p>
+<p>实现地址翻译的是一个被被称为MMU的硬件单元，它接收CPU发出的虚拟地址指令，MMU通过计算得到页表项的地址，然后找到页表中的这个页表项，得到物理页号，将物理页号替代虚拟页号得到物理地址。</p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xboVA.png" alt="3xboVA.png"></p>
+<h3 id="13-快表">1.3 快表</h3>
+<p>在MMU中集成一个快表，含有少量表项。将一个虚拟地址放入MMU中进行转换时，硬件首先通过将该虚拟页号与TLB中所有表象进行匹配，判断页面是否在其中。如果在，则将页框取出而不必访问页表；否则，会进行正常的页表查询，接着从TLB中淘汰一个表项，然后用新找到的页表项代替它。</p>
+<h3 id="14-多级页表">1.4 多级页表</h3>
+<p>考虑这样一个数字，对于一个32位的地址空间，4KB的页面大小和一个表项占4字节，则应该拥有2^32/2^12=2^20个表项，每个表项4字节，则该页表一共占有2^20*4=2^22=4MB，如果是64位系统则页表会更大。引入多级页表的原因是避免把全部页面一直保存在内存中。特别是那些从不需要的页表就不应该保留。</p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xbOxS.png" alt="3xbOxS.png"></p>
+<h2 id="2-页面置换算法">2. 页面置换算法</h2>
+<ol>
+<li>
+<p><strong>最佳（OPT）</strong></p>
+<p>所选择的被换出的页面将是最长时间内不再被访问，通常可以保证获得最低的缺页率。是一种理论上的算法，因为无法知道一个页面多长时间不再被访问。</p>
+<p>举例：一个系统为某进程分配了三个物理块，并有如下页面引用序列：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">7，0，1，2，0，3，0，4，2，3，0，3，2，1，2，0，1，7，0，1
+</code></pre></div><p>开始运行时，先将 7, 0, 1 三个页面装入内存。当进程要访问页面 2 时，产生缺页中断，会将页面 7 换出，因为页面 7 再次被访问的时间最长。</p>
+</li>
+<li>
+<p><strong>最近最久未使用（LRU）</strong></p>
+<p>虽然无法知道将来要使用的页面情况，但是可以知道过去使用页面的情况。LRU 将最近最久未使用的页面换出。</p>
+<p>为了实现 LRU，需要在内存中维护一个所有页面的链表。当一个页面被访问时，将这个页面移到链表表头。这样就能保证链表表尾的页面是最近最久未访问的。</p>
+<p>因为每次访问都需要更新链表，因此这种方式实现的 LRU 代价很高。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">4，7，0，7，1，0，1，2，1，2，6
+</code></pre></div><p><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/eb859228-c0f2-4bce-910d-d9f76929352b.png" alt="img"></p>
+</li>
+<li>
+<p><strong>先进先出（FIFO）</strong></p>
+<p>选择换出的页面是最先进入的页面。</p>
+<p>该算法会将那些经常被访问的页面也被换出，从而使缺页率升高。</p>
+</li>
+</ol>
+<h2 id="3-工作集与抖动">3. 工作集与抖动</h2>
+<p>大部分进程对内存的访问都表现出局部性访问的行为。（<strong>空间局部</strong>：内存中被访问的页周围的页也很可能被访问；<strong>时间局部</strong>：最近被访问的页在不久的将来还会被访问）</p>
+<p>一个进程当前正在使用的页面的集合称为它的工作集。如果整个工作集都被装入到内存中，那么就不会产生缺页。因此，如果内存太小无法容纳下整个工作集，便会导致大量的缺页，页面被频繁地换入和换出，使程序运行速度受到很大影响，我们称之为<strong>抖动</strong>。</p>
+<p>导致抖动的原因除了上面提到的内存过小，加载的程序过多以外，还可能是不正确的页面置换算法导致的。</p>
+<h2 id="4-分段">4. 分段</h2>
+<blockquote>
+<p>部分引用自cyc2018关于分段技术的<a href="https://cyc2018.github.io/CS-Notes/#/notes/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%20-%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86?id=_1-%e6%9c%80%e4%bd%b3">总结</a></p>
+</blockquote>
+<h3 id="41-纯分段的实现">4.1 纯分段的实现</h3>
+<p>虚拟内存采用的是分页技术，也就是将地址空间划分成固定大小的页，每一页再与内存进行映射。</p>
+<p>下图为一个编译器在编译过程中建立的多个表，有 4 个表是动态增长的，如果使用分页系统的一维地址空间，动态增长的特点会导致覆盖问题的出现。</p>
+<p><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/22de0538-7c6e-4365-bd3b-8ce3c5900216.png" alt="img"></p>
+<p>分段的做法是把每个表分成段，一个段构成一个独立的地址空间。每个段的长度可以不同，并且可以动态增长。</p>
+<p><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/e0900bb2-220a-43b7-9aa9-1d5cd55ff56e.png" alt="img"></p>
+<h3 id="42-段页式">4.2 段页式</h3>
+<p>程序的地址空间划分成多个拥有独立地址空间的段，每个段上的地址空间划分成大小相同的页。这样既拥有分段系统的共享和保护，又拥有分页系统的虚拟内存功能。</p>
+<p>在MULTICS系统中，一个地址由两部分构成：段和段内地址。段内地址又进一步分为页和页内的字。在进行内存访问时，执行下面的算法：</p>
+<ol>
+<li>根据段号知道段描述符</li>
+<li>检查该段的页表是否在内存中，如果在，则知道它的位置，如果不在，则产生一个段错误</li>
+<li>检查所请求虚拟页面的页表项，如果该页面不在内存中则产生一个缺页中断，如果在内存就从页表项中取出这个页面在内存中的起始地址</li>
+<li>把偏移量加到页面的起始地址上，得到要访问的字在内存中的地址</li>
+<li>最后进行读或写操作</li>
+</ol>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xqnaR.png" alt="3xqnaR.png"></p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xqlRK.png" alt="3xqlRK.png"></p>
+<h3 id="43-分段与分页的比较">4.3 分段与分页的比较</h3>
+<ul>
+<li>对程序员的透明性：分页透明，但是分段需要程序员显式划分每个段。</li>
+<li>地址空间的维度：分页是一维地址空间，分段是二维的。</li>
+<li>大小是否可以改变：页的大小不可变，段的大小可以动态改变。</li>
+<li>出现的原因：分页主要用于实现虚拟内存，从而获得更大的地址空间；分段主要是为了使程序和数据可以被划分为逻辑上独立的地址空间并且有助于共享和保护。</li>
+</ul>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/process/" data-toggle="tooltip" data-placement="top" title="进程和线程">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/gc_1/" data-toggle="tooltip" data-placement="top" title="JVM垃圾收集策略">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="进程和线程" />
+    <meta property="og:title" content="进程和线程" />
+    <meta property="twitter:title" content="进程和线程" />
+    
+
+    
+    <meta name="description" content="整理自《深入理解计算机系统》与《现代操作系统》">
+    <meta property="og:description" content="整理自《深入理解计算机系统》与《现代操作系统》" />
+    <meta property="twitter:description" content="整理自《深入理解计算机系统》与《现代操作系统》" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>进程和线程-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/process/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" title="操作系统">
+                            操作系统
+                        </a>
+                        
+                    </div>
+                    <h1>进程和线程</h1>
+                    <h2 class="subheading">操作系统学习笔记</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Tuesday, September 10, 2019
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-进程">1. 进程</a>
+      <ul>
+        <li><a href="#11-概念">1.1 概念</a></li>
+        <li><a href="#12-进程的创建与终止">1.2 进程的创建与终止</a></li>
+        <li><a href="#13-进程的状态">1.3 进程的状态</a></li>
+        <li><a href="#15-进程控制块-pcb">1.5 进程控制块 PCB</a></li>
+        <li><a href="#14-异常的处理">1.4 异常的处理</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-线程">2. 线程</a>
+      <ul>
+        <li><a href="#21--线程与进程的区别">2.1  线程与进程的区别</a></li>
+        <li><a href="#22-线程的实现方式">2.2 线程的实现方式</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-进程同步">3. 进程同步</a>
+      <ul>
+        <li><a href="#31-信号量">3.1 信号量</a></li>
+        <li><a href="#32-管程">3.2 管程</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-经典同步问题">4. 经典同步问题</a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+    <li><a href="#5-进程的调度算法">5. 进程的调度算法</a>
+      <ul>
+        <li><a href="#51-批处理系统">5.1 批处理系统</a></li>
+        <li><a href="#52-交互式系统">5.2 交互式系统</a></li>
+        <li><a href="#53-实时系统">5.3 实时系统</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <h2 id="1-进程">1. 进程</h2>
+<h3 id="11-概念">1.1 概念</h3>
+<p>进程的经典定义是一个执行中的程序的实例。与每个进程相关的是地址空间，地址空间中存放有可执行程序、程序的数据以及程序的堆栈。与每个进程相关的还有资源集，通常包括寄存器（含有程序计数器和堆栈指针）等。进程基本上是容纳运行一个程序所需要所有信息的容器。</p>
+<p>在许多操作系统中，与一个进程有关的所有信息，除了该进程自身地址空间的内容以外，均存放在操作系统的一张表中，称为进程表。</p>
+<p>另补充一个概念：</p>
+<ul>
+<li>并发：两个或多个事件在同一个时间段内发生</li>
+<li>并行：两个或多个事件在同一时刻发生（同时发生），并行是并发的真子集</li>
+</ul>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xqjW6.png" alt="3xqjW6.png"></p>
+<h3 id="12-进程的创建与终止">1.2 进程的创建与终止</h3>
+<p>在Unix中，父进程通过fork函数创建一个新的运行的进程。新创建的子进程几乎但不完全与父进程相同。子进程得到与父进程用户级虚拟地址空间相同的（但是独立的）一份副本，包括代码和数据段、堆、共享库以及用户栈。不可写的内存区是共享的，可写的内存区域通过写时复制共享。</p>
+<p>由于fork的这一机制，操作系统的进程间是有层级关系的，init是所有进程的父进程。</p>
+<p>当一个进程由于某种原因终止时，内核并不是立即把它从系统中清除，而是保持这一状态，直到被它的父进程回收。一个终止但还未回收的进程被称为僵尸进程。</p>
+<h3 id="13-进程的状态">1.3 进程的状态</h3>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xqxSK.png" alt="3xqxSK.png"></p>
+<p>就绪是由于没有被分到时间片导致的，一旦被分配到CPU资源即可运行。阻塞并不是因为没有CPU。只有就绪和运行是双向转换的。</p>
+<h3 id="15-进程控制块-pcb">1.5 进程控制块 PCB</h3>
+<p>为了实现进程模型，操作系统维护着一张表格，即进程控制块，每个进程占用一个进程表项。该表项包含了进程状态的重要信息，包括程序计数器、堆栈指针、内存分配状况、所打开的文件状态。当进程由运行态变为阻塞态或就绪态时，会将必要的信息保存在PCB中。</p>
+<h3 id="14-异常的处理">1.4 异常的处理</h3>
+<p>异常可以分为以下四类，</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>原因</th>
+<th>异步/同步</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>中断</td>
+<td>来自I/O设备的信号</td>
+<td>异步</td>
+</tr>
+<tr>
+<td>陷阱</td>
+<td>有意的异常，系统调用</td>
+<td>同步</td>
+</tr>
+<tr>
+<td>故障</td>
+<td>潜在可恢复的错误</td>
+<td>同步</td>
+</tr>
+<tr>
+<td>终止</td>
+<td>不可恢复的错误</td>
+<td>同步</td>
+</tr>
+</tbody>
+</table>
+<p>系统中为每一种可能的异常分配了一个唯一的非负整数的异常号，在系统启动时，操作系统分配和初始化一张异常表，异常表的起始位置放在一个叫异常表基址寄存器的特殊CPU寄存器里。</p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xqzQO.png" alt="3xqzQO.png"></p>
+<h2 id="2-线程">2. 线程</h2>
+<h3 id="21--线程与进程的区别">2.1  线程与进程的区别</h3>
+<ol>
+<li>
+<p>进程是对运行时程序的封装，是系统进行<code>资源调度和分配的的基本单位</code>，实现了操作系统的并发；</p>
+</li>
+<li>
+<p>线程是进程的子任务，是<code>CPU调度和分派的基本单位</code>，用于保证程序的 实时性，实现进程内部的并发；</p>
+</li>
+<li>
+<p>一个程序至少有一个进程，一个进程至少有一个线程，线程依赖于进程而存在；</p>
+</li>
+<li>
+<p>进程在执行过程中拥有独立的内存单元，多线程拥有相同的地址空间。（第一列是进程中线程共有的，第二列是每个线程中独占的）</p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xLpOe.png" alt="3xLpOe.png"></p>
+</li>
+<li>
+<p>线程创建和撤销消耗的代价更低</p>
+</li>
+</ol>
+<h3 id="22-线程的实现方式">2.2 线程的实现方式</h3>
+<p>有两种线程实现方式，左图是用户级线程包；右图是由内核管理的线程包。</p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xLel8.png" alt="3xLel8.png"></p>
+<ol>
+<li>
+<p>在用户空间中实现线程</p>
+<p>该方法将线程包放在用户空间中，内核对线程包一无所知。每个进程都需要有专门的线程表。进行线程切换时不需要陷入内核，不需要上下文切换，并且它允许每个进程都有自己定制的调度算法。</p>
+</li>
+<li>
+<p>在内核中实现线程</p>
+<p>在内核中有用来记录系统中素有线程的线程表，当某个线程希望创建一个新线程或撤销一个已有线程时，它进行一个系统调用。由于在内核中创建或撤销线程的代价大，提出了线程池的概念。</p>
+</li>
+</ol>
+<p>线程的实现方式不同，线程的调度方式也不同。</p>
+<p>考虑用户级线程，由于内核并不知道线程的存在，选取一个进程，给予A时间片，A中的线程调度程序决定哪个线程运行，A时间片可能会被A中的一个线程独占，也或者被A中多个线程分配。</p>
+<p>如果是内核级线程，内核选择一个特定的线程运行，不用考虑线程属于哪个进程，不过如果有必要的话，可以这么做（跨进程调度线程开销大，内核会将这个开销考虑进去）</p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xLnOg.png" alt="3xLnOg.png"></p>
+<h2 id="3-进程同步">3. 进程同步</h2>
+<p>进程间通信需要解决三个问题：如果将消息传递给另一个，如何保证进程在关键活动中不会出现打叉，如何保证按照正确的顺序进行。</p>
+<p>当两个或多个进程读写某些共享数据，而最后的结果取决于进程运行的精确时序，称为竞争条件。避免竞争条件的关键是创建临界区。保证同一时刻，只有一个进程访问共享资源，换言之，我们需要的是<code>互斥</code>。除了互斥之外，我们还需要保证多进程的执行按某种顺序执行，我们称之为<code>同步</code>。有许多方法可以创建临界区，其中最常见的一种是信号量和管程。</p>
+<h3 id="31-信号量">3.1 信号量</h3>
+<p>由Dijkstra提出，引入了一种新的变量类型，信号量。对于每一个信号量都有两种操作，up和down。up和down操作包括对信号量的检查、修改以及可能发生的睡眠操作，这几个步骤是不可分割的，即是原子操作。</p>
+<p>使用信号量实现生产者-消费者问题</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#960050;background-color:#1e0010">#</span>define N 100
+typedef <span style="color:#66d9ef">int</span> semaphore<span style="color:#f92672">;</span>
+semaphore mutex <span style="color:#f92672">=</span> 1<span style="color:#f92672">;</span>
+semaphore empty <span style="color:#f92672">=</span> N<span style="color:#f92672">;</span>
+semaphore full <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">producer</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">while</span><span style="color:#f92672">(</span>TRUE<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> item <span style="color:#f92672">=</span> produce_item<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        down<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>empty<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        down<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>mutex<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        insert_item<span style="color:#f92672">(</span>item<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        up<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>mutex<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        up<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>full<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">consumer</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">while</span><span style="color:#f92672">(</span>TRUE<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        down<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>full<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        down<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>mutex<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> item <span style="color:#f92672">=</span> remove_item<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        consume_item<span style="color:#f92672">(</span>item<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        up<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>mutex<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        up<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>empty<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>信号量mutex用于互斥的访问缓冲区，full和empty是为了实现同步。</p>
+<h3 id="32-管程">3.2 管程</h3>
+<p>管程有一个重要特性：在一个时刻只能有一个进程使用管程。进程在无法继续执行的时候不能一直占用管程，否则其它进程永远不能使用管程。</p>
+<p>管程引入了 <strong>条件变量</strong> 以及相关的操作：<strong>wait()</strong> 和 <strong>signal()</strong> 来实现同步操作。对条件变量执行 wait() 操作会导致调用进程阻塞，把管程让出来给另一个进程持有。signal() 操作用于唤醒被阻塞的进程。</p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xLMwj.png" alt="3xLMwj.png"></p>
+<h2 id="4-经典同步问题">4. 经典同步问题</h2>
+<h4 id="41--哲学家进餐问题">4.1  哲学家进餐问题</h4>
+<p><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/a9077f06-7584-4f2b-8c20-3a8e46928820.jpg" alt="img"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#960050;background-color:#1e0010">#</span>define N 5
+<span style="color:#960050;background-color:#1e0010">#</span>define <span style="color:#a6e22e">LEFT</span> <span style="color:#f92672">(</span>i <span style="color:#f92672">+</span> N <span style="color:#f92672">-</span> 1<span style="color:#f92672">)</span> <span style="color:#f92672">%</span> N <span style="color:#75715e">// 左邻居
+</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">#</span>define <span style="color:#a6e22e">RIGHT</span> <span style="color:#f92672">(</span>i <span style="color:#f92672">+</span> 1<span style="color:#f92672">)</span> <span style="color:#f92672">%</span> N    <span style="color:#75715e">// 右邻居
+</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">#</span>define THINKING 0
+<span style="color:#960050;background-color:#1e0010">#</span>define HUNGRY   1
+<span style="color:#960050;background-color:#1e0010">#</span>define EATING   2
+typedef <span style="color:#66d9ef">int</span> semaphore<span style="color:#f92672">;</span>
+<span style="color:#66d9ef">int</span> state<span style="color:#f92672">[</span>N<span style="color:#f92672">]</span><span style="color:#f92672">;</span>                <span style="color:#75715e">// 跟踪每个哲学家的状态，需要互斥访问
+</span><span style="color:#75715e"></span>semaphore mutex <span style="color:#f92672">=</span> 1<span style="color:#f92672">;</span>         <span style="color:#75715e">// 临界区的互斥，临界区是 state 数组，对其修改需要互斥
+</span><span style="color:#75715e"></span>semaphore s<span style="color:#f92672">[</span>N<span style="color:#f92672">]</span><span style="color:#f92672">;</span>              <span style="color:#75715e">// 每个哲学家一个信号量
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">philosopher</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">while</span><span style="color:#f92672">(</span>TRUE<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        think<span style="color:#f92672">(</span>i<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        take_two<span style="color:#f92672">(</span>i<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        eat<span style="color:#f92672">(</span>i<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        put_two<span style="color:#f92672">(</span>i<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">take_forks</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    down<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>mutex<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    state<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> HUNGRY<span style="color:#f92672">;</span>
+    check<span style="color:#f92672">(</span>i<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    up<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>mutex<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    down<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>s<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span> <span style="color:#75715e">// 只有收到通知之后才可以开始吃，否则会一直等下去
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">put_forks</span><span style="color:#f92672">(</span>i<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    down<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>mutex<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    state<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> THINKING<span style="color:#f92672">;</span>
+    check<span style="color:#f92672">(</span>LEFT<span style="color:#f92672">)</span><span style="color:#f92672">;</span> <span style="color:#75715e">// 尝试通知左右邻居，自己吃完了，你们可以开始吃了
+</span><span style="color:#75715e"></span>    check<span style="color:#f92672">(</span>RIGHT<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    up<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>mutex<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eat</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    down<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>mutex<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    state<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> EATING<span style="color:#f92672">;</span>
+    up<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>mutex<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#75715e">// 检查两个邻居是否都没有用餐，如果是的话，就 up(&amp;s[i])，使得 down(&amp;s[i]) 能够得到通知并继续执行
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">check</span><span style="color:#f92672">(</span>i<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>         
+    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>state<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> HUNGRY <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> state<span style="color:#f92672">[</span>LEFT<span style="color:#f92672">]</span> <span style="color:#f92672">!</span><span style="color:#f92672">=</span> EATING <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> state<span style="color:#f92672">[</span>RIGHT<span style="color:#f92672">]</span> <span style="color:#f92672">!</span><span style="color:#f92672">=</span>EATING<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        state<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> EATING<span style="color:#f92672">;</span>
+        up<span style="color:#f92672">(</span><span style="color:#f92672">&amp;</span>s<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>为每个哲学家设置一个信号量，用数组装填，再设置一个互斥量，互斥的访问状态数组state[i]</p>
+<h4 id="42-读者-写者问题">4.2 读者-写者问题</h4>
+<p>允许多个进程同时对数据进行读操作，但是不允许读和写以及写和写操作同时发生。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">int</span> semaphore;
+semaphore count_mutex <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+semaphore data_mutex <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+<span style="color:#66d9ef">int</span> count <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">reader</span>() {
+    <span style="color:#66d9ef">while</span>(TRUE) {
+        down(<span style="color:#f92672">&amp;</span>count_mutex);
+        count<span style="color:#f92672">+</span><span style="color:#f92672">+</span>;
+        <span style="color:#66d9ef">if</span>(count <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>) down(<span style="color:#f92672">&amp;</span>data_mutex); <span style="color:#75715e">// 第一个读者需要对数据进行加锁，防止写进程访问
+</span><span style="color:#75715e"></span>        up(<span style="color:#f92672">&amp;</span>count_mutex);
+        read();
+        down(<span style="color:#f92672">&amp;</span>count_mutex);
+        count<span style="color:#f92672">-</span><span style="color:#f92672">-</span>;
+        <span style="color:#66d9ef">if</span>(count <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) up(<span style="color:#f92672">&amp;</span>data_mutex);
+        up(<span style="color:#f92672">&amp;</span>count_mutex);
+    }
+}
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">writer</span>() {
+    <span style="color:#66d9ef">while</span>(TRUE) {
+        down(<span style="color:#f92672">&amp;</span>data_mutex);
+        write();
+        up(<span style="color:#f92672">&amp;</span>data_mutex);
+    }
+}
+</code></pre></div><h2 id="5-进程的调度算法">5. 进程的调度算法</h2>
+<h3 id="51-批处理系统">5.1 批处理系统</h3>
+<p>批处理系统没有太多的用户操作，在该系统中，调度算法目标是保证吞吐量和周转时间（从提交到终止的时间）。</p>
+<p><strong>1 先来先服务 first-come first-serverd（FCFS）</strong></p>
+<p>非抢占式的调度算法，按照请求的顺序进行调度。</p>
+<p>有利于长作业，但不利于短作业，因为短作业必须一直等待前面的长作业执行完毕才能执行，而长作业又需要执行很长时间，造成了短作业等待时间过长。</p>
+<p><strong>2 短作业优先 shortest job first（SJF）</strong></p>
+<p>非抢占式的调度算法，按估计运行时间最短的顺序进行调度。</p>
+<p>长作业有可能会饿死，处于一直等待短作业执行完毕的状态。因为如果一直有短作业到来，那么长作业永远得不到调度。</p>
+<h3 id="52-交互式系统">5.2 交互式系统</h3>
+<p>交互式系统有大量的用户交互操作，在该系统中调度算法的目标是快速地进行响应。</p>
+<p><strong>1 时间片轮转</strong></p>
+<p>将所有就绪进程按 FCFS 的原则排成一个队列，每次调度时，把 CPU 时间分配给队首进程，该进程可以执行一个时间片。当时间片用完时，由计时器发出时钟中断，调度程序便停止该进程的执行，并将它送往就绪队列的末尾，同时继续把 CPU 时间分配给队首的进程。</p>
+<p>时间片轮转算法的效率和时间片的大小有很大关系：</p>
+<ul>
+<li>因为进程切换都要保存进程的信息并且载入新进程的信息，如果时间片太小，会导致进程切换得太频繁，在进程切换上就会花过多时间。</li>
+<li>而如果时间片过长，那么实时性就不能得到保证。</li>
+</ul>
+<p><strong>2 优先级调度</strong></p>
+<p><img src="https://s2.ax1x.com/2020/03/08/3xLd0J.png" alt="3xLd0J.png"></p>
+<p>为每个进程分配一个优先级，按优先级进行调度。</p>
+<p>为了防止低优先级的进程永远等不到调度（饥饿现象），可以随着时间的推移增加等待进程的优先级。</p>
+<p><strong>3 多级反馈队列</strong></p>
+<p>一个进程需要执行 100 个时间片，如果采用时间片轮转调度算法，那么需要交换 100 次。</p>
+<p>多级队列是为这种需要连续执行多个时间片的进程考虑，它设置了多个队列，每个队列时间片大小都不同，例如 1,2,4,8,..。进程在第一个队列没执行完，就会被移到下一个队列。这种方式下，之前的进程只需要交换 7 次。</p>
+<p>每个队列优先权也不同，最上面的优先权最高。因此只有上一个队列没有进程在排队，才能调度当前队列上的进程。</p>
+<p>可以将这种调度算法看成是时间片轮转调度算法和优先级调度算法的结合。</p>
+<p><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/042cf928-3c8e-4815-ae9c-f2780202c68f.png" alt="img"></p>
+<h3 id="53-实时系统">5.3 实时系统</h3>
+<p>实时系统要求一个请求在一个确定时间内得到响应。</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/post/memorymanage/" data-toggle="tooltip" data-placement="top" title="内存管理">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>

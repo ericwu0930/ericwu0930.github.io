@@ -165,6 +165,24 @@
     </item>
     
     <item>
+      <title>内存管理</title>
+      <link>https://ericwu0930.github.io/post/memorymanage/</link>
+      <pubDate>Mon, 30 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/memorymanage/</guid>
+      <description>如果不对内存抽象，会面临两个问题。第一，用户程序可以很容易的破坏才做系统；第二，想要同时运行多个程序比较困难，需要对程序进行重定位。于是现代</description>
+    </item>
+    
+    <item>
+      <title>进程和线程</title>
+      <link>https://ericwu0930.github.io/post/process/</link>
+      <pubDate>Tue, 10 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/process/</guid>
+      <description>1. 进程 1.1 概念 进程的经典定义是一个执行中的程序的实例。与每个进程相关的是地址空间，地址空间中存放有可执行程序、程序的数据以及程序的堆栈。与每个</description>
+    </item>
+    
+    <item>
       <title></title>
       <link>https://ericwu0930.github.io/search/placeholder/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
