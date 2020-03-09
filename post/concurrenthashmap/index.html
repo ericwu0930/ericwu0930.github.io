@@ -322,7 +322,7 @@
 </ul>
 <p><img src="https://static.oschina.net/uploads/img/201612/29164827_4mOm.png" alt="1.7ConcurrentHashMap的get过程"></p>
 <h2 id="2-concurrenthashmap在jdk18中的设计">2. ConCurrentHashMap在JDK1.8中的设计</h2>
-<p>1.8的ConcurrentHashMap摒弃了1.7的segment设计，而是在1.8HashMap的基础上使用CAS + synchronized实现了线程安全。</p>
+<p>1.8的ConcurrentHashMap摒弃了1.7的segment设计，而是在1.8HashMap的基础上使用CAS + synchronized实现了线程安全。（也可以理解为将锁细化了，将锁加载每一个桶上）</p>
 <p>数组可以扩容，链表可以转化为红黑树，其底层结构如下图所示：</p>
 <p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/QCu849YTaIPf1sDCN5zcDdGsibZwyzy9r6hAjXjUBUbenB9FQ9BKXGQaQ0M64Q7HP9fTYSKBWkrrZfmsibdEcKDg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
 <p>摒弃了原来的Segment分段锁结果，并将存放数据的HashEntry改为了Node，但作用是相同的。</p>
