@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="ConcurrentHashMap源码分析" />
+    <meta property="og:title" content="ConcurrentHashMap源码分析" />
+    <meta property="twitter:title" content="ConcurrentHashMap源码分析" />
+    
+
+    
+    <meta name="description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。">
+    <meta property="og:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    <meta property="twitter:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>ConcurrentHashMap源码分析-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/concurrenthashmap/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90" title="源码分析">
+                            源码分析
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                    </div>
+                    <h1>ConcurrentHashMap源码分析</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Monday, March 9, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-concurrenthashmap在jdk17中的设计">1. ConCurrentHashMap在JDK1.7中的设计</a>
+      <ul>
+        <li><a href="#11-整体概览">1.1 整体概览</a></li>
+        <li><a href="#12-put过程">1.2 put过程</a></li>
+        <li><a href="#13-扩容过程">1.3 扩容过程</a></li>
+        <li><a href="#14-get过程">1.4 get过程</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-concurrenthashmap在jdk18中的设计">2. ConCurrentHashMap在JDK1.8中的设计</a>
+      <ul>
+        <li><a href="#21-put操作">2.1 put操作</a></li>
+        <li><a href="#22-get操作">2.2 get操作</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-总结">3. 总结</a></li>
+  </ul>
+</nav>
+                
+                <blockquote>
+<p>本文总结自以下两篇博文，https://blog.csdn.net/weixin_44460333/article/details/86770169，https://my.oschina.net/pingpangkuangmo/blog/817973，修改了一些typo，并添加了一部分自己的理解，非常感谢两位博主的精彩总结以及无私奉献！</p>
+</blockquote>
+<p>众所周知，HashMap是线程不安全的，当并发操作HashMap会产生诸多问题，甚至在JDK1.7中，多线程对HashMap进行扩容时，会形成环形<a href="https://www.cnblogs.com/lonelyJay/p/9726187.html">链表</a>。ConcurrentHashMap是HashMap的多线程安全版，其在JDK1.7之后发生了很多变化，在此我们进行一些对比。</p>
+<h2 id="1-concurrenthashmap在jdk17中的设计">1. ConCurrentHashMap在JDK1.7中的设计</h2>
+<p>ConcurrentHashMap是线程安全，通过分段锁的方式提高了并发度。分段是一开始就确定的了，后期不能再进行扩容的。通过分段锁，其支持N个Segment这么多次数的并发。</p>
+<p>其中的段Segment继承了重入锁ReentrantLock，有了锁的功能，同时含有类似HashMap中的数组加链表结构（这里没有使用红黑树）</p>
+<p>虽然Segment的个数是不能扩容的，但是单个Segment里面的数组是可以扩容的。其底层结构如下图所示：</p>
+<p><img src="http://static.zybuluo.com/Rico123/91c1itf4k1viprpx41f55bdr/ConcurrentHashMap.jpg" alt="ConcurrentHashMap.jpg-21.4kB"></p>
+<h3 id="11-整体概览">1.1 整体概览</h3>
+<p>Conccurent核心成员变量：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">1    <span style="color:#75715e">/**
+</span><span style="color:#75715e">2     * Segment 数组，存放数据时首先需要定位到具体的 Segment 中。
+</span><span style="color:#75715e">3     */</span>
+4    <span style="color:#66d9ef">final</span> Segment<span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span> segments<span style="color:#f92672">;</span>
+5
+6    <span style="color:#66d9ef">transient</span> Set<span style="color:#f92672">&lt;</span>K<span style="color:#f92672">&gt;</span> keySet<span style="color:#f92672">;</span>
+7    <span style="color:#66d9ef">transient</span> Set<span style="color:#f92672">&lt;</span>Map<span style="color:#f92672">.</span><span style="color:#a6e22e">Entry</span><span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span> entrySet<span style="color:#f92672">;</span>
+
+</code></pre></div><p>Segment是ConcurrentHashMap的一个内部类，主要组成如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> 1    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Segment</span><span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> ReentrantLock <span style="color:#66d9ef">implements</span> Serializable <span style="color:#f92672">{</span>
+ 2
+ 3        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">long</span> serialVersionUID <span style="color:#f92672">=</span> 2249069246763182397L<span style="color:#f92672">;</span>
+ 4
+ 5        <span style="color:#75715e">// Segment中有一个table，等同于HashMap中的table
+</span><span style="color:#75715e"></span> 6        <span style="color:#66d9ef">transient</span> <span style="color:#66d9ef">volatile</span> HashEntry<span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span> table<span style="color:#f92672">;</span> 
+ 7
+ 8        <span style="color:#66d9ef">transient</span> <span style="color:#66d9ef">int</span> count<span style="color:#f92672">;</span>
+ 9
+10        <span style="color:#66d9ef">transient</span> <span style="color:#66d9ef">int</span> modCount<span style="color:#f92672">;</span>
+11
+12        <span style="color:#66d9ef">transient</span> <span style="color:#66d9ef">int</span> threshold<span style="color:#f92672">;</span>
+13
+14        <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">float</span> loadFactor<span style="color:#f92672">;</span>
+15
+16    <span style="color:#f92672">}</span>
+</code></pre></div><p>再看一下HashEntry的组成：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HashEntry</span><span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> hash<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">final</span> K key<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">volatile</span> V value<span style="color:#f92672">;</span>              <span style="color:#75715e">//重点！使用volatile保证了value变量在内存的可见性
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">volatile</span> HashEntry<span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span> next<span style="color:#f92672">;</span>  <span style="color:#75715e">//重点！保证了链表的指针在内存的可见性
+</span><span style="color:#75715e"></span>    
+    HashEntry<span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> hash<span style="color:#f92672">,</span>K key<span style="color:#f92672">,</span> V value<span style="color:#f92672">,</span> HashEntry<span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span> next<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">hash</span><span style="color:#f92672">=</span>hash<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">key</span><span style="color:#f92672">=</span>key<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">value</span><span style="color:#f92672">=</span>value<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">next</span><span style="color:#f92672">=</span>next<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h3 id="12-put过程">1.2 put过程</h3>
+<ul>
+<li>首先是通过 key 定位到 Segment，之后在对应的 Segment 中进行具体的 put。</li>
+<li>在<code>1</code>尝试获取锁，如果获取失败，则可定时有其他线程存在竞争，则利用scanAndLockForPut（）自旋获取锁</li>
+<li>在当前的Segment中的table中，通过key的hashCode定位到了HashEntry</li>
+<li>遍历该HashEntry，如果不为空则判断传入的key和当前遍历的key是否相等，相等则覆盖,<code>2</code></li>
+<li>为空则需要新建一个 HashEntry 并加入到 Segment 中，同时会先判断是否需要扩容, <code>3</code></li>
+<li>释放锁 <code>4</code></li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#66d9ef">public</span> V <span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>K key<span style="color:#f92672">,</span> V value<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+ 2        Segment<span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span> s<span style="color:#f92672">;</span>
+ 3        <span style="color:#a6e22e">if</span> <span style="color:#f92672">(</span>value <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+ 4            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">NullPointerException</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+ 5        <span style="color:#66d9ef">int</span> hash <span style="color:#f92672">=</span> hash<span style="color:#f92672">(</span>key<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+ 6        <span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>hash <span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span> segmentShift<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span> segmentMask<span style="color:#f92672">;</span>
+ 7        <span style="color:#a6e22e">if</span> <span style="color:#f92672">(</span><span style="color:#f92672">(</span>s <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Segment<span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span><span style="color:#f92672">)</span>UNSAFE<span style="color:#f92672">.</span><span style="color:#a6e22e">getObject</span>          <span style="color:#75715e">// nonvolatile; recheck
+</span><span style="color:#75715e"></span> 8             <span style="color:#f92672">(</span>segments<span style="color:#f92672">,</span> <span style="color:#f92672">(</span>j <span style="color:#f92672">&lt;</span><span style="color:#f92672">&lt;</span> SSHIFT<span style="color:#f92672">)</span> <span style="color:#f92672">+</span> SBASE<span style="color:#f92672">)</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#75715e">//  in ensureSegment
+</span><span style="color:#75715e"></span> 9            s <span style="color:#f92672">=</span> ensureSegment<span style="color:#f92672">(</span>j<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+10        <span style="color:#66d9ef">return</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> hash<span style="color:#f92672">,</span> value<span style="color:#f92672">,</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>          <span style="color:#75715e">//根据定位到的Segment，调用Segment的put方法
+</span><span style="color:#75715e"></span>11    <span style="color:#f92672">}</span>
+</code></pre></div><p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/QCu849YTaIPf1sDCN5zcDdGsibZwyzy9rstfAX6MUyOTcZXhGqIKfHnByhzUNicK3icoWfFvtiaOo65iadLmmV9zhUg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>scanAndLockForPut()函数，其实是通过自旋等待获取锁，如果指定次数未得到，则阻塞</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/QCu849YTaIPf1sDCN5zcDdGsibZwyzy9r9Zlk8CZt9Bq2GUFa4fR7dINAciazXctxwMLZP23KEnEsXibUUBjeh2rw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<h3 id="13-扩容过程">1.3 扩容过程</h3>
+<p>扩容是在Segment的锁保护下进行扩容的，不需要关注并发问题。</p>
+<p><img src="https://static.oschina.net/uploads/img/201612/29164040_Me8a.png" alt="Segment扩容如下所示"></p>
+<p>这里的重点就是：首先找到一个lastRun。因为扩容后需要reHash，这些结点可能会分配到不同的新桶中，但也会有一些节点在相同的桶中，为了减少移动操作，我们在原来某个桶的链条上从头到尾进行遍历，用lastRun来指明一个结点，自该节点之后的所有节点都在相同的桶中（也有可能很不幸，lastRun没有后续结点，但这不重要）</p>
+<p>然后对开始到lastRun部分的元素，重新计算下设置到newTable中，每次都是将当前元素作为newTable的首元素，之前老的链表作为该首元素的next部分。（表头插入）</p>
+<h3 id="14-get过程">1.4 get过程</h3>
+<ul>
+<li>根据key计算出对应的Segment</li>
+<li>再根据key计算出对应segment中数组的index</li>
+<li>最终遍历上述index位置的链表，查找出对应的key的value</li>
+</ul>
+<p><img src="https://static.oschina.net/uploads/img/201612/29164827_4mOm.png" alt="1.7ConcurrentHashMap的get过程"></p>
+<h2 id="2-concurrenthashmap在jdk18中的设计">2. ConCurrentHashMap在JDK1.8中的设计</h2>
+<p>1.8的ConcurrentHashMap摒弃了1.7的segment设计，而是在1.8HashMap的基础上使用CAS + synchronized实现了线程安全。</p>
+<p>数组可以扩容，链表可以转化为红黑树，其底层结构如下图所示：</p>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/QCu849YTaIPf1sDCN5zcDdGsibZwyzy9r6hAjXjUBUbenB9FQ9BKXGQaQ0M64Q7HP9fTYSKBWkrrZfmsibdEcKDg/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<p>摒弃了原来的Segment分段锁结果，并将存放数据的HashEntry改为了Node，但作用是相同的。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Node</span><span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">implements</span> Map<span style="color:#f92672">.</span><span style="color:#a6e22e">Entry</span><span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> hash<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">final</span> K key<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">volatile</span> V val<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">volatile</span> Node<span style="color:#f92672">&lt;</span>K<span style="color:#f92672">,</span>V<span style="color:#f92672">&gt;</span> next<span style="color:#f92672">;</span>
+</code></pre></div><p>在新版的ConcurrentHashMap中，有一个重要的参数sizeCtl，代表数组大小，但其还有其他的含义，后面再详细说到。</p>
+<h3 id="21-put操作">2.1 put操作</h3>
+<p><img src="https://static.oschina.net/uploads/img/201612/29180141_DUUU.png" alt="1.8ConcurrentHashMap的put过程"></p>
+<ul>
+<li>如果数组还未初始化，那么进行初始化，这里会通过一个CAS操作（compare and set 原子操作）将sizeCtl设置为-1，设置成功的，可以进行初始化操作</li>
+<li>根据key的hash值找到对应的桶，如果桶中还没有元素，那么通过一个CAS操作来设置桶的第一个元素（Expected：Null，New Value：new Node&hellip;），失败的继续执行下面的逻辑即向桶中插入或更新</li>
+<li>如果找到的桶存在，但是桶中第一个元素的hash值是-1，说明此时该桶正在进行迁移操作，这一块会在下面的扩容中详细谈及。</li>
+<li>如果找到的桶存在，那么要么是链表结构要么是红黑树结构，此时需要获取该桶的锁，在锁定的情况下执行链表或者红黑树的插入或更新
+<ul>
+<li>如果桶中第一个元素的hash值大于0，说明是链表结构，则对链表插入或者更新</li>
+<li>如果桶中的第一个元素类型是TreeBin，说明是红黑树结构，则按照红黑树的方式进行插入或者更新</li>
+</ul>
+</li>
+<li>在锁的保护下插入或者更新完毕后，如果是链表结构，需要判断链表中元素的数量是否超过8（默认），一旦超过就要考虑进行数组扩容或者是链表转红黑树</li>
+</ul>
+<h3 id="22-get操作">2.2 get操作</h3>
+<p><img src="https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/QCu849YTaIPf1sDCN5zcDdGsibZwyzy9r3vfhssfaHjFeWRVCaOusk8jhrhMG5FQw3ribtxaIjmZE216vh2nibChw/640?wx_fmt=png" alt="640?wx_fmt=png"></p>
+<ul>
+<li>根据计算出来的 hashcode 寻址，如果就在桶上那么直接返回值。</li>
+<li>如果是红黑树那就按照树的方式获取值。</li>
+<li>就不满足那就按照链表的方式遍历获取值。</li>
+</ul>
+<h2 id="3-总结">3. 总结</h2>
+<p>在JDK1.7中，ConcurrentHashMap的设计框架是使用了分段锁的思想，在进行put中，都是使用lock()进行加锁；到了JDK1.8时代，取消了分段锁这一机制，取而代之的是CAS+synchronized操作，可见在JDK1.8之后，已经对synchronized进行了长足的优化。</p>
+<p>对ConcurrentHashMap的读操作不需要加锁，而是使用volitale关键字保证了内存的一致性。</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/innerclass/" data-toggle="tooltip" data-placement="top" title="内部类">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
