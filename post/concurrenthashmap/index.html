@@ -353,6 +353,7 @@
 <li>如果是红黑树那就按照树的方式获取值。</li>
 <li>就不满足那就按照链表的方式遍历获取值。</li>
 </ul>
+<p>我们注意到，对ConcurrentHashMap的读操作没有用到锁，因此get的操作是弱一致性的，什么是弱一致性？弱一致性主要是为了提升效率，也是一致性和效率之间的一种权衡。对于get操作而言，其弱一致性导致的后果是get操作只能保证一定能看到已完成的put操作。同时，clear也是弱一致性的，<a href="http://ifeve.com/concurrenthashmap-weakly-consistent/">更详细的解释详见这篇文章</a></p>
 <h2 id="3-总结">3. 总结</h2>
 <p>在JDK1.7中，ConcurrentHashMap的设计框架是使用了分段锁的思想，在进行put中，都是使用lock()进行加锁；到了JDK1.8时代，取消了分段锁这一机制，取而代之的是CAS+synchronized操作，可见在JDK1.8之后，已经对synchronized进行了长足的优化。</p>
 <p>对ConcurrentHashMap的读操作不需要加锁，而是使用volitale关键字保证了内存的一致性。</p>
