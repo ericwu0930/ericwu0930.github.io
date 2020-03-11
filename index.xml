@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Java内存模型与锁优化</title>
+      <link>https://ericwu0930.github.io/post/lock/</link>
+      <pubDate>Wed, 11 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/lock/</guid>
+      <description>1. Java内存模型 1.1 硬件的效率与一致性 基于高速缓存的存储交互很好的解决了处理器与内存的速度矛盾，但也为计算机系统带来更高的复杂度，因为它引入</description>
+    </item>
+    
+    <item>
       <title>Java的四种引用以及ThreadLocal源码分析</title>
       <link>https://ericwu0930.github.io/post/reference/</link>
       <pubDate>Wed, 11 Mar 2020 00:00:00 +0000</pubDate>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="Java内存模型与锁优化" />
+    <meta property="og:title" content="Java内存模型与锁优化" />
+    <meta property="twitter:title" content="Java内存模型与锁优化" />
+    
+
+    
+    <meta name="description" content="总结自《深入理解Java虚拟机》">
+    <meta property="og:description" content="总结自《深入理解Java虚拟机》" />
+    <meta property="twitter:description" content="总结自《深入理解Java虚拟机》" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Java内存模型与锁优化-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/lock/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B" title="并发编程">
+                            并发编程
+                        </a>
+                        
+                    </div>
+                    <h1>Java内存模型与锁优化</h1>
+                    <h2 class="subheading">并发编程学习笔记</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Wednesday, March 11, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-java内存模型">1. Java内存模型</a>
+      <ul>
+        <li><a href="#11-硬件的效率与一致性">1.1 硬件的效率与一致性</a></li>
+        <li><a href="#12-java的内存模型">1.2 Java的内存模型</a></li>
+        <li><a href="#13-对于volatile型变量的特殊规则">1.3 对于volatile型变量的特殊规则</a></li>
+        <li><a href="#14-原子性可见性与有序性">1.4 原子性、可见性与有序性</a></li>
+        <li><a href="#15--先行发生原则happens-before">1.5  先行发生原则（happens-before）</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-锁优化">2. 锁优化</a></li>
+  </ul>
+</nav>
+                
+                <h2 id="1-java内存模型">1. Java内存模型</h2>
+<h3 id="11-硬件的效率与一致性">1.1 硬件的效率与一致性</h3>
+<p><img src="https://s2.ax1x.com/2020/03/11/8AMdpT.png" alt="8AMdpT.png"></p>
+<p>基于高速缓存的存储交互很好的解决了处理器与内存的速度矛盾，但也为计算机系统带来更高的复杂度，因为它引入了新的问题：缓存一致性。在多处理器系统中，每个处理器都有自己的高速缓存，而它们又共享同一个主存，如上图所示，为了保证主存的一致性，在高速缓存和主存之间引入了缓存一致性协议，这类协议有MSI，MESI等。</p>
+<p><code>所谓的内存模型是指在特定的操作协议下，对特定的内存或告诉缓存进行读写访问的过程抽象。</code></p>
+<p>另外为了使得处理器内部的运算单元能尽量被充分使用，处理器会在保证最终输出结果一致的情况下，对输入代码进行指令重排序。</p>
+<h3 id="12-java的内存模型">1.2 Java的内存模型</h3>
+<p>Java虚拟机规范中定义了一种Java内存模型来屏蔽各种硬件和操作系统的内存访问差异，如下图所示。</p>
+<p><img src="https://s2.ax1x.com/2020/03/11/8AM0cF.png" alt="8AM0cF.png"></p>
+<p>主内存可以理解为硬件内存，每条线程有自己的工作内存，线程对变量的所有操作都必须在工作内存中进行，而不能直接读写在主内存中的变量。JVM为了保证缓存的一致性，Java内存模型中定义了8中操作，通过对这8中操作添加一些约束条件来实现。这八种操作为：</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lock</td>
+<td>作用于主内存的变量，它把一个变量标识为一条线程独占</td>
+</tr>
+<tr>
+<td>unlock</td>
+<td>作用于主内存的变量，它把一个处于锁定状态的变量释放出来</td>
+</tr>
+<tr>
+<td>read</td>
+<td>从主内存加载到工作内存</td>
+</tr>
+<tr>
+<td>load</td>
+<td>将read操作得到的变量放入工作内存的变量副本中</td>
+</tr>
+<tr>
+<td>use</td>
+<td>使用工作内存的变量</td>
+</tr>
+<tr>
+<td>assign</td>
+<td>对工作内存中的变量进行赋值</td>
+</tr>
+<tr>
+<td>store</td>
+<td>把工作内存中的一个变量的值传送到主内存</td>
+</tr>
+<tr>
+<td>write</td>
+<td>将store传送过来的变量写入到主内存的变量中</td>
+</tr>
+</tbody>
+</table>
+<p>约束条件有很多，这里说比较重要的几条</p>
+<ol>
+<li>read和load，store和write不能单独出现，每一对之间可以插入其他命令，但每一对中两个指令出现的顺序不能改变；</li>
+<li>不允许一个线程丢弃assign操作。</li>
+<li>如果对一个变量执行lock操作，会清空工作内存中此变量的值，在执行引擎使用这个变量前，重新read和load操作</li>
+<li>对一个变量执行unlock操作时，必须执行store和write操作将变量同步回主内存</li>
+<li>一个变量在同一时刻只允许一条线程对其进行lock操作，但lock操作可以被同一条线程重复执行多次，多次执行lock后，只有执行相同次数的unlock操作，变量才会被解锁。</li>
+</ol>
+<h3 id="13-对于volatile型变量的特殊规则">1.3 对于volatile型变量的特殊规则</h3>
+<p>volatile关键字有两个作用，第一保证变量对所有的线程都是可见的，第二防止指令重排序。</p>
+<p>为了保证volatile的可见性，另外附加了两条规则：1. use前必须read和load 2. assign后必须store和write</p>
+<p>在DLC中，我们使用了一个volatile来修饰instance变量，原因为何？</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">volatile</span> <span style="color:#66d9ef">static</span> Singleton instance<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Singleton <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">synchronized</span><span style="color:#f92672">(</span>Singleton<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+                    instance<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Singleton<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> instance<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>instance = new Singleton() 这个操作可能会发生如下形式的重排序</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">1<span style="color:#f92672">.</span> <span style="color:#75715e">//分配内存
+</span><span style="color:#75715e"></span>2<span style="color:#f92672">.</span> <span style="color:#75715e">//给Singleton对象的成员变量分配“零值”
+</span><span style="color:#75715e"></span>3<span style="color:#f92672">.</span> <span style="color:#75715e">//将新键的对象赋值给instance
+</span><span style="color:#75715e"></span>4<span style="color:#f92672">.</span> <span style="color:#75715e">//按照构造方法以及程序块对成员变量重新设值
+</span></code></pre></div><p>如果这样的话，就会使得其他线程访问instance变量时，得到一个“未经过构造方法”的错误对象。</p>
+<p>但是有一点也是需要注意的，volatile并不能保证线程安全，如把一个变量race声明为volatile，10个线程对race各执行100次自增操作，race并不能达到1000，而是比1000要少，这是为什么？因为race++虽然看起来只有一条指令，但是它不是原子操作。虽然volatile能够保证每次读取到栈顶的变量时一致的，但是因为没有锁，所以并不是线程安全的。</p>
+<h3 id="14-原子性可见性与有序性">1.4 原子性、可见性与有序性</h3>
+<p>Java的内存模型是围绕着在并发过程中如何处理原子性、可见性和有序性这3个特征来建立的，我们逐个来看哪些操作实现了这3个特性。</p>
+<ol>
+<li>原子性：保证原子性变量操作包括read，load，assign，use，store和write。如果应用场景需要一个更大范围的原子性保证，则可以使用lock和unlock操作。synchronized关键字就是使用lock和unlock保证原子性的。</li>
+<li>可见性：除了volatile，synchronized和final同样保证可见性，synchronized的可见性是依靠java内存模型中的unlock时必须先把变量同步回内存中这条规则获得的。被final修饰的字段在构造器中一旦初始化完成，那么其他线程就能看到final的值</li>
+<li>有序性：在单线程中，有序性是可以得到天然的保证的，然而在多线程中，由于指令重排序现象的存在，有序性需要依靠volatile和synchronized进行保证。volatile是依靠禁止指令重排序保证了有序性，而synchronized则是依靠“一个变量在同一时刻只允许一个线程对其进行lock操作”进行保证的。</li>
+</ol>
+<h3 id="15--先行发生原则happens-before">1.5  先行发生原则（happens-before）</h3>
+<p>如果A先行发生于B，那么在发生操作B之前，操作A产生的影响能被操作B看到。在Java内存模型下，有一些“天然的”先行发生关系，这些先行发生关系无须任何同步器协助就可以在编码中直接使用</p>
+<ol>
+<li>程序次序规则：<strong>单线程内</strong>，按照程序代码顺序，书写在前面的操作先行发生于书写在后面的操作</li>
+<li>管程锁定规则：一个unlock操作先行发生于对后面（时间上的概念）的同一个锁的lock操作</li>
+<li>volatile变量规则：对一个volatile变量的写操作先行发生于后面（时间上的概念）的对这个变量的读操作</li>
+<li>线程启动规则：Thread对象的start()方法先行发生于此线程的其他动作</li>
+<li>线程终止规则：线程中所有操作都先行发生于对此线程的终止检测，我们可以使用Thread.join()方法结束、Thread.isAlive()的返回值等手段，检测到线程已经终止执行</li>
+<li>线程中断规则：对线程interrupt（）方法的调用先行发生于被中断线程的代码检测到中断时间的发生</li>
+<li>对象终结规则：一个对象的初始化完成（构造方法执行结束）先行发生于它的finalize（）方法的开始</li>
+<li>传递性：A先行发生于B，B先行发生于C，A先行发生于C</li>
+</ol>
+<p>注：一个操作“时间上的先发生”不代表这个操作会“先行发生”。</p>
+<h2 id="2-锁优化">2. 锁优化</h2>
+<ol>
+<li>锁消除：JVM消除不必要的锁</li>
+<li>锁粗化：频繁地加锁解锁（特别是对循环块内加锁）很耗费性能，JVM会将锁范围扩大</li>
+<li>自旋锁：避免进入内核态，但是占用CPU时间，如果锁被占用的时间多自旋效果还是很好的</li>
+<li>偏向锁：在对象头Mark Word中指明该对象偏向于哪个线程，如果该线程对其进行访问，永远不需要进行同步</li>
+<li>轻量级锁：如果对象没有被锁定，虚拟机首先将在当前线程的栈帧中穿件一个名为锁记录Lock Record的空间，用于存储锁对象目前的Mark Word拷贝，然后使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针。如果这个更新成功了则获得锁，并且对象的Mark Word会变成轻量级锁。如果更新失败，JVM会检查对象的Mark Word是否指向当前线程的栈帧，如果是，则直接进入同步块继续执行，否则说明这个锁对象已经被其他线程抢占。如果有两条以上的线程争用这个锁，轻量级锁膨胀为重量级锁。</li>
+</ol>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/reference/" data-toggle="tooltip" data-placement="top" title="Java的四种引用以及ThreadLocal源码分析">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
