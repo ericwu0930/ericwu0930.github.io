@@ -138,15 +138,6 @@
     </item>
     
     <item>
-      <title>垃圾回收调优</title>
-      <link>https://ericwu0930.github.io/post/gc_4/</link>
-      <pubDate>Mon, 02 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/post/gc_4/</guid>
-      <description>一、确定目标 低延迟 CMS G1 ZGC ————对于互联网程序 高吞吐量 ParalellGC ———对于科学运算 二、最快的GC是不发生GC 当经常发生GC的时候，考虑下面几个问题 数</description>
-    </item>
-    
-    <item>
       <title>JVM内存分配策略与GC时机</title>
       <link>https://ericwu0930.github.io/post/gc_3/</link>
       <pubDate>Sun, 01 Dec 2019 00:00:00 +0000</pubDate>
