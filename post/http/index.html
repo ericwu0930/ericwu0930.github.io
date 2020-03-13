@@ -265,7 +265,6 @@
       <ul>
         <li><a href="#通用首部字段">通用首部字段</a></li>
         <li><a href="#请求首部字段">请求首部字段</a></li>
-        <li><a href="#3pohtgpnghttpss2ax1xcom202002163pohtgpng">3pohTg.png</a></li>
         <li><a href="#响应首部字段">响应首部字段</a></li>
         <li><a href="#实体首部字段">实体首部字段</a></li>
         <li><a href="#为cookie服务的首部字段">为Cookie服务的首部字段</a></li>
@@ -348,7 +347,7 @@
 <p><img src="https://s2.ax1x.com/2020/02/16/3pIxzt.png" alt="3pIxzt.png"></p>
 <h3 id="26-使用cookie的状态管理">2.6 使用Cookie的状态管理</h3>
 <p>HTTP不保存状态，可以减少服务器的CPU及内存资源的消耗。但是不保存状态又会给用户访问页面带来许多麻烦。Cookie技术通过在请求和响应报文中写入Cookie信息来控制客户端的状态。</p>
-<p>Cookie 会根据从服务器端发送的响应报文内的一个叫做 Set-Cookie 的 首部字段信息，通知客户端保存 Cookie。当下次客户端再往该服务器 发送请求时，客户端会自动在请求报文中加入 Cookie 值后发送出 去。</p>
+<p>Cookie 会根据从服务器端发送的响应报文内的一个叫做 Set-Cookie 的 首部字段信息，通知客户端保存 Cookie。当下次客户端再往该服务器 发送请求时，客户端会自动在请求报文中加入 Cookie 值后发送出去。</p>
 <p>服务器端发现客户端发送过来的 Cookie 后，会去检查究竟是从哪一 个客户端发来的连接请求，然后对比服务器上的记录，最后得到之前的状态信息。</p>
 <h2 id="3-http报文内的http信息">3 HTTP报文内的HTTP信息</h2>
 <h3 id="31-请求报文以及响应报文的结构">3.1 请求报文以及响应报文的结构</h3>
@@ -446,7 +445,9 @@
 <ul>
 <li>
 <p>304 Not Modified</p>
-<p>客户端发送附带条件的请求时，服务器端允许请求访问资源，但未满足条件。</p>
+<p>当客户端缓存了目标资源但不确定该缓存资源是否是最新版本的时候, 就会发送一个条件请求。在进行条件请求时,客户端会提供给服务器一个If-Modified-Since请求头,其值为服务器上次返回响应头中Last-Modified值,还会提供一个If-None-Match请求头,值为服务器上次返回的ETag响应头的值。</p>
+<p>服务器会读取到这两个请求头中的值,判断出客户端缓存的资源是否是最新的,如果是的话,服务器就会返回HTTP/304 Not Modified响应头, 但没有响应体.客户端收到304响应后,就会从本地缓存中读取对应的资源。</p>
+<p>如果服务器认为客户端缓存的资源已经过期了,那么服务器就会返回HTTP/200 OK响应,响应体就是该资源当前最新的内容。</p>
 </li>
 <li>
 <p>307 Temporary Redirect</p>
@@ -516,7 +517,7 @@
 <h3 id="通用首部字段">通用首部字段</h3>
 <p><img src="https://s2.ax1x.com/2020/02/16/3po2Of.png" alt="3po2Of.png"></p>
 <h3 id="请求首部字段">请求首部字段</h3>
-<h3 id="3pohtgpnghttpss2ax1xcom202002163pohtgpng"><img src="https://s2.ax1x.com/2020/02/16/3pohTg.png" alt="3pohTg.png"></h3>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pohTg.png" alt="3pohTg.png"></p>
 <h3 id="响应首部字段">响应首部字段</h3>
 <p><img src="https://s2.ax1x.com/2020/02/16/3pxvWT.png" alt="3pxvWT.png"></p>
 <h3 id="实体首部字段">实体首部字段</h3>
