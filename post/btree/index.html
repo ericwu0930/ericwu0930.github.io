@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="B树与B&#43;树" />
+    <meta property="og:title" content="B树与B&#43;树" />
+    <meta property="twitter:title" content="B树与B&#43;树" />
+    
+
+    
+    <meta name="description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。">
+    <meta property="og:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    <meta property="twitter:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>B树与B&#43;树-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/btree/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86" title="数据库原理">
+                            数据库原理
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                    </div>
+                    <h1>B树与B&#43;树</h1>
+                    <h2 class="subheading">数据库原理学习笔记</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Wednesday, March 18, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-外存储器-磁盘">1. 外存储器-磁盘</a>
+      <ul>
+        <li><a href="#11-磁盘的构造">1.1 磁盘的构造</a></li>
+        <li><a href="#12-磁盘的读写原理和效率">1.2 磁盘的读写原理和效率</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-b树">2. B树</a>
+      <ul>
+        <li><a href="#21-概念">2.1 概念</a></li>
+        <li><a href="#22-b树的插入">2.2 B树的插入</a></li>
+        <li><a href="#23-b树的删除">2.3 B树的删除</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-b树">3. B+树</a>
+      <ul>
+        <li><a href="#31-b树的概念">3.1 B+树的概念</a></li>
+        <li><a href="#32-b树的查询性能">3.2 B+树的查询性能</a></li>
+        <li><a href="#33-b树的优势">3.3 B+树的优势：</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <blockquote>
+<p>本文整理自以下两篇博文，感谢两位博主的精彩总结与无私奉献https://blog.csdn.net/qq_26222859/article/details/80631121 ，https://blog.csdn.net/v_JULY_v/article/details/6530142/</p>
+</blockquote>
+<h2 id="1-外存储器-磁盘">1. 外存储器-磁盘</h2>
+<h3 id="11-磁盘的构造">1.1 磁盘的构造</h3>
+<p><img src="https://s1.ax1x.com/2020/03/19/8rpmR0.jpg" alt="8rpmR0.jpg"></p>
+<p>当磁盘驱动器执行读/写功能时。盘片装在一个主轴上，并绕主轴高速旋转，当磁道在读/写头(又叫磁头) 下通过时，就可以进行数据的读 / 写了。</p>
+<p>一般磁盘分为固定头盘(磁头固定)和活动头盘。固定头盘的每一个磁道上都有独立的磁头，它是固定不动的，专门负责这一磁道上数据的读/写。</p>
+<p>活动头盘 (如上图)的磁头是可移动的。每一个盘面上只有一个磁头(磁头是双向的，因此正反盘面都能读写)。它可以从该面的一个磁道移动到另一个磁道。所有磁头都装在同一个动臂上，因此不同盘面上的所有磁头都是同时移动的(行动整齐划一)。当盘片绕主轴旋转的时候，磁头与旋转的盘片形成一个圆柱体。各个盘面上半径相同的磁道组成了一个圆柱面，我们称为柱面 。因此，柱面的个数也就是盘面上的磁道数。</p>
+<h3 id="12-磁盘的读写原理和效率">1.2 磁盘的读写原理和效率</h3>
+<p>磁盘上数据必须用一个三维地址唯一标示：<strong>柱面号</strong>、<strong>盘面号</strong>、<strong>扇区</strong></p>
+<p>据需要下面3个步骤：</p>
+<p>读/写磁盘上某一指定数据需要下面3个步骤：</p>
+<ol>
+<li>
+<p>首先移动臂根据柱面号使磁头移动到所需要的柱面上，这一过程被称为定位或查找 。</p>
+</li>
+<li>
+<p>如上图11.3中所示的6盘组示意图中，所有磁头都定位到了10个盘面的10条磁道上(磁头都是双向的)。这时根据盘面号来确定指定盘面上的磁道。</p>
+</li>
+<li>
+<p>盘面确定以后，盘片开始旋转，将指定扇区的磁道段移动至磁头下。</p>
+</li>
+</ol>
+<p>经过上面三个步骤，指定数据的存储位置就被找到。这时就可以开始读/写操作了。</p>
+<p>访问某一具体信息，由3部分时间组成：</p>
+<p>● 寻道时间: 完成上述步骤1所需要的时间。这部分时间代价最高，最大可达到0.1s左右。</p>
+<p>● 旋转时间: 完成上述步骤3所需要的时间。由于盘片绕主轴旋转速度很快，一般为7200转/分(电脑硬盘的性能指标之一, 家用的普通硬盘的转速一般有5400rpm(笔记本)、7200rpm几种)。因此一般旋转一圈大约0.0083s。</p>
+<p>● 传送时间: 数据通过系统总线传送到内存的时间，一般传输一个字节(byte)大概0.02us=2*10^(-8)s</p>
+<p>磁盘读取数据是以盘块(block)为基本单位的。位于同一盘块中的所有数据都能被一次性全部读取出来。而磁盘IO代价主要花费在查找时间Ts上。因此我们应该尽量将相关信息存放在同一盘块，同一磁道中。或者至少放在同一柱面或相邻柱面上，以求在读/写信息时尽量减少磁头来回移动的次数，避免过多的查找时间Ts。</p>
+<h2 id="2-b树">2. B树</h2>
+<h3 id="21-概念">2.1 概念</h3>
+<p>描述一个棵B树是首先需要指定它的阶数，阶数表示一个结点最多有多少个孩子结点。B树中有一些规则</p>
+<ul>
+<li>每个结点最多由m-1个关键字</li>
+<li>根节点最少可以只有1个关键字</li>
+<li>非跟结点至少有m/2个关键字</li>
+<li>所有的叶子结点都位于同一层</li>
+<li>每个结点的关键字按照从小到大排序，每个关键字左子树中的所有结点都小于它，右子树中的所有关键字都大于它。</li>
+</ul>
+<h3 id="22-b树的插入">2.2 B树的插入</h3>
+<p>B树的插入过程类似于2-3查找树的插入过程（详见这篇<a href="https://ericwu0930.github.io/post/redblackbst/">博文</a>），思路很简单，如果结点中关键字的数目超过了m-1，则以该结点中的中间关键字为父节点，形成一个树，然后将父结点插入到更上一层的结点中，如果插入后关键字的数目不符合要求，则继续这个过程。</p>
+<p><img src="https://s1.ax1x.com/2020/03/19/8rpnzV.jpg" alt="8rpnzV.jpg"></p>
+<p><img src="https://s1.ax1x.com/2020/03/19/8rpKMT.jpg" alt="8rpKMT.jpg"></p>
+<h3 id="23-b树的删除">2.3 B树的删除</h3>
+<p>首先分两种情况，如果所要删除的关键字在叶子结点，那么直接删除就好了；如果所删除的关键字在非叶子结点，那么需要用后继关键字（右子树第一个元素）覆盖这个关键字，然后在这个分支中删除这个关键字。</p>
+<p>此时可能会出现叶子结点中关键字的个数不符合B树要求的情况，即关键字树小于m/2，这是需要查看相邻的兄弟结点是否丰满（借出一个关键字之后仍然满足要要求），则兄弟结点将一个关键字移到父结点，父结点将一个关键字移动到本结点。如果不丰满，则将父结点中两个兄弟结点之间的关键字下移覆盖掉待删除的关键字，然后两个兄弟结点合并。如下图中删除E关键字所示。</p>
+<p><img src="https://s1.ax1x.com/2020/03/19/8rpMsU.jpg" alt="8rpMsU.jpg"></p>
+<p><img src="https://s1.ax1x.com/2020/03/19/8rp1Z4.jpg" alt="8rp1Z4.jpg"></p>
+<p>现在将上面的规则使用起来，以一个5阶的B树为例，我们要删除下图中的C关键字。</p>
+<p><img src="https://s1.ax1x.com/2020/03/19/8rp8o9.jpg" alt="8rp8o9.jpg"></p>
+<p>因为C关键字不是在叶子结点上，所以将其后继关键字上移，这是E所在地的结点只有一个关键字了，不符合要求，它的兄弟结点也不丰满，于是将D关键字拉下来，与左边的兄弟结点合并。</p>
+<p><img src="https://s1.ax1x.com/2020/03/19/8rpJiR.jpg" alt="8rpJiR.jpg"></p>
+<p>这时又出现了只含有一个F结点的情况，这时，它的兄弟结点是丰满的，可以借出R关键字，于是把父结点中的J下移到该结点中，相应的如果结点中J后 有元素则前移，然后相邻兄弟结点中的第一个元素上移到父节点中，后面的元素前移；注意含有K，L的结点以前依附在M的左边，现在变为依附在J的右边。这样每个结点都满足B树结构性质。</p>
+<p><img src="https://s1.ax1x.com/2020/03/19/8rpYJ1.jpg" alt="8rpYJ1.jpg"></p>
+<p>B树相较于查找树的优势？</p>
+<p>B树相较于二叉树形状上是矮胖的，B树中将每一个结点放在一个磁盘页中，每访问一个结点就从磁盘中调出相关磁盘页加载到内存中。B树相较于二叉查找树，查找一个关键字比较的次数并不少（甚至是多的），但是对磁盘的访问速度远远低于访问内存的速度，因此树的高度足够低，IO的次数就可以足够少，可以提高查找性能。</p>
+<h2 id="3-b树">3. B+树</h2>
+<h3 id="31-b树的概念">3.1 B+树的概念</h3>
+<p>B+树是B树的变形，除了有B树的一些性质外，一个m阶的B+树还具有如下几个特征：</p>
+<ol>
+<li>有k个子树的中间结点包含有k个元素（B树中有k-1个元素），每个元素不保存数据，只用来索引，所有数据都保存在叶子结点。</li>
+<li>所有的叶子结点中包含了全部元素的信息，及指向这些元素记录的指针，且叶子结点本身依关键字的大小自小而大顺序链接。</li>
+<li>所有的中间结点元素都同时存在于子结点，在子节点元素中最大（或最小）元素。</li>
+</ol>
+<p><img src="https://s1.ax1x.com/2020/03/19/8rpaQK.png" alt="8rpaQK.png"></p>
+<p>B+树还具有一个特点，那就是卫星数据的位置。所谓卫星数据，指的是索引元素所指向的数据记录，比如数据库中的某一行，在B-树中，无论中间结点还是叶子结点都带有卫星数据</p>
+<p><img src="https://s1.ax1x.com/2020/03/19/8rpdsO.png" alt="8rpdsO.png"></p>
+<p>而在B+树中，只有叶子结点带有卫星数据，其余中间结点仅仅是索引，没有任何数据关联。</p>
+<p><img src="https://s1.ax1x.com/2020/03/19/8rprod.png" alt="8rprod.png"></p>
+<h3 id="32-b树的查询性能">3.2 B+树的查询性能</h3>
+<p>在单元素查询时，因为B+树的中间结点没有卫星数据，所以同样大小的磁盘页可以容纳更多的结点元素，这意味着数据量相同的情况下B+树比B-树更加矮胖（回忆一下，B-树比查找树查找性能好的原因），因此查询时IO次数更少。另外，B+树的查询必须最终查找到叶子结点，而B-树只要找到匹配元素即可，有可能出现在叶子结点，也有可能出现在非叶子结点，因此查找性能并不稳定。</p>
+<p>在范围查找中，B-树所进行的是一个中序遍历，但是在B+树中，因为叶子结点通过链表指针相连，所以性能更好</p>
+<h3 id="33-b树的优势">3.3 B+树的优势：</h3>
+<p>1.单一节点存储更多的元素，使得查询的IO次数更少。</p>
+<p>2.所有查询都要查找到叶子节点，查询性能稳定。</p>
+<p>3.所有叶子节点形成有序链表，便于范围查询。</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/lock/" data-toggle="tooltip" data-placement="top" title="Java内存模型与锁优化">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
