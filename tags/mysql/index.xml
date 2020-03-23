@@ -12,11 +12,20 @@
     
     
     <item>
-      <title>MySQL索引背后的数据结构及算法原理</title>
-      <link>https://ericwu0930.github.io/post/</link>
+      <title>InnoDB存储引擎结构</title>
+      <link>https://ericwu0930.github.io/post/innodb/</link>
       <pubDate>Mon, 23 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://ericwu0930.github.io/post/</guid>
+      <guid>https://ericwu0930.github.io/post/innodb/</guid>
+      <description>由于Mysql数据库中的存储引擎是插件式的，而存储引擎又是基于表的，因此可以根据不同的需要使用不同的存储引擎创建表。 InnoDB是Mysql</description>
+    </item>
+    
+    <item>
+      <title>MySQL索引背后的数据结构及算法原理</title>
+      <link>https://ericwu0930.github.io/post/innodb_index/</link>
+      <pubDate>Mon, 23 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/innodb_index/</guid>
       <description>转载自 MySQL索引背后的数据结构及算法原理 https://www.jianshu.com/p/ee7b51056e06 http://blog.jobbole.com/24006/ 近几年看到的最好的一篇有关数据库索引的文章，重新进行了排版，并将磁盘存取原理这一块替换成更容</description>
     </item>
     

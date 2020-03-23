@@ -6,10 +6,28 @@
     <description>Recent content in Posts on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Mar 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>InnoDB存储引擎结构</title>
+      <link>https://ericwu0930.github.io/post/innodb/</link>
+      <pubDate>Mon, 23 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/innodb/</guid>
+      <description>由于Mysql数据库中的存储引擎是插件式的，而存储引擎又是基于表的，因此可以根据不同的需要使用不同的存储引擎创建表。 InnoDB是Mysql</description>
+    </item>
+    
+    <item>
+      <title>MySQL索引背后的数据结构及算法原理</title>
+      <link>https://ericwu0930.github.io/post/innodb_index/</link>
+      <pubDate>Mon, 23 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/innodb_index/</guid>
+      <description>转载自 MySQL索引背后的数据结构及算法原理 https://www.jianshu.com/p/ee7b51056e06 http://blog.jobbole.com/24006/ 近几年看到的最好的一篇有关数据库索引的文章，重新进行了排版，并将磁盘存取原理这一块替换成更容</description>
+    </item>
     
     <item>
       <title>Java内存模型与锁优化</title>
@@ -63,15 +81,6 @@
       
       <guid>https://ericwu0930.github.io/post/redblackbst/</guid>
       <description>在一棵含有N个结点的树种，我们希望树高为~lgN，这样我们就能保证所有查找都能在~lgN次比较内结束，就和二分查找一样。但是在动态插入种保证</description>
-    </item>
-    
-    <item>
-      <title>B树与B&#43;树</title>
-      <link>https://ericwu0930.github.io/post/btree/</link>
-      <pubDate>Tue, 18 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/post/btree/</guid>
-      <description>本文整理自以下两篇博文，感谢两位博主的精彩总结与无私奉献https://blog.csdn.net/qq_26222859/article/</description>
     </item>
     
     <item>
