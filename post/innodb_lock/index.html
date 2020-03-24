@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="InnoDB锁的实现" />
+    <meta property="og:title" content="InnoDB锁的实现" />
+    <meta property="twitter:title" content="InnoDB锁的实现" />
+    
+
+    
+    <meta name="description" content="整理自《MySQL技术内幕》">
+    <meta property="og:description" content="整理自《MySQL技术内幕》" />
+    <meta property="twitter:description" content="整理自《MySQL技术内幕》" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>InnoDB锁的实现-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/innodb_lock/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('https://images.unsplash.com/photo-1546527848-5f786ed0f030?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/mysql" title="MySQL">
+                            MySQL
+                        </a>
+                        
+                    </div>
+                    <h1>InnoDB锁的实现</h1>
+                    <h2 class="subheading">MySQL学习笔记</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Tuesday, March 24, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-mysql中的锁">1. MySQL中的锁</a></li>
+    <li><a href="#2-非一致性锁定读">2. 非一致性锁定读</a></li>
+    <li><a href="#3-非一致性锁定读">3. 非一致性锁定读</a></li>
+    <li><a href="#4-外键和锁">4. 外键和锁</a></li>
+    <li><a href="#5-innodb中的行锁">5. InnoDB中的行锁</a></li>
+    <li><a href="#6-幻读">6. 幻读</a></li>
+    <li><a href="#7-死锁">7. 死锁</a></li>
+  </ul>
+</nav>
+                
+                <p><em>本篇文章整理自《MySQL技术内幕》第6章 锁，调整了文章中的顺序使其更加符合逻辑，也对文章中令我感到疑惑的地方通过查阅资料进行了补充和说明</em></p>
+<h2 id="1-mysql中的锁">1. MySQL中的锁</h2>
+<p>在MySQL中，lock的对象是事务，用来锁定的是数据库中的对象，如表、页、行。并且一般lock的对象仅在commit或rollback后进行释放，也就是说锁的持续时间是整个事务过程。</p>
+<h2 id="2-非一致性锁定读">2. 非一致性锁定读</h2>
+<p>InnoDB也提供了一种一致性的非锁定读，它是指InnoDB存储引擎通过行多版本控制的方式来读取当前执行时间数据库中的行数据。如果读取的行上有排他锁（对其有写操作），这时读取操作不会因此去等待行上锁的释放，相反，InnoDB存储引擎回去读取行的一个快照数据。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gd5a3s16byj30d40aq3yz.jpg" alt="image-20200324170621369"></p>
+<p>快照数据是指该行的之前版本的数据，该实现是通过undo段来完成，而undo用来在事务中回滚数据，因此快照数据本身是没有额外的开销的。</p>
+<p>在InnoDB存储引擎的默认设置下，这是一种默认的读取方式，但是在不同事务隔离级别下，读取的方式不同，并不是在每个事务隔离级别下都是采用非锁定的一致性读，此外即使都是使用非锁定的一致性读，对于快照数据的定义也各不相同。</p>
+<p>一个行记录可能有不止一个快照数据，我们称之为行多版本技术，由此带来的并发控制，称之为多版本并发控制（MVCC）。在事务隔离级别READ COMMITEED和REPEATABLE READ下，InnoDB存储引擎使用非锁定的一致性读，但是在READ COMMITTED事务隔离级别下，对于快照数据，非一致性读总是读取被锁定行的最新一份快照数据，而REPEATABLE READ事务隔离级别下，对于快照数据，非一致性读总是读取本事务开始时的行数据版本。</p>
+<h2 id="3-非一致性锁定读">3. 非一致性锁定读</h2>
+<p>在某些情况下，用户需要显式地对数据库读取操作进行加锁以保证数据逻辑的一致性。InnoDB存储引擎对于SELECT语句支持两种一致性的锁定读操作：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">SELECT</span> ... <span style="color:#66d9ef">FOR</span> <span style="color:#66d9ef">UPDATE</span>                   <span style="color:#75715e">#排他锁
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> ... <span style="color:#66d9ef">LOCK</span> <span style="color:#66d9ef">IN</span> SHARE MODE           <span style="color:#75715e">#共享锁
+</span></code></pre></div><p>对于一致性非锁定读，即使读取的行已被执行了SELECT&hellip; FOR UPDATE，也是可以进行读取的。此外，SELECT &hellip; FOR UPDATE, SELECT&hellip; LOCK IN SHARE MODE必须在一个事务中，当事务提交了，锁也就释放了。</p>
+<h2 id="4-外键和锁">4. 外键和锁</h2>
+<p>外键主要用于引用完整性的约束检查，在InnoDB中，对于一个外键列，如果没有显式地对这个列家索引，InnoDB存储引擎自动对其加一个索引，这样可以避免针对该列的锁定退化为表锁，进而可能会引发<a href="https://blog.csdn.net/xiaowenmu1/article/details/103827526">死锁</a>。</p>
+<p>对于外键值的插入或更新，首先需要查询父表中的记录，即SELECT父表。对父表SELECT时，不是使用一致性非锁定读的方式，因为这样会发生数据不一致的问题，因此这时使用的是SELECT &hellip; LOCK IN SHARE MODE方式，即对父表加一个S锁。</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>会话A</th>
+<th>会话B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>BEGIN</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>DELETE FROM parent WHERE id=3;</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td></td>
+<td>BEGIN</td>
+</tr>
+<tr>
+<td>4</td>
+<td></td>
+<td>INSERT INTO child SELECT 2,3 #第二列是外键，执行该句时会被阻塞</td>
+</tr>
+</tbody>
+</table>
+<p>在以上案例中，如果使用非锁定读，则父表中已经不存在主键3了，但是子表中的外键中会出现3，存在不一致的情况。</p>
+<h2 id="5-innodb中的行锁">5. InnoDB中的行锁</h2>
+<p><strong>InnoDB中是支持行锁的，并且要牢记，InnoDB的行锁是通过对索引进行加锁来实现的，如果某个加锁操作没有使用索引，则该锁会退化成表锁</strong>。在InnoDB存储引擎中实现了两种标准的行级锁：</p>
+<ul>
+<li>共享锁，允许事务读一行数据</li>
+<li>排他锁，允许事务删除或更新一行数据</li>
+</ul>
+<p>类似于读者-写者模式，排他锁与所有的锁都不兼容，共享锁可以与共享锁兼容。</p>
+<p>InnoDB存储引擎有3中行锁的算法，分别是：</p>
+<ul>
+<li>Record Lock：单个行记录上的锁</li>
+<li>Gap Lock：间隙锁，锁定一个范围，但不包含本行</li>
+<li>Next-Key Lock（临键锁）：Gap Lock+Record Lock，锁定一个范围，并锁定本行</li>
+</ul>
+<p>Record Lock总是会锁住索引所指向的行，如果InnoDB存储引擎表在建立的时候没有设置任何一个索引，那么这时InnoDB存储引擎会对隐式的主键进行锁定。</p>
+<p>Next-Key Lock是结合了Gap Lock和Record Lock的一种锁定算法，在Next-Key Lock算法下，InnoDB对于行的查询都是采用这种锁定算法。例如一个索引有10，11,13和20四个值，那么该索引可能被Next-Key Locking的区间是（左开右闭）：</p>
+<p>(-∞,10]
+(10,11]
+(11,13]
+(13,20]
+(20,+∞]</p>
+<p>需要注意的是，如果查询的索引还有唯一属性(Unique)，同时查询语句必须为<code>精准匹配</code>（<code>=</code>），不能为 <code>&gt;</code>、<code>&lt;</code>、<code>like</code>等，InnodDB存储引擎会对Next-Key Lock进行优化，将其降级为Record Lock。</p>
+<p>举一个例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#a6e22e">Z</span> (A <span style="color:#66d9ef">INT</span>,B <span style="color:#66d9ef">INT</span>, <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>(A),<span style="color:#66d9ef">KEY</span>(B));
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> Z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">1</span>;
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> Z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">1</span>;
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> Z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">3</span>;
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> Z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">6</span>;
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> Z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">10</span>,<span style="color:#ae81ff">8</span>;
+
+<span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> Z <span style="color:#66d9ef">WHERE</span> B<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> <span style="color:#66d9ef">FOR</span> <span style="color:#66d9ef">UPDATE</span>;
+
+<span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> Z <span style="color:#66d9ef">WHERE</span> A<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span> <span style="color:#66d9ef">LOCK</span> <span style="color:#66d9ef">IN</span> SHARE MODE;   <span style="color:#75715e">#阻塞
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> Z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">2</span>;                       <span style="color:#75715e">#阻塞
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> Z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">6</span>,<span style="color:#ae81ff">5</span>;                       <span style="color:#75715e">#阻塞
+</span></code></pre></div><p>显然，查询语句通过索引列b进行查询，使用传统的Next-Key Locking技术加锁，其需要分别进行锁定。对于聚集索引，其仅对a等于5的索引加上Record Lock。而对于辅助索引，其加上的是Next-Key Lock，锁定的范围是(1,3]，<strong>另外需要注意的是InnoDB存储引擎还会对辅助索引下一个键值加上Gap Lock，也就是(3,6)</strong>。这道Gap Lock是为了解决幻读而设置的，可以通过两种方式显示的关闭Gap Lock：</p>
+<ul>
+<li>将事务的隔离级别设置为READ COMMITED</li>
+<li>将参数innodb_locks_unsafe_for_binlog设置为1</li>
+</ul>
+<h2 id="6-幻读">6. 幻读</h2>
+<p>幻读是指在同一事务下，连续执行两次同样的SQL语句可能导致不同的结果，第二次SQL语句可能会返回之前不存在的行，可以理解为是<strong>不可重复读</strong>的一种情况。</p>
+<p>使用一致性的非锁定读中的行版本控制可以解决因事务B中修改某行数据而导致的事务A中前后两次读数据不一致的情况，但是无法解决因事务B中插入一行数据而导致的事务A中前后两次读数据不一致这种情况。在InnoDB中通过使用临建锁来解决这一问题。如下表，表t由1、2、5这三个值组成：</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>会话A</th>
+<th>会话B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SET SESSION tx_isolation='READ COMMITED&rsquo;;</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>BEGIN;</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>SELECT * FROM t WHERE a&gt;2 FOR UPDATE;</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td></td>
+<td>BEGIN;</td>
+</tr>
+<tr>
+<td>5</td>
+<td></td>
+<td>INSERT INTO t SELECT 4;</td>
+</tr>
+<tr>
+<td>6</td>
+<td></td>
+<td>COMMIT;</td>
+</tr>
+<tr>
+<td>7</td>
+<td>SELECT * FROM t WHERE a&gt;2 FOR UPDATE;</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>在READ COMMITED这一事务隔离级别下，只是用Record Lock锁，仅仅锁住了5这个单值，会话A中前后两次SELECT得到的结果并不一致，</p>
+<p>而在REPEATABLE READ这一隔离级别下，采用Next-Key Locking的方式进行加锁，锁住的是(2,+∞)，因此任何对这个范围的插入都是不被允许的。</p>
+<h2 id="7-死锁">7. 死锁</h2>
+<p>死锁是指两个或两个以上的事务在执行过程中，因争夺锁资源而造成的一种互相等待的现象。</p>
+<p>在InnoDB中通过两种方法解决死锁问题，一种方法是设置一个超时阈值，若阻塞时间超过这个阈值后一个事物进行回滚，另一个事务继续运行。另一种方法就是使用wait-for graph（等待图）的方式来进行死锁检测，这是一种更主动的方法，如下图t1和t2之间存在环路，故产生了死锁，通常来说InnoDB存储引擎选择回滚undo量最小的事务。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gd5a3l4mnpj30g407074z.jpg" alt="image-20200324200301192"></p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gd5a3os20yj306a04kdg0.jpg" alt="image-20200324200735196"></p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/innodb_index/" data-toggle="tooltip" data-placement="top" title="MySQL索引背后的数据结构及算法原理">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
