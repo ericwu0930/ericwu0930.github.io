@@ -219,8 +219,8 @@
                 <nav id="TableOfContents">
   <ul>
     <li><a href="#1-mysql中的锁">1. MySQL中的锁</a></li>
-    <li><a href="#2-非一致性锁定读">2. 非一致性锁定读</a></li>
-    <li><a href="#3-非一致性锁定读">3. 非一致性锁定读</a></li>
+    <li><a href="#2-一致性非锁定读">2. 一致性非锁定读</a></li>
+    <li><a href="#3-一致性锁定读">3. 一致性锁定读</a></li>
     <li><a href="#4-外键和锁">4. 外键和锁</a></li>
     <li><a href="#5-innodb中的行锁">5. InnoDB中的行锁</a></li>
     <li><a href="#6-幻读">6. 幻读</a></li>
@@ -231,13 +231,13 @@
                 <p><em>本篇文章整理自《MySQL技术内幕》第6章 锁，调整了文章中的顺序使其更加符合逻辑，也对文章中令我感到疑惑的地方通过查阅资料进行了补充和说明</em></p>
 <h2 id="1-mysql中的锁">1. MySQL中的锁</h2>
 <p>在MySQL中，lock的对象是事务，用来锁定的是数据库中的对象，如表、页、行。并且一般lock的对象仅在commit或rollback后进行释放，也就是说锁的持续时间是整个事务过程。</p>
-<h2 id="2-非一致性锁定读">2. 非一致性锁定读</h2>
+<h2 id="2-一致性非锁定读">2. 一致性非锁定读</h2>
 <p>InnoDB也提供了一种一致性的非锁定读，它是指InnoDB存储引擎通过行多版本控制的方式来读取当前执行时间数据库中的行数据。如果读取的行上有排他锁（对其有写操作），这时读取操作不会因此去等待行上锁的释放，相反，InnoDB存储引擎回去读取行的一个快照数据。</p>
 <p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gd5a3s16byj30d40aq3yz.jpg" alt="image-20200324170621369"></p>
 <p>快照数据是指该行的之前版本的数据，该实现是通过undo段来完成，而undo用来在事务中回滚数据，因此快照数据本身是没有额外的开销的。</p>
 <p>在InnoDB存储引擎的默认设置下，这是一种默认的读取方式，但是在不同事务隔离级别下，读取的方式不同，并不是在每个事务隔离级别下都是采用非锁定的一致性读，此外即使都是使用非锁定的一致性读，对于快照数据的定义也各不相同。</p>
 <p>一个行记录可能有不止一个快照数据，我们称之为行多版本技术，由此带来的并发控制，称之为多版本并发控制（MVCC）。在事务隔离级别READ COMMITEED和REPEATABLE READ下，InnoDB存储引擎使用非锁定的一致性读，但是在READ COMMITTED事务隔离级别下，对于快照数据，非一致性读总是读取被锁定行的最新一份快照数据，而REPEATABLE READ事务隔离级别下，对于快照数据，非一致性读总是读取本事务开始时的行数据版本。</p>
-<h2 id="3-非一致性锁定读">3. 非一致性锁定读</h2>
+<h2 id="3-一致性锁定读">3. 一致性锁定读</h2>
 <p>在某些情况下，用户需要显式地对数据库读取操作进行加锁以保证数据逻辑的一致性。InnoDB存储引擎对于SELECT语句支持两种一致性的锁定读操作：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">SELECT</span> ... <span style="color:#66d9ef">FOR</span> <span style="color:#66d9ef">UPDATE</span>                   <span style="color:#75715e">#排他锁
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> ... <span style="color:#66d9ef">LOCK</span> <span style="color:#66d9ef">IN</span> SHARE MODE           <span style="color:#75715e">#共享锁
