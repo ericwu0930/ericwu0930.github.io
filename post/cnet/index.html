@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="计算机网络零散知识点总结" />
+    <meta property="og:title" content="计算机网络零散知识点总结" />
+    <meta property="twitter:title" content="计算机网络零散知识点总结" />
+    
+
+    
+    <meta name="description" content="计算机网络中比较零散的知识点">
+    <meta property="og:description" content="计算机网络中比较零散的知识点" />
+    <meta property="twitter:description" content="计算机网络中比较零散的知识点" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>计算机网络零散知识点总结-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/cnet/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('https://farm5.staticflickr.com/4386/37060519312_4eb1782b87_k.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" title="计算机网络">
+                            计算机网络
+                        </a>
+                        
+                    </div>
+                    <h1>计算机网络零散知识点总结</h1>
+                    <h2 class="subheading">整理自《计算机网络自顶向下》与《TCP/IP详解》</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Tuesday, March 31, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-dns域名解析系统">1. DNS域名解析系统</a></li>
+    <li><a href="#2-从输入网址到获得页面的过程">2. 从输入网址到获得页面的过程</a></li>
+    <li><a href="#3-session与cookie">3. Session与Cookie</a></li>
+    <li><a href="#4-get与post的区别">4. Get与Post的区别</a></li>
+    <li><a href="#5-arp协议">5. ARP协议</a></li>
+    <li><a href="#6-网络层协议">6. 网络层协议</a>
+      <ul>
+        <li><a href="#61-路由器工作原理">6.1 路由器工作原理</a></li>
+        <li><a href="#62-网际协议因特网中的转发和编址">6.2 网际协议：因特网中的转发和编址</a></li>
+        <li><a href="#icmp因特网控制报文协议">ICMP因特网控制报文协议</a></li>
+        <li><a href="#63-路由选择算法">6.3 路由选择算法</a></li>
+      </ul>
+    </li>
+    <li><a href="#7-使用ping时所用到的协议">7. 使用ping时，所用到的协议</a></li>
+  </ul>
+</nav>
+                
+                <h2 id="1-dns域名解析系统">1. DNS域名解析系统</h2>
+<p>DNS服务器分为三种，根域名服务器、顶级域名服务器以及权限域名服务器。在因特网上有13个根DNS服务器，他们的命名从A-M，大部分分布在北美洲。顶级域名服务器负责顶级域名com org net&hellip;权威域名服务器是具体负责一个区的域名服务器。（区是域的一个子集，DNS服务器管辖的范围不是以域为单位，而是以区为单位）</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh8cwe8ej30hj08zdk2.jpg" alt=""></p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh8gf7rij30ic08341c.jpg" alt=""></p>
+<p>除了以上的DNS层次结构外，还有一种很重要的DNS，本地DNS服务器。每一个ISP都有一台本地DNS服务器。当主机与某个ISP链接时，ISP提供一个本地DNS服务器的IP地址。当主机发出DNS请求时，该请求被发往本地DNS服务器，然后再讲请求转发到DNS服务器层次结构中。</p>
+<p>一个DNS解析过程如下图所示，假设主机cis.poly.edu想要访问gaia.cs.umass.edu，主机首先向本地DNS服务器发送一个DNS查询报文。本地DNS服务器将该报文转发到根DNS服务器，根DNS服务器注意到顶级域名为edu于是向本地DNS服务器返回负责edu的TLD的IP地址列表，本地DNS服务器再次向这eduTLD服务器进行查询。该TLD服务器注意到umass.edu前缀，并用权威DNS服务器的IP地址进行响应。最后，本地DNS服务器直接向dns.umass.edu重发查询报文，dns.umass.edu用gaia.cs.umass.edu的IP地址进行响应。</p>
+<p>图中cis.poy.edu向dns.poly.edu发送的查询属于递归查询，即只想得到一个结果（撒手不管）；后面的查询都是迭代查询，因为剩下的操作都需要dns.poly.edu亲自去查询。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh8jcyhzj30b40fxgov.jpg" alt="image-20200312215552136"></p>
+<p>为了改善时延性能并减少在因特网上到处传输的DNS报文数量，DNS广泛使用缓存技术。当某DNS服务器接收到一个DNS回答时，它将该回答中的信息缓存在本地存储器中，并设置一个存活时间。</p>
+<p>DNS协议由两个主要部分组成：<strong>名称查询和区域传输</strong>。名称查询很好理解，区域传输是指为了数据的安全，除了一台主服务器，还要配备一个或多个辅助服务器，使用区域传输，从主服务器完整地获取该数据库的副本。DNS有一个专用的协议用于执行区域传输。</p>
+<p>DNS既可以通过UDP进行传输，也可以通过TCP进行传输，<strong>端口号都是53</strong>。区域传输使用TCP进行，当DNS传输数据大于512字节时，使用TCP进行数据传输，小于512字节时，使用UDP进行传输。</p>
+<h2 id="2-从输入网址到获得页面的过程">2. 从输入网址到获得页面的过程</h2>
+<ol>
+<li>
+<p>浏览器查询 DNS，获取域名对应的IP地址:具体过程包括浏览器搜索自身的DNS缓存、搜索操作系统的DNS缓存、读取本地的Host文件（该文件中对应着ip与域名的映射）和向本地DNS服务器进行查询等。对于向本地DNS服务器进行查询，如果要查询的域名包含在本地配置区域资源中，则返回解析结果给客户机，完成域名解析(此解析具有权威性)；如果要查询的域名不由本地DNS服务器区域解析，但该服务器已缓存了此网址映射关系，则调用这个IP地址映射，完成域名解析（此解析不具有权威性）。如果本地域名服务器并未缓存该网址映射关系，那么将根据其设置发起递归查询或者迭代查询；</p>
+</li>
+<li>
+<p>浏览器获得域名对应的IP地址以后，浏览器向服务器请求建立链接，发起三次握手；</p>
+</li>
+<li>
+<p>TCP/IP链接建立起来后，浏览器向服务器发送HTTP请求；</p>
+</li>
+<li>
+<p>服务器接收到这个请求，并根据路径参数映射到特定的请求处理器进行处理，并将处理结果及相应的视图返回给浏览器；</p>
+</li>
+<li>
+<p>浏览器解析并渲染视图，若遇到对js文件、css文件及图片等静态资源的引用，则重复上述步骤并向服务器请求这些资源；</p>
+</li>
+<li>
+<p>浏览器根据其请求到的资源、数据渲染页面，最终向用户呈现一个完整的页面。</p>
+</li>
+</ol>
+<h2 id="3-session与cookie">3. Session与Cookie</h2>
+<p>基于Cookie技术还实现了Session技术，如下图所示，Session技术将Session对象保存于服务器中，实现了同一次会话多次请求之间的数据共享。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh8pedd5j311s0h80uq.jpg" alt="Session原理"></p>
+<p>两次请求获取的session是否是同一个？是的</p>
+<p>如何保证是同一个session？在第一次请求中，为本次会话在服务器内存中创建了一个Session对象，这个Session对象拥有唯一的id，服务器将这个sessionId通过set-cookie回传给客户端，客户端再次发送请求时在cookie中包含有这个sessionid，服务器根据这个sessionid找到对应的session对象。</p>
+<p>Session和Cookie的区别：</p>
+<ol>
+<li>Session保存于服务器中，Cookie保存于客户端中</li>
+<li>Session没有大小限制，Cookie有大小限制</li>
+<li>Session保存在服务器中相对安全，Cookie会被拦截</li>
+</ol>
+<h2 id="4-get与post的区别">4. Get与Post的区别</h2>
+<p>GET与POST是我们常用的两种HTTP Method，二者之间的区别主要包括如下几个方面：</p>
+<ol>
+<li>
+<p>从功能上讲，GET一般用来从服务器上获取资源，POST一般用来更新服务器上的资源；</p>
+</li>
+<li>
+<p>从请求参数形式上看，GET请求的数据会附在URL之后，即将请求数据放置在HTTP报文的 请求头 中，以?分割URL和传输数据，参数之间以&amp;相连。特别地，如果数据是英文字母/数字，原样发送；否则，会将其编码为 application/x-www-form-urlencoded MIME 字符串(如果是空格，转换为+，如果是中文/其他字符，则直接把字符串用BASE64加密，得出如：%E4%BD%A0%E5%A5%BD，其中％XX中的XX为该符号以16进制表示的ASCII)；而POST请求会把提交的数据则放置在是HTTP请求报文的 请求体 中。</p>
+</li>
+<li>
+<p>就安全性而言，POST的安全性要比GET的安全性高，因为GET请求提交的数据将明文出现在URL上，而且POST请求参数则被包装到请求体中，相对更安全。</p>
+</li>
+<li>
+<p>从请求的大小看，GET请求的长度受限于浏览器或服务器对URL长度的限制，允许发送的数据量比较小，而POST请求则是没有大小限制的。</p>
+</li>
+</ol>
+<h2 id="5-arp协议">5. ARP协议</h2>
+<p>如果一台主机要讲一个帧发送到另一台主机，仅知道这台主机的IP地址是不够的，还需要知道主机的MAC地址。地址解析协议（ARP）提供了一种在IPv4地址和各种网络技术使用的硬件地址之间的映射。</p>
+<ol>
+<li>
+<p>每一台主机都会在ARP cache缓冲区建立一个ARP表格，用来记录IP位置和MAC地址的对应关系，这个表的每一条资料会根据自身的存活时间递减而最终消失，以确保资料的真实性</p>
+</li>
+<li>
+<p>当发送主机要发送数据包给目的主机的时候，会检查自己的ARP列表中是否存在该IP地址对应的MAC地址，如果有，直接将数据包发送到这个MAC地址，如果没有，就向本地网络发起一个ARP请求的广播包，查询目的主机对应的MAC地址。此ARP请求数据包里包括源主机的IP地址，硬件地址，以及目的主机的IP地址。</p>
+</li>
+<li>
+<p>网络中所有主机收到这个请求之后，会检查数据包中的目的IP是否和自己的IP地址一致。如果不相同就忽略此数据包，如果相同，该主机首先将源主机的MAC地址和IP地址添加到自己的ARP列表中，如果ARP列表中已经存在该IP信息，则将其覆盖，然后给源主机发送一个ARP相应数据包，告诉对方自己是他需要查找的MAC地址，源主机收到这个ARP响应数据包后，将得到的目的主机的IP地址和MAC地址添加到自己的ARP列表中，并利用此信息开始数据传输，如果源主机一直没有收到ARP的响应数据包，表示ARP查询失败【广播发送ARP请求，单播发送ARP响应】</p>
+</li>
+</ol>
+<p>APR欺骗：攻击者只要持续不断地发出伪造的ARP响应包就能更改目标主机ARP缓存中的IP_MAC条目，造成网络中断或中间人攻击。</p>
+<h2 id="6-网络层协议">6. 网络层协议</h2>
+<p>网络层的功能主要为<strong>转发</strong>和<strong>路由选择</strong>。转发涉及在单一的路由器中从一条入链路到一条出链路的传送。路由选择涉及一个网络的所有路由器，通过路由选择算法以决定从源到目的地结点所采用的的路径。</p>
+<h3 id="61-路由器工作原理">6.1 路由器工作原理</h3>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh8upx4qj30ik09e77m.jpg" alt="image-20200313092840509"></p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh8xryhdj30g604bwfv.jpg" alt="image-20200313093004804"></p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh90gxcwj30ej03sab5.jpg" alt="image-20200313093019865"></p>
+<p>交换结构将路由器的输入端口与输出端口相连，路由选择处理器执行路由选择协议（体现在为路由器计算转发表）。</p>
+<p>排队的位置和程度取决于流量负载、交换结构的相对速率和线路速率，当无内存可用于存储到达的分组时将会出现丢包。</p>
+<h3 id="62-网际协议因特网中的转发和编址">6.2 网际协议：因特网中的转发和编址</h3>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh93fiw2j30ed0a8adu.jpg" alt="image-20200313094307767"></p>
+<p>网络层有三个主要组件构成。第一个组件是IP协议，第二个组件是路由选择部分，通过路由选择协议计算出转发表，第三部分是报告数据报中的差错。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh96n94pj30bo08vtc5.jpg" alt="image-20200313104905118"></p>
+<h4 id="ipv4数据报中的关键字段如下所示">IPv4数据报中的关键字段如下所示</h4>
+<ul>
+<li>版本号：IPv4还是IPv6</li>
+<li>首部长度：因为IPv4数据报可包含一些可变数量的选项，故需要用这4比特来确定IP数据报中数据部分实际从哪里开始</li>
+<li>数据报长度，这是IP数据报的总长度</li>
+<li>标识、标志、片偏移。这三个字段与IP分片有关 ； 其中标志由3位组成，第一位为0，第二位表示DF（能否分片），第三位MF表示这片是否是最后一片</li>
+<li>寿命TTL每经过一个路由器，该字段被减1</li>
+<li>上层协议：指明是TCP还是UDP，协议号是将网络层与传输层绑定在一起的粘合剂</li>
+<li>首部校验和：仅计算IPv4头部</li>
+<li>数据：IP数据报中的数据字段包含要交付给目的地的运输层报文段，也可以是ICMP报文。</li>
+</ul>
+<h4 id="ip数据报分片">IP数据报分片</h4>
+<p>一个链路层帧能承载的最大数据量叫做最大传送单元（MTU），MTU是数据链路层的概念，MSS是传输层的概念。当数据帧大小超过MTU时，会进行分片，然后到达目的地之后进行重新组装。</p>
+<p>当生成一个数据报时，发送主机在为该数据报设置源和目的地址的同时再贴上标识号。发送主机通常将为它发送的每个数据报的标识号加1。当路由器需要对一个数据报分片时，每个分片拥有相同的源IP地址，目的IP地址。最后一个分片标志位被设为0，其他的被设为1。偏移字段指定该片应放在初始IP数据报的哪个位置。</p>
+<p>在目的地，当重组成功后，才会将其传递给运输层，如果有一个或多个片没有到达目的地，不完整的数据报会被丢弃。</p>
+<h4 id="dhcp协议">DHCP协议</h4>
+<p>DHCP允许主机自动获取一个IP地址、子网掩码、默认网关以及本地DNS服务器的地址。DHCP协议是一个4个步骤的过程，yiaddr表示被分配到的IP地址。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh9p2zekj30bv0gx79q.jpg" alt="image-20200313104925111"></p>
+<ol>
+<li>DHCP服务器发现：客户在<strong>UDP分组中向端口67</strong>发送该发现报文。使用广播目的地址255.255.255.255，并且使用“本主机”源地址0.0.0.0。DHCP客户将该IP数据报传递给链路层进行广播。</li>
+<li>DHCP服务器提供：DHCP服务器用一个DHCP提供报文向客户做出响应，仍使用IP广播地址255.255.255.255。可能会有多个DHCP服务器做出响应，提供的报文包含有收到的发现报文的事务ID、向客户推荐的IP地址、子网掩码以及IP地址租用期。</li>
+<li>DHCP请求：客户从一个或多个服务器提供中选择一个，并向选中的服务器提供一个DHCP请求报文进行响应，回显配置参数</li>
+<li>DHCP ACK：服务器用DHCP ACK报文对DHCP请求报文进行响应，证实所要求的的参数。</li>
+</ol>
+<h4 id="nat网络地址转换">NAT网络地址转换</h4>
+<p>NAT路由器的IP地址通过ISP的DHCP服务器得到，路由器本身也会运行一个DHCP服务器，给家庭网络地址中的计算机提供地址。NAT路由器对于公网屏蔽了私网的细节，当数据报从NAT路由器发出时，将源地址替换为公网中的地址，然后重新分配一个端口号，并将其记录在NAT转换表中。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh9t9044j30k809z436.jpg" alt="image-20200313110633479"></p>
+<h3 id="icmp因特网控制报文协议">ICMP因特网控制报文协议</h3>
+<p>ICMP最典型的用途是差错报告，ICMP通常被认为是IP的一部分，但从体系结构上，它位于IP之上，因为ICMP报文是承载在IP分组中的。</p>
+<p>ICMP的报文格式如下图所示，不同的类型+代码表示不同的差错信息（少了一项类型3，编码4，需要进行分片但设置了不分片位，可以配合TCP实现路径MTU探测）。可以使用ICMP追踪世界上任意一台其他主机之间的路由，比如发送一个不可到达端口的UDP，然后将TTL依次+1，如果返回TTL过期的ICMP，该ICMP携带有路由器的名字与它的IP地址；如果返回的是目的端口不可达，则表明到达了目标主机。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh9wb7hzj30au03kmxe.jpg" alt="image-20200313113638767"></p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddh9yup8bj30dx0aqn0y.jpg" alt="image-20200313113903082"></p>
+<h3 id="63-路由选择算法">6.3 路由选择算法</h3>
+<p>把互联网划分为许多较小的自自系统，一般都记为AS，AS是在单一技术管理下的一组路由器。在目前的互联网中，一个大的ISP就是一个自治系统，互联网把路由选择协议划分为两大类，即内部网关协议和外部网关协议。</p>
+<p>每个自治系统决定在本自治系统内运行哪一个内部路由选择协议（RIP OSPF），但每个自治系统都有一个或多个路由器除运行本系统的内部路由选择协议外，还要运行自治系统间的路由协议（BGP-4）</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gddha1l8hkj30cj0310tt.jpg" alt="image-20200313120408007"></p>
+<h2 id="7-使用ping时所用到的协议">7. 使用ping时，所用到的协议</h2>
+<p>当在局域网中使用ping <a href="http://www.xxx.com">www.xxx.com</a>时，用到了哪些协议？</p>
+<p>通过DNS协议，将ping后接的域名转换为ip地址。（DNS使用的传输层协议是UDP）</p>
+<p>通过ARP解析服务，由ip地址解析出MAC地址，以在数据链路层传输。</p>
+<p>ping是为了测试另一台主机是否可达，发送一份ICMP回显请求给目标主机，并等待ICMP回显应答。（ICMP用于在ip主机、路由器间传递网络是否通畅、主机是否可达等控制信息）</p>
+<p>TCP粘包情况（发送端发送的次数与接收端收到的次数不一致）</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/innodb_lock/" data-toggle="tooltip" data-placement="top" title="InnoDB锁的实现">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
