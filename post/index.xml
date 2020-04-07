@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 31 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 06 Apr 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Redis数据结构与对象</title>
+      <link>https://ericwu0930.github.io/post/redis_struct/</link>
+      <pubDate>Mon, 06 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/redis_struct/</guid>
+      <description>Redis是用c语言开发的一个开源的高性能键值对（key-value）数据库，Redis数据库里面的每个键值对都是由对象（object）组成</description>
+    </item>
     
     <item>
       <title>计算机网络零散知识点总结</title>
