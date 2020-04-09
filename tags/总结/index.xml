@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>总结 on Eric&#39;s Blog</title>
+    <link>https://ericwu0930.github.io/tags/%E6%80%BB%E7%BB%93/</link>
+    <description>Recent content in 总结 on Eric&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 09 Apr 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://ericwu0930.github.io/tags/%E6%80%BB%E7%BB%93/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>春招实习感悟</title>
+      <link>https://ericwu0930.github.io/post/summary/</link>
+      <pubDate>Thu, 09 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/summary/</guid>
+      <description>1. 前言 很幸运收到了腾讯的oc，从3月11号投递简历，到4月8号接到oc，非常感谢菜菜学长一直义务解答各种疑惑，受菜菜学长的委托写下这篇春招实</description>
+    </item>
+    
+  </channel>
+</rss>

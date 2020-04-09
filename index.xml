@@ -6,10 +6,19 @@
     <description>Recent content on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 06 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 09 Apr 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>春招实习感悟</title>
+      <link>https://ericwu0930.github.io/post/summary/</link>
+      <pubDate>Thu, 09 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/summary/</guid>
+      <description>1. 前言 很幸运收到了腾讯的oc，从3月11号投递简历，到4月8号接到oc，非常感谢菜菜学长一直义务解答各种疑惑，受菜菜学长的委托写下这篇春招实</description>
+    </item>
     
     <item>
       <title>Redis数据结构与对象</title>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="春招实习感悟" />
+    <meta property="og:title" content="春招实习感悟" />
+    <meta property="twitter:title" content="春招实习感悟" />
+    
+
+    
+    <meta name="description" content="学习路线及转行感悟">
+    <meta property="og:description" content="学习路线及转行感悟" />
+    <meta property="twitter:description" content="学习路线及转行感悟" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>春招实习感悟-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/summary/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E6%80%BB%E7%BB%93" title="总结">
+                            总结
+                        </a>
+                        
+                    </div>
+                    <h1>春招实习感悟</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Thursday, April 9, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-前言">1. 前言</a></li>
+    <li><a href="#2-学习建议">2. 学习建议</a>
+      <ul>
+        <li><a href="#数据结构与算法">数据结构与算法</a></li>
+        <li><a href="#操作系统">操作系统</a></li>
+        <li><a href="#计算机网络">计算机网络</a></li>
+        <li><a href="#数据库">数据库</a></li>
+        <li><a href="#java">JAVA</a></li>
+        <li><a href="#设计模式">设计模式</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-一点心里话">3. 一点心里话</a></li>
+  </ul>
+</nav>
+                
+                <h2 id="1-前言">1. 前言</h2>
+<p>很幸运收到了腾讯的oc，从3月11号投递简历，到4月8号接到oc，非常感谢菜菜学长一直义务解答各种疑惑，受菜菜学长的委托写下这篇春招实习感悟，也算是对自己转行之路的一点点总结。</p>
+<p>先做一下自我介绍，我本科毕业于末流985，硕士就读于top3（嗯，是的，top3），专业都是机械工程。自大三下学期开始，单纯出于兴趣跟随计算机系的学生一起上课，修完了数据结构、算法设计、操作系统、计算机网络和编译原理。进入研究生阶段后，出于各种原因，我选择了转行。从研二上学期开始自学Java，以下是我学习建议。</p>
+<h2 id="2-学习建议">2. 学习建议</h2>
+<p>作为非科班生，项目经验肯定是跟科班生差得远，这是客观事实，所以一定要在基础知识上下功夫，证明给面试官你很热爱这一行，同时你也有潜力做好这一行。我会从数据结构与算法、操作系统、计算机网络、数据库、Java、设计模式这几个方面进行学习资源的推荐。</p>
+<h3 id="数据结构与算法">数据结构与算法</h3>
+<ul>
+<li><strong>算法 第4版</strong>：入门首选，好书。另外推荐牛客网上左神的算法基础入门班课程（感觉只看入门就好了），基本上带你过了一遍本科数据结构所学的知识点。</li>
+<li><strong>剑指Offer 第2版</strong>：很多人都推这本书，我刷了三遍，但我感觉面试过程中并没有遇到？似乎leetcode前二百遇到的更多</li>
+<li><strong>leetcode</strong>：养成习惯，每天一道新题，然后把不会做的题或者做错的题用Anki这个软件记录下来，定期复习。题刷的再多，遇到之前错题如果做不出来都是白费。另外会有小伙伴问我困难题做不做，之前我是碰到困难题一概pass的，但经过今年暑期招聘，我发现阿里、网易的笔试题，普遍是1题中等+1题困难，或者2题中等+2题困难。困难题如果不是之前做过相似的，对于普通人（我）很难在笔试的时间里做出来吧，所以我的建议是leetcode前200的题目全做。</li>
+</ul>
+<h3 id="操作系统">操作系统</h3>
+<ul>
+<li>
+<p><strong>深入理解计算机系统 第三版</strong>：非科班入门必看，感觉杂糅了计算机组成、汇编语言以及一部分操作系统。我看得时候是挑着看的，主要看了第一部分的第六章、第二部分以及第三部分</p>
+</li>
+<li>
+<p><strong>现代操作系统 第四版</strong>：主要看了第一章引论、第二章 进程与线程、第三章 内存管理、第六章 死锁，这三部分也是面试过程中操作系统方面会频繁问到的内容。书中内容与《深入理解计算机系统》互为补充。</p>
+</li>
+<li>
+<p><strong>鸟哥的Linux私房菜 第四版</strong>：我很快的翻了一遍，主要了解Linux基本命令，也可以看下b站的这个视频，前面部分就是介绍Linux各种<a href="https://www.bilibili.com/video/BV1ex411x7Em">命令</a></p>
+</li>
+</ul>
+<h3 id="计算机网络">计算机网络</h3>
+<ul>
+<li>
+<p><strong>计算机网络 第7版</strong>：入门书籍，如果感觉一上来学的费劲可以在b站上找一下韩立刚老师的视频，讲的非常好，只不过视频比较早了，新版视频需要<a href="https://edu.51cto.com/course/7313.html?source=so">购买</a>。</p>
+</li>
+<li>
+<p><strong>TCP/IP详解 卷1</strong>：主要看TCP协议、UDP协议相关章节，这本书感觉写的过于详细，实在看不懂的地方略过。可以看下我做的<a href="https://ericwu0930.github.io/post/tcp/">笔记</a></p>
+</li>
+<li>
+<p><strong>图解HTTP</strong>：http也是面试常问考点，有计算机网络基础后看这本书非常快，一天看完。我的<a href="https://ericwu0930.github.io/post/http/">笔记</a></p>
+</li>
+<li>
+<p><strong>计算机网络-自顶向下方法 第6版</strong>：我主要看了这本书的第六章 网络层部分，这一部分讲的比TCP/IP详解好很多。</p>
+</li>
+</ul>
+<h3 id="数据库">数据库</h3>
+<ul>
+<li><strong>数据库系统概念 第6版</strong>：这本书非常的厚重，我主要是配合b站哈工大战德臣老师的<a href="https://www.bilibili.com/video/BV1B4411Y7iE">公开课</a>翻阅，讲得非常好</li>
+<li><strong>MySQL必知必会</strong>：应用层面的书籍，一些MySQL基本操作指令</li>
+<li><strong>MySQL技术内幕 第2版</strong>：一开始读比较晦涩，主要是作者默认读者已经掌握了MySQL的一些基础知识，书中的一些名词没有做解释，需要随时百度，但不妨碍是本好书。我主要看了第1章、第2章、第5章、第6章、第7章</li>
+<li><strong>Redis设计与实现</strong>：好书，通俗易懂，读起来没有《MySQL技术内幕》那么晦涩</li>
+</ul>
+<h3 id="java">JAVA</h3>
+<ul>
+<li>
+<p><strong>Java核心技术 卷1 第10版</strong>：主要看了前九章，也可以看下这个<a href="https://www.bilibili.com/video/BV1uJ411k7wy?from=search&amp;seid=2598051222051284668">视频</a></p>
+</li>
+<li>
+<p><strong>深入理解Java虚拟机</strong>：神书，全是重点，如果一开始感觉费劲可以配合这个<a href="https://www.bilibili.com/video/BV1yE411Z7AP">视频</a>。</p>
+</li>
+<li>
+<p><strong>Java并发编程实战</strong></p>
+<p>听说Java编程思想和Effective Java也都是神书，但是我还没开始读所以暂不做介绍。</p>
+</li>
+</ul>
+<h3 id="设计模式">设计模式</h3>
+<ul>
+<li><strong>Head First 设计模式</strong>：设计模式是一种比较玄学的东西吧，有种说法是90%的设计模式都是多态的体现，感觉没有一定的代码量很难真正理解，但为了面试中会问到，把单例、策略、工厂、装饰者等常见的看一下就好，也可以看下我做的<a href="https://ericwu0930.github.io/post/design/">笔记</a></li>
+</ul>
+<p>另外个人网站是一个非常加分的亮点，几乎每一轮面试的时候面试官都会问我学习过程中是否有做笔记的习惯，是否有个人博客，我现阶段的技术博客主要是对书本知识框架的梳理，夹杂一点自己的感悟和理解。虽然写博客耗时耗力，但可以帮助我们理顺知识点之间的逻辑关系，并且在以后复习的时候效率也更高。搭建个人博客可以照着这个<a href="https://www.bilibili.com/video/BV1q4411i7gL?from=search&amp;seid=10052147667453984640">视频</a>来做，如果有git经验的话上手更快。我也强烈推荐这位up主，从他这里我也学到了很多。</p>
+<h2 id="3-一点心里话">3. 一点心里话</h2>
+<p>到底要不要转行，这可能是摆在天坑专业学生面前一个永恒的话题，在这里我说说我自己的想法。</p>
+<p>学到大三，我就大概知道了机械这个行业究竟是干什么的，如果就业会从事那种职业，如果科研会研究什么问题。不管是从那个方面来看，我都不喜欢这个专业，但是面对一个自己用三年时间换来的保研机会，我没有了勇士断腕的决心和勇气。</p>
+<p>进入研究生阶段之后，导师告诉我如果想在科研上做出点成绩，研一就多修一下数学。于是我在一年的时间里修完了数值分析、矩阵理论、多元统计、随机过程和泛函分析。随之而来的便是一份很糟糕的成绩单，因为我真的学不明白。看看身边进不了科研圈的博士师兄们毕业了也不过纷纷进入了华为敲代码，心想如果要转行为何不趁早呢？于是也就做出了这个决定。</p>
+<p>有人问我，你不怕几年后计算机行业饱和么，我说我不怕，就算多年后计算机行业趋于冷静，薪资水平没这么扎眼，我还是喜欢这份职业。我自认为是一个循规蹈矩的人，转行是目前为止我做出的最不寻常的决定，其中有父母的阻拦（爸妈更希望我能在本专业读博），也有老师的劝解，我不知道我这一决定的对错，但是我不后悔。</p>
+<p>我一直很喜欢一个词，功不唐捐。2017年9月，当我第一次坐在计算机系的教室跟着大二的学弟学妹们一起上数据结构与算法时，我不会想到三年后的今天能有机会进入腾讯实习，感谢自己所付出的努力，也感谢一路上的贵人相助。</p>
+<p>希望各位想转行的小伙伴一旦下定了决心，就坚持到底。</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/redis_struct/" data-toggle="tooltip" data-placement="top" title="Redis数据结构与对象">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
