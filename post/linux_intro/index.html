@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="Linux基础入门" />
+    <meta property="og:title" content="Linux基础入门" />
+    <meta property="twitter:title" content="Linux基础入门" />
+    
+
+    
+    <meta name="description" content="Linux入门总结">
+    <meta property="og:description" content="Linux入门总结" />
+    <meta property="twitter:description" content="Linux入门总结" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Linux基础入门-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/linux_intro/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/linux" title="Linux">
+                            Linux
+                        </a>
+                        
+                    </div>
+                    <h1>Linux基础入门</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Sunday, May 10, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-linux权限管理">1. Linux权限管理</a></li>
+    <li><a href="#2-linux软件安装管理">2. Linux软件安装管理</a>
+      <ul>
+        <li><a href="#21--软件包分类">2.1  软件包分类</a></li>
+        <li><a href="#22-rpm包的安装">2.2 RPM包的安装</a></li>
+        <li><a href="#23-yum在线安装">2.3 yum在线安装</a></li>
+        <li><a href="#24-源码包的安装">2.4 源码包的安装</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-linux系统管理">3. Linux系统管理</a>
+      <ul>
+        <li><a href="#31-进程管理">3.1 进程管理</a></li>
+        <li><a href="#32-工作管理">3.2 工作管理</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-linux服务管理">4. Linux服务管理</a>
+      <ul>
+        <li><a href="#41-linux运行级别">4.1 Linux运行级别</a></li>
+        <li><a href="#42-服务的分类">4.2 服务的分类</a></li>
+        <li><a href="#43-查询已安装的服务">4.3 查询已安装的服务</a></li>
+        <li><a href="#44-rpm包服务管理">4.4 RPM包服务管理</a></li>
+        <li><a href="#45-源码包服务管理">4.5 源码包服务管理</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-常用命令汇总">5. 常用命令汇总</a></li>
+    <li><a href="#6--小tips">6.  小tips</a></li>
+  </ul>
+</nav>
+                
+                <h2 id="1-linux权限管理">1. Linux权限管理</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">-rw-r--r--
+- 文件类型<span style="color:#f92672">(</span>-文件 d目录 l软链接<span style="color:#f92672">)</span>
+rw- u所有者权限
+r-- g所属组权限
+r-- o其他人
+</code></pre></div><p>改变文件权限：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">chmod <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span> 模式 文件名
+- 常用选项 -R 递归
+
+chmod u+x cangls.av <span style="color:#75715e"># 所有者赋予x权限</span>
+chmod g+w,o+w furong.av  
+chmod u<span style="color:#f92672">=</span>wrx,g<span style="color:#f92672">=</span>wrx furong.av
+chmod a<span style="color:#f92672">=</span>wrx furong.av <span style="color:#75715e"># 给所有人都赋予权限</span>
+
+<span style="color:#75715e"># 以上都不方便 使用数字4 2 1 对应以上权限</span>
+chmod <span style="color:#ae81ff">644</span> cangls.av
+</code></pre></div><p>权限的作用：</p>
+<ul>
+<li>对文件的作用
+<ol>
+<li>r：读取文件内容（cat more head tail）</li>
+<li>w：编辑、新增、修改文件内容（vi echo）但不能删除文件</li>
+<li>x：可执行</li>
+</ol>
+</li>
+<li>对目录的作用
+<ol>
+<li>r：可以查看目录下文件名（ls）</li>
+<li>w：具有修改目录结构的权限：新建文件和目录，删除此目录下文件和目录，重命名茨木下文件和目录，剪切（touch rm mv cp）</li>
+<li>x：可进入目录（cd）</li>
+</ol>
+</li>
+<li>对文件来讲，最高权限是执行，对目录来讲，最高权限是写</li>
+</ul>
+<p>其他权限命令：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">chown 用户名 文件名
+chgrp 组名   文件名
+</code></pre></div><h2 id="2-linux软件安装管理">2. Linux软件安装管理</h2>
+<h3 id="21--软件包分类">2.1  软件包分类</h3>
+<ul>
+<li>源码包</li>
+<li>二进制包（RPM包、系统默认）</li>
+</ul>
+<h3 id="22-rpm包的安装">2.2 RPM包的安装</h3>
+<p>RMP包比较头疼的问题是依赖问题，因此一般不用rpm命令进行软件的安装， 而是使用该命令查看安装了哪些rpm包</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">rpm -qa | grep xxx<span style="color:#f92672">(</span>要查询的文件名<span style="color:#f92672">)</span>
+</code></pre></div><h3 id="23-yum在线安装">2.3 yum在线安装</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 配置yum的源文件</span>
+vi /etc/yum.repos.d/CentOS-Base.repo
+<span style="color:#f92672">[</span>base<span style="color:#f92672">]</span> 容器名称，一定要写在<span style="color:#f92672">[</span><span style="color:#f92672">]</span>中
+name   容器说明，可以自己随便写
+mirrorlist  镜像站点
+baseurl     yum源头服务器的地址
+enabled     此容器是否生效，如果不写默认生效
+<span style="color:#75715e"># linux中可以在文件名后加.bak使其失效</span>
+</code></pre></div><p>常用yum命令</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">yum list
+yum search
+yum -y install 包名安装  <span style="color:#75715e"># -y 就是默认输入y</span>
+yum -y remove 包名 <span style="color:#75715e"># 卸载命令，尽量不要卸载</span>
+yum -y update 包名 <span style="color:#75715e"># 升级 如果不加报名则自动全部升级</span>
+</code></pre></div><h3 id="24-源码包的安装">2.4 源码包的安装</h3>
+<h4 id="241-区别">2.4.1 区别</h4>
+<ul>
+<li>安装之前的区别：概念上的区别</li>
+<li>安装之后的区别：安装位置的区别</li>
+</ul>
+<p>RPM包的安装位置，建议安装在默认位置下。这样可以使用卸载命令自动删除，也可以使用service命令启动（实际上是执行了*/etc/rc.d/init.d/xxx(包名) start*）</p>
+<table>
+<thead>
+<tr>
+<th>安装目录</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/etc/</td>
+<td>配置文件安装目录</td>
+</tr>
+<tr>
+<td>/usr/bin/</td>
+<td>可执行的命令安装目录</td>
+</tr>
+<tr>
+<td>/usr/lib/</td>
+<td>程序所使用的的函数库保存位置</td>
+</tr>
+<tr>
+<td>/usr/share/doc/</td>
+<td>基本的软件使用保存位置</td>
+</tr>
+<tr>
+<td>/usr/share/man/</td>
+<td>帮助文件保存位置</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">rpm -ql 包名 <span style="color:#75715e">#查看安装位置</span>
+</code></pre></div><p>源码包安装位置需要自己指定，建议安装在/usr/local/软件名（源码包保存位置：/usr/local/src），源码没有一键卸载命令，如果不指定安装目录，将装的到处都是很难处理。</p>
+<h4 id="242-安装过程">2.4.2 安装过程</h4>
+<ul>
+<li>
+<p>下载源码包</p>
+</li>
+<li>
+<p>解压缩下载的源码包   tar -zxvf</p>
+</li>
+<li>
+<p>进入解压缩目录，执行./configure操作</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">./configure --prefix<span style="color:#f92672">=</span>/usr/local/软件包名
+</code></pre></div></li>
+<li>
+<p>make(可以使用make clean清除)</p>
+</li>
+<li>
+<p>make install命令安装</p>
+</li>
+</ul>
+<h2 id="3-linux系统管理">3. Linux系统管理</h2>
+<h3 id="31-进程管理">3.1 进程管理</h3>
+<h4 id="进程管理的作用">进程管理的作用</h4>
+<ol>
+<li>判断服务器健康状态（最主要）</li>
+<li>查看系统中所有进程</li>
+<li>杀死进程</li>
+</ol>
+<h4 id="进程的查看命令">进程的查看命令</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">ps aux
+<span style="color:#75715e">#查看系统中所有进程，使用BSD操作系统格式</span>
+ps -le
+<span style="color:#75715e">#查看系统中所有进程，使用Linux标准命令格式，会显示进程的优先级</span>
+pstree
+<span style="color:#75715e">#显示进程树</span>
+</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genhr7utyfj31i2030750.jpg" alt="image-20200510173930705"></p>
+<ul>
+<li>VSZ：占用虚拟内存</li>
+<li>RSS：占用实际内存</li>
+<li>TT：该进程在哪个终端中运行的。其中tty1-tty7代表本地控制台终端，tty1-tty6是本地的字符界面终端，tty7是图形终端。pts/0-255代表虚拟终端。？则表示不是由终端执行的进程</li>
+<li>STAT：状态 S 休眠状态 R 运行状态</li>
+<li>STARTED：进程启动时间</li>
+<li>TIME：进程耗费cpu时间</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">top <span style="color:#75715e">#类似于windows的任务管理器</span>
+-d秒数：指定top命令每隔几秒更新。默认是3秒
+-b：使用批处理模式输出，一般和<span style="color:#e6db74">&#39;-n&#39;</span>选项合用
+-n次数：指定top命令执行的次数。
+top -b -n <span style="color:#ae81ff">1</span> &gt;&gt; top.txt <span style="color:#75715e"># 重定向输出</span>
+<span style="color:#75715e"># 在top命令的交互模式中可以执行的命令：</span>
+?或h：显示交互模式的帮助
+P：以cpu使用率排序
+M：以内存的使用率排序
+N：以PID排序
+q：退出top
+</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geni7hgrusj31ko06y7dm.jpg" alt="image-20200510175510808"></p>
+<p>系统当前时间   系统运行时间    用户数    系统在之前1分钟，5分钟，15分钟的平均负载</p>
+<p>进程状态：</p>
+<p>CPU状态：us被用户态占用的cpu百分比，sy被内核态占用的百分比，id空闲CPU的CPU百分比</p>
+<p>内存状态：buffers缓冲是加速写操作</p>
+<p>交换分区：cached缓存加速读操作</p>
+<h4 id="杀死进程">杀死进程</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kill -l <span style="color:#75715e">#查看可用的进程信号</span>
+	信号名称：HUP <span style="color:#ae81ff">1</span> 平滑重启，重新读取配置文件之后重启
+			KILL <span style="color:#ae81ff">9</span> 强制终止
+kill -HUP pid号 <span style="color:#75715e"># 杀死pid进程</span>
+killall <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span><span style="color:#f92672">[</span>信号<span style="color:#f92672">]</span> 进程名
+	-i 交互
+	-I 忽略大小写
+pkill <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span><span style="color:#f92672">[</span>信号<span style="color:#f92672">]</span> 进程名
+	-t 终端号：按照终端号踢出用户，终端号可以通过w命令查看
+</code></pre></div><h3 id="32-工作管理">3.2 工作管理</h3>
+<p>工作管理指的是在单个登录终端中同时管理多个工作的行为（也就是windows中最小化之后开启别的任务），在LInux中使用<em>jobs</em>命令查看工作</p>
+<h4 id="注意事项">注意事项：</h4>
+<ul>
+<li>后台管理与终端是绑定在一起的</li>
+<li>放入后台的命令必须可以持续运行一段时间才有放入后台的意义</li>
+<li>放入后台执行的命令如果需要与前台交互，则不会运行，出于暂停状态</li>
+</ul>
+<h4 id="放入后台的方法">放入后台的方法：</h4>
+<ol>
+<li>在命令行之后+&amp;，放入后台后出于运行状态（如果需要与前台用户发生交互则仍是出于暂停状态）</li>
+<li>按ctrl+z，放入后台后出于暂停状态</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">jobs -l <span style="color:#75715e"># 显示工作的pid</span> 
+fg %工作号 <span style="color:#75715e">#将后台暂停的工作恢复到前台执行</span>
+bg %工作号 <span style="color:#75715e">#将后台暂停的工作恢复到后台执行</span> 
+</code></pre></div><h2 id="4-linux服务管理">4. Linux服务管理</h2>
+<h3 id="41-linux运行级别">4.1 Linux运行级别</h3>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genmhgl4gvj31o20oen8g.jpg" alt="image-20200510202309126"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 可以使用init命令进入Linux某个运行级别</span>
+init x
+</code></pre></div><h3 id="42-服务的分类">4.2 服务的分类</h3>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genlsf7gkfj317i0l8q9x.jpg" alt="image-20200510195904602"></p>
+<h3 id="43-查询已安装的服务">4.3 查询已安装的服务</h3>
+<h4 id="rpm包安装的服务">RPM包安装的服务</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">chkconfig --list
+</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genmmdaqa0j31bm0bu40u.jpg" alt="image-20200510202752654"></p>
+<p>上图中的0-6对应Linux的runlevel</p>
+<h4 id="源码包安装的服务">源码包安装的服务：</h4>
+<p>一般是在/usr/local/下查看</p>
+<h3 id="44-rpm包服务管理">4.4 RPM包服务管理</h3>
+<h4 id="服务的启动">服务的启动</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">/etc/init.d/独立服务名 start|stop|status|restart
+service 独立服务名 start|stop|status|restart    
+</code></pre></div><p>本质上启动某服务，即运行该程序的启动脚本</p>
+<h4 id="服务的自启动">服务的自启动</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">chkconfig --level 服务级别 服务名 on|off 
+</code></pre></div><h3 id="45-源码包服务管理">4.5 源码包服务管理</h3>
+<p>使用绝对路径，调用启动脚本来启动</p>
+<h2 id="5-常用命令汇总">5. 常用命令汇总</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">netstat
+	-t：列出TCP协议端口
+	-u：列出UDP协议端口
+	-n：不使用域名与服务名，而使用ip地址和端口号
+	-l：仅列出在监听状态网络服务
+	-a：列出所有的网络连接
+	<span style="color:#75715e"># 常用组合 netstat -tuln    netstat -an</span>
+	
+telnet ip地址 端口号 <span style="color:#75715e"># 探测端口号</span>
+
+find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672">]</span><span style="color:#f92672">[</span>搜索条件<span style="color:#f92672">]</span>  <span style="color:#75715e"># 在linux中通配符 *匹配任意内容 ？匹配任意一个字符 []匹配任意一个中括号内的字符</span>
+	搜索条件：
+		-iname 不区分大小写
+		-user 按照所有者
+		-name 按照文件名搜索
+		-size +xx k -xx k <span style="color:#75715e">#搜索大于xx k的文件 搜索小于xx k的文件（M 单位则为兆）</span>
+</code></pre></div><h2 id="6--小tips">6.  小tips</h2>
+<ul>
+<li>usr是指的Unix System Resource的缩写，即Unix系统资源的缩写</li>
+<li>etc一般放置配置文件</li>
+</ul>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/summary/" data-toggle="tooltip" data-placement="top" title="我的转码之路">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
