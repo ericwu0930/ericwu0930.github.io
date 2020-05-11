@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="JDK1.8新特性——Stream流" />
+    <meta property="og:title" content="JDK1.8新特性——Stream流" />
+    <meta property="twitter:title" content="JDK1.8新特性——Stream流" />
+    
+
+    
+    <meta name="description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。">
+    <meta property="og:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    <meta property="twitter:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>JDK1.8新特性——Stream流-吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/stream/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/java%E5%9F%BA%E7%A1%80" title="Java基础">
+                            Java基础
+                        </a>
+                        
+                    </div>
+                    <h1>JDK1.8新特性——Stream流</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Monday, May 11, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-stream流">1. Stream流</a></li>
+    <li><a href="#2-stream类的方法">2. Stream类的方法</a></li>
+    <li><a href="#3--流相关函数接口">3.  流相关函数接口</a></li>
+    <li><a href="#4-例子">4. 例子</a></li>
+  </ul>
+</nav>
+                
+                <blockquote>
+<p>转自原文https://blog.csdn.net/qq_37757008/article/details/84845556，稍作修改</p>
+</blockquote>
+<h2 id="1-stream流">1. Stream流</h2>
+<p>Stream流是Java8的新特性，它也是有关于集合的新api；Stream 作为 Java 8 的一大亮点，它与 java.io 包里的 InputStream 和 OutputStream 是完全不同的概念。Java 8 中的 Stream 是对集合（Collection）对象功能的增强，它专注于对集合对象进行各种非常便利、高效的聚合操作，或者大批量数据操作；</p>
+<p>Stream API 借助于同样新出现的 Lambda 表达式，极大的提高编程效率和程序可读性；下面我们用一个例子来引入Stream流的操作：</p>
+<p>我们写一个方法找偶数，返回一个新的list包含结果。在这里我们使用了设计模式中的策略模式，将它的处理方法拿出来，可以对它的使用方法进行主动的编写，同时我们用了一个新的模式Predicate，这个模式叫做断言模式，顾名思义就是对我们要进行的处理进行断言操作，断定它能进行的功能；</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span>2<span style="color:#f92672">,</span>3<span style="color:#f92672">,</span>4<span style="color:#f92672">,</span>5<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span>2<span style="color:#f92672">,</span>3<span style="color:#f92672">,</span>4<span style="color:#f92672">,</span>5<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>exec<span style="color:#f92672">(</span>list<span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> Predicate<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+            <span style="color:#a6e22e">@Override</span>
+            <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(</span>Integer i<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> i <span style="color:#f92672">%</span> 2 <span style="color:#f92672">=</span><span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#960050;background-color:#1e0010">；</span>
+        <span style="color:#75715e">//System.out.println(exec(list, i -&gt;  i % 2 == 0))；
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+<span style="color:#75715e">// 设计模式中，策略模式
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">exec</span><span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list<span style="color:#f92672">,</span> Predicate<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> predicate<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list2 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">for</span><span style="color:#f92672">(</span>Integer i <span style="color:#f92672">:</span>list<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>predicate<span style="color:#f92672">.</span><span style="color:#a6e22e">test</span><span style="color:#f92672">(</span>i<span style="color:#f92672">)</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            list2<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>i<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">return</span> list2<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+
+</code></pre></div><p>其中，Predicate是一个函数接口，可以使用lambda表达式实现</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geoenjs8vaj30my08zjs4.jpg" alt="image-20200511113051649"></p>
+<p>可是这也是比较麻烦的 ；而且在之前我们遍历集合的时候就需要循环，或者 Iterator 迭代器来遍历；这也都是很浪费时间和空间的；那有没有一种方法，是我们不用调用方法，直接用语句来获得所有的偶数呢？这个时候我们就需要用到jdk1.8的新特性，Stream流，将数组元素变为一条数据流，然后对这个数据流进行操作，过滤或者收集想要的数据；</p>
+<p>Stream 不是集合元素，它不是数据结构并不保存数据，它是有关算法和计算的，它更像一个<strong>高级版本的 Iterator</strong>。原始版本的 Iterator，用户只能显式地一个一个遍历元素并对其执行某些操作；高级版本的 Stream，用户只要给出需要对其包含的元素执行什么操作，比如 “过滤掉长度大于 10 的字符串”、“获取每个字符串的首字母”等，Stream 会隐式地在内部进行遍历，做出相应的数据转换。</p>
+<p>Stream 就如同一个迭代器（Iterator），单向，不可往复，数据只能遍历一次，遍历过一次后即用尽了，就好比流水从面前流过，一去不复返。</p>
+<h2 id="2-stream类的方法">2. Stream类的方法</h2>
+<ol>
+<li>
+<p>filter过滤器</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Stream<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>Predicate<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> predicate<span style="color:#f92672">)</span>
+</code></pre></div><p>这个过滤器的方法就是对流中的数据一个一个的进行筛选，看看它是不是符合规则，如果不符合就拦截住，也就是舍弃，如果符合要求，则让他通过，进行下一步的操作，说白了就像一个滤网一样，我们可以设置过滤的规则，然后它对数据流进行筛选；</p>
+<p>比如上面的例子来说我们就可以用这样的方法；</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span>2<span style="color:#f92672">,</span>3<span style="color:#f92672">,</span>4<span style="color:#f92672">,</span>5<span style="color:#f92672">,</span>6<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> stream <span style="color:#f92672">=</span> list<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span> i <span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span> 
+     i<span style="color:#f92672">%</span>2  <span style="color:#f92672">=</span><span style="color:#f92672">=</span> 0<span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>stream<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div><p>我们可以看到filter的参数就是一个Predicae&lt;&gt;断言；也就是说我们可以给它里面传一个lambda表达式，就是过滤的规则； 同时它返回的又是一个Stream流对象，这时我们又可以用它的collect（收集器），对过滤下来的数据收集起来，把他存入一个List集合；然后这时候我们输出得到的这个集合，就是我们收集的数据；</p>
+</li>
+<li>
+<p>collect 归约</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> R <span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Supplier<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> supplier<span style="color:#f92672">,</span>BiConsumer<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">,</span><span style="color:#f92672">?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> accumulator<span style="color:#f92672">,</span>BiConsumer<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">,</span>R<span style="color:#f92672">&gt;</span> combiner<span style="color:#f92672">)</span>
+<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">,</span> A<span style="color:#f92672">&gt;</span> R <span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collector<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">,</span> A<span style="color:#f92672">,</span> R<span style="color:#f92672">&gt;</span> collector<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div><p>将Stream还原成第二种形式是第一种形式的压缩版，其中Collecotor可以通过Collectors这一工具类实现。</p>
+</li>
+<li>
+<p>map 映射</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> Stream<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>Function<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">,</span><span style="color:#f92672">?</span> <span style="color:#66d9ef">extends</span> R<span style="color:#f92672">&gt;</span> mapper<span style="color:#f92672">)</span>
+</code></pre></div><p>映射的, lambda把原有的元素转换为另一个元素， 不会改变个数；上面的filter过滤器就是给把我们的数据按我们的规则筛选出来，那map()方法就是将我们的元素按照规则映射成另外的元素；比如我们要得到上面的list集合中的所有元素的2倍的集合，这时候我们就需要用到map(）方法；</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list4 <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 4<span style="color:#f92672">,</span> 5<span style="color:#f92672">,</span> 6<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> collect <span style="color:#f92672">=</span> list4<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>i <span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span> i <span style="color:#f92672">*</span> 2<span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>collect<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div><p>其中Function也是个函数接口</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geoeniwfraj30g207xt95.jpg" alt="image-20200511115253300"></p>
+</li>
+<li>
+<p>flatMap 扁平化映射</p>
+<p>Returns a stream consisting of the results of replacing each element of this stream with the contents of a mapped stream produced by applying the provided mapping function to each element.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> Stream<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span>Function<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">,</span><span style="color:#f92672">?</span> <span style="color:#66d9ef">extends</span> Stream<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span> <span style="color:#66d9ef">extends</span> R<span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span> mapper<span style="color:#f92672">)</span>
+</code></pre></div><p>个人理解，将流中每个元素再次展开为流。比如我们现在定义了一个list集合，它的元素是字符串数组；如果我们想将它里面的每个字符串提取出来，组成一个新的集合，按照原来的方法我们就需要两重遍历，先遍历集合，后遍历数组，得到每一个字符串元素，再新建一个集合，将它们存进去；</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+list<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> String<span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;张三&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;李四&#34;</span><span style="color:#f92672">}</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+list<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> String<span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;王五&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;张三&#34;</span><span style="color:#f92672">}</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+list<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> String<span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;钱七&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;周八&#34;</span><span style="color:#f92672">}</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+   
+List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> list2 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+   
+<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> strings <span style="color:#f92672">:</span> list<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>String string <span style="color:#f92672">:</span> strings<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        list2<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>string<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>list2<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div><p>使用flatMap简化该过程</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> list3 <span style="color:#f92672">=</span> list<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span> s <span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span>s<span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div></li>
+<li>
+<p>forEach 遍历流</p>
+<p>Performs an action for each element of this stream.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>Consumer<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> action<span style="color:#f92672">)</span>
+</code></pre></div><p>接收一个Consumer接口，该接口也是个函数接口</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">list3<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>a<span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>a<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span> <span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div></li>
+<li>
+<p>Map类的遍历，虽然不属于流的范畴，但是也是JDK1.8中提供的一种更优雅的Map遍历的方式</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> String<span style="color:#f92672">&gt;</span> map <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+map<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;张&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+map<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;b&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;李&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+map<span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span> <span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> value<span style="color:#f92672">)</span> <span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;key:&#34;</span> <span style="color:#f92672">+</span>key <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; value:&#34;</span> <span style="color:#f92672">+</span> value<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span> <span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div><p>该方法接收一个BiConsumer接口。</p>
+</li>
+</ol>
+<h2 id="3--流相关函数接口">3.  流相关函数接口</h2>
+<ol>
+<li>
+<p>Predicate 断言接口
+对应的lambda 一个参数，返回结果是boolean
+(a) -&gt; { return true|false; }</p>
+</li>
+<li>
+<p>BiPredicate 双参数断言
+对应的lambda 两个参数，返回结果是boolean
+(a, b) -&gt; { return true|false; }</p>
+</li>
+<li>
+<p>Function 函数接口
+对应的lambda 一个参数，一个返回结果，参数和返回结果的类型可以不一样</p>
+</li>
+<li>
+<p>BiFunction 双参数函数接口
+两个参数，一个结果
+(a, b) -&gt; { 根据ab返回一个结果}</p>
+</li>
+<li>
+<p>Consumer 消费接口
+一个参数 没有结果
+(a) -&gt; { 不需要return }</p>
+</li>
+<li>
+<p>BiConsumer 双参数消费接口
+两个参数，没有结果
+(a,b) -&gt; { 不需要return }</p>
+</li>
+<li>
+<p>Supplier 生产者接口
+没有参数，返回一个结果
+() -&gt; {return 结果}</p>
+</li>
+</ol>
+<h2 id="4-例子">4. 例子</h2>
+<p>定义一个学生类</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Student</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> String sex<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> String city<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Student</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">,</span> String sex<span style="color:#f92672">,</span> String city<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> name<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sex</span> <span style="color:#f92672">=</span> sex<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">city</span> <span style="color:#f92672">=</span> city<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">toString</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Student{&#34;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;name=&#39;&#34;</span> <span style="color:#f92672">+</span> name <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;\&#39;&#39;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;, sex=&#39;&#34;</span> <span style="color:#f92672">+</span> sex <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;\&#39;&#39;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;, city=&#39;&#34;</span> <span style="color:#f92672">+</span> city <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;\&#39;&#39;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#39;}&#39;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getSex</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> sex<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setSex</span><span style="color:#f92672">(</span>String sex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sex</span> <span style="color:#f92672">=</span> sex<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getName</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> name<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setName</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> name<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getCity</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> city<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setCity</span><span style="color:#f92672">(</span>String city<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">city</span> <span style="color:#f92672">=</span> city<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>然后我们定义一个集合存放学生类的对象</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> List<span style="color:#f92672">&lt;</span>Student<span style="color:#f92672">&gt;</span> students <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>
+                <span style="color:#66d9ef">new</span> Student<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;zhang&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;男&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;西安&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
+                <span style="color:#66d9ef">new</span> Student<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;li&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;男&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;西安&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
+                <span style="color:#66d9ef">new</span> Student<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;wang&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;女&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;北京&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
+                <span style="color:#66d9ef">new</span> Student<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;zhao&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;女&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;上海&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
+                <span style="color:#66d9ef">new</span> Student<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;zhou&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;男&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;北京&#34;</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div><p>当上述List按性别分组</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">//按照性别分组
+</span><span style="color:#75715e"></span>Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> List<span style="color:#f92672">&lt;</span>Student<span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span> map3 <span style="color:#f92672">=</span> students<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>
+Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">groupingBy</span><span style="color:#f92672">(</span> s <span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">getSex</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>map3<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div><p>按所在城市分组</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">//按照所在城市分组
+</span><span style="color:#75715e"></span>Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> List<span style="color:#f92672">&lt;</span>Student<span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span> map4 <span style="color:#f92672">=</span> students<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>
+Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">groupingBy</span><span style="color:#f92672">(</span> s <span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">getCity</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>map4<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</code></pre></div>
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/linux_intro/" data-toggle="tooltip" data-placement="top" title="Linux基础入门">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>

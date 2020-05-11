@@ -6,10 +6,19 @@
     <description>Recent content in 学习笔记 on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 10 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 11 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>JDK1.8新特性——Stream流</title>
+      <link>https://ericwu0930.github.io/post/stream/</link>
+      <pubDate>Mon, 11 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/stream/</guid>
+      <description>转自原文https://blog.csdn.net/qq_37757008/article/details/84845556，稍作修改 1. St</description>
+    </item>
     
     <item>
       <title>Linux基础入门</title>
