@@ -242,8 +242,15 @@
         <li><a href="#45-源码包服务管理">4.5 源码包服务管理</a></li>
       </ul>
     </li>
-    <li><a href="#5-常用命令汇总">5. 常用命令汇总</a></li>
-    <li><a href="#6--小tips">6.  小tips</a></li>
+    <li><a href="#5-linux下环境变量的配置">5. Linux下环境变量的配置</a>
+      <ul>
+        <li><a href="#51-创建与查看环境变量">5.1 创建与查看环境变量</a></li>
+        <li><a href="#52-path变量系统查找命令的路径">5.2 PATH变量：系统查找命令的路径</a></li>
+        <li><a href="#53-环境变量配置文件的修改">5.3 环境变量配置文件的修改</a></li>
+      </ul>
+    </li>
+    <li><a href="#6-常用命令汇总">6. 常用命令汇总</a></li>
+    <li><a href="#7-小tips">7. 小tips</a></li>
   </ul>
 </nav>
                 
@@ -457,7 +464,30 @@ service 独立服务名 start|stop|status|restart
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">chkconfig --level 服务级别 服务名 on|off 
 </code></pre></div><h3 id="45-源码包服务管理">4.5 源码包服务管理</h3>
 <p>使用绝对路径，调用启动脚本来启动</p>
-<h2 id="5-常用命令汇总">5. 常用命令汇总</h2>
+<h2 id="5-linux下环境变量的配置">5. Linux下环境变量的配置</h2>
+<h3 id="51-创建与查看环境变量">5.1 创建与查看环境变量</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 创建环境变量</span>
+export 变量名<span style="color:#f92672">=</span>变量值
+<span style="color:#75715e"># 或</span>
+变量名<span style="color:#f92672">=</span>变量值
+export 变量名
+
+env <span style="color:#75715e">#查看环境变量</span>
+set <span style="color:#75715e">#查看所有变量</span>
+</code></pre></div><h3 id="52-path变量系统查找命令的路径">5.2 PATH变量：系统查找命令的路径</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">echo $PATH <span style="color:#75715e">#可以查看环境变量</span>
+PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$PATH<span style="color:#e6db74">&#34;</span>:/root/sh  <span style="color:#75715e">#增加PATH变量的值，该方法只能临时生效，想要永久生效只能修改配置文件</span>
+</code></pre></div><h3 id="53-环境变量配置文件的修改">5.3 环境变量配置文件的修改</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 修改配置文件后，使用source命令使其生效</span>
+source 配置文件
+. 配置文件
+</code></pre></div><p>一个正常的启动过程加载配置文件的过程，后一个配置文件可以覆盖前一个配置文件中定义的环境变量</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geoa5v06tej31pw0qgq9y.jpg" alt="image-20200511100200544"></p>
+<p>在/etc/profile 中修改历史命令条数 HISTSIZE</p>
+<p>在~/.bashrc 中修改别名 alias</p>
+<p>在/etc/bashrc 修改登录提示符PS1</p>
+<p>在/etc/sysconfig/i18n 修改系统默认语系</p>
+<h2 id="6-常用命令汇总">6. 常用命令汇总</h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">netstat
 	-t：列出TCP协议端口
 	-u：列出UDP协议端口
@@ -474,7 +504,7 @@ find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672"
 		-user 按照所有者
 		-name 按照文件名搜索
 		-size +xx k -xx k <span style="color:#75715e">#搜索大于xx k的文件 搜索小于xx k的文件（M 单位则为兆）</span>
-</code></pre></div><h2 id="6--小tips">6.  小tips</h2>
+</code></pre></div><h2 id="7-小tips">7. 小tips</h2>
 <ul>
 <li>usr是指的Unix System Resource的缩写，即Unix系统资源的缩写</li>
 <li>etc一般放置配置文件</li>
