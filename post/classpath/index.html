@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-	<meta name="generator" content="Hugo 0.64.1" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,15 +15,15 @@
     
 
     
-    <meta name="title" content="" />
-    <meta property="og:title" content="" />
-    <meta property="twitter:title" content="" />
+    <meta name="title" content="关于IDEA中classpath的定义" />
+    <meta property="og:title" content="关于IDEA中classpath的定义" />
+    <meta property="twitter:title" content="关于IDEA中classpath的定义" />
     
 
     
-    <meta name="description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。">
-    <meta property="og:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
-    <meta property="twitter:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    <meta name="description" content="classpath个人理解">
+    <meta property="og:description" content="classpath个人理解" />
+    <meta property="twitter:description" content="classpath个人理解" />
     
 
     
@@ -35,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>Eric&#39;s Blog-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>关于IDEA中classpath的定义-吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/">
+    <link rel="canonical" href="/post/classpath/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -159,14 +158,37 @@
 
 
 
-<header class="intro-header" style="background-image: url('/img/roof.jpg')">
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>Eric&#39;s Blog </h1>
-                    
-		    <span class="subheading">路在脚下，心向远方</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                    </div>
+                    <h1>关于IDEA中classpath的定义</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;&#34;
+                         
+                        on 
+                        Wednesday, May 13, 2020
+                        
+                        
+                        
+                    </span>
                 </div>
             </div>
         </div>
@@ -175,257 +197,70 @@
 
 
 
-  
-<div class="container">
-    <div class="row">
-        
-        
-   	    <div class="
-            col-lg-8 col-lg-offset-1
-            col-md-8 col-md-offset-1
-            col-sm-12
-            col-xs-12
-            post-container
-        ">
-            
 
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/gc_3/">
-        <h2 class="post-title">
-            JVM内存分配策略与GC时机
-        </h2>
-	
-        <h3 class="post-subtitle">
-            GC学习笔记之三
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            总结自《深入理解java虚拟机》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Sunday, December 1, 2019
-    
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/gc_2/">
-        <h2 class="post-title">
-            JVM垃圾收集器
-        </h2>
-	
-        <h3 class="post-subtitle">
-            GC学习笔记之二
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            总结自《深入理解java虚拟机》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Saturday, November 30, 2019
-    
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/gc_1/">
-        <h2 class="post-title">
-            JVM垃圾收集策略
-        </h2>
-	
-        <h3 class="post-subtitle">
-            GC学习笔记之一
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            总结自《深入理解java虚拟机》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Friday, November 29, 2019
-    
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/memorymanage/">
-        <h2 class="post-title">
-            内存管理
-        </h2>
-	
-        <h3 class="post-subtitle">
-            操作系统学习笔记
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            整理自《深入理解计算机系统》与《现代操作系统》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Monday, September 30, 2019
-    
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/process/">
-        <h2 class="post-title">
-            进程和线程
-        </h2>
-	
-        <h3 class="post-subtitle">
-            操作系统学习笔记
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            整理自《深入理解计算机系统》与《现代操作系统》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Tuesday, September 10, 2019
-    
-    
-    </p>
-
-</div>
-<hr>
-
+<article>
+    <div class="container">
+        <div class="row">
 
             
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
 
-
-<ul class="pager">
-    
-    <li class="previous">
-        <a href="/page/5/">&larr; 上一页</a>
-    </li>
-    
-    
-    <li class="next">
-        <a href="/page/7/">下一页 &rarr;</a>
-    </li>
-    
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents"></nav>
+                
+                <p>之前一直有个误解，认为classpath是编译前概念，所以看到src文件夹下有main，有test，有resources等子目录，到底哪个是classpath就很懵。后来发现，其实classpath是.java文件被编译成.class字节码文件后，运行时的一个概念。</p>
+<p>打开IDEA中的Project Structure</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geqokxre9jj30rt0cd0ts.jpg" alt=""></p>
+<p>结构的右边列出了4个项目中的文件类型：</p>
+<ul>
+<li>Source Folders：表示的都是代码源文件目录，生成的class文件会输出到target-&gt;classess文件夹中，但是里面的源文件不会复制到target-&gt;classes文件夹中</li>
+<li>Test Source Folders: 表示的都是测试代码源文件目录，生成的class文件同样会输出到target-&gt;classess文件夹中，并且里面的源文件不会复制到target-&gt;classes文件夹中</li>
+<li>Resource Folders: 表示的都是资源文件目录，这些目录里面的文件会在代码编译运行被直接复制到target-&gt;classess文件夹中</li>
+<li>Excluded Folders:表示的是target文件夹生成的位置，target是IDEA编译后的一些class信息存放地，里面有子目录target-&gt;classes来存储编译后的字节码。</li>
 </ul>
+<p>target-&gt;classes即为classpath路径位置，任何我们需要在classpath：前缀中获取的资源都必须在target-&gt;classes文件夹中找到，否则将出现java.io.FileNotFoundException的错误信息。</p>
 
 
-       	</div>
-        
+                
 
-<div class="
-    col-lg-3 col-lg-offset-0
-    col-md-3 col-md-offset-0
-    col-sm-12
-    col-xs-12
-    sidebar-container
-">
-    
-    
-
-    
-	
-    <section class="visible-md visible-lg">
-	<hr><h5><a href="/top/about">ABOUT ME</a></h5>
-        <div class="short-about">
-            
-            <a href="/top/about">
-               <img src="/img/portrait.jpeg" alt="avatar" style="cursor: pointer" />
-            </a>
-            
-            
-                <p>Software Developer, Photographer and Life Adventurer</p>
-            
-           
-           <ul class="list-inline"> 
-               
-               
-               
-               
-               <li>
-                   <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-               <li>
-                   <a target="_blank" href="/img/we_chat.JPG">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               <li>
-                   <a target="_blank" href="https://github.com/ericwu0930/">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-               
-               <li>
-                   <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-            
-            
-               
-               
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/stream/" data-toggle="tooltip" data-placement="top" title="JDK1.8新特性——Stream流">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
                 </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
             </div>
-    </section>
-	
-    
-    
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
 
-    
-    
-</div>
+                
+                
 
-	</div>
-</div>
-
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
 
 
 
