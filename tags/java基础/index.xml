@@ -6,10 +6,19 @@
     <description>Recent content in Java基础 on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 11 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 21 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/tags/java%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>反射与注解</title>
+      <link>https://ericwu0930.github.io/post/reflection/</link>
+      <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/reflection/</guid>
+      <description>最近在学习Spring框架，分析源码时经常会用到反射和注解机制，这里对注解和反射做一个总结 1. 注解 首先，注解！=注释，注释是用文字描述程序，是</description>
+    </item>
     
     <item>
       <title>JDK1.8新特性——Stream流</title>
