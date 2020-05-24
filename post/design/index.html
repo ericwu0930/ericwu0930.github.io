@@ -399,6 +399,79 @@
 <p>在Java源码中，最典型的使用装饰者的例子是Java I/O</p>
 <p><img src="https://s2.ax1x.com/2020/03/04/3o50V1.png" alt="3o50V1.png"></p>
 <p><img src="https://s2.ax1x.com/2020/03/04/3o562D.png" alt="3o562D.png"></p>
+<p>另外举个例子，我们在设计project时，总是要自己定义一些异常类，这里我们常常会使用装饰者模式，实现代码和类关系如下所示</p>
+<p>定义接口</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CommonError</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> CommonError <span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>String errMsg<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>定义本体，本体是一个枚举类，对于枚举类的理解可以看这个博客https://www.cnblogs.com/panchanggui/p/10318368.html，其核心是，枚举类中可以定义一些成员对象。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> EmBusinessError <span style="color:#66d9ef">implements</span> CommonError<span style="color:#f92672">{</span>
+    <span style="color:#75715e">// 通用错误类型00001
+</span><span style="color:#75715e"></span>    PARAMETER_VALIDATION_ERROR<span style="color:#f92672">(</span>10001<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;参数不合法&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
+
+    UNKNOWN_ERROR<span style="color:#f92672">(</span>10002<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;未知错误&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
+
+    <span style="color:#75715e">// 10000开头为用户信息相关错误定义
+</span><span style="color:#75715e"></span>    USER_NOT_EXIST<span style="color:#f92672">(</span>20001<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;用户不存在&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
+
+    STOCK_NOT_ENOUGH<span style="color:#f92672">(</span>30001<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;库存不足&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
+
+    USER_LOGIN_FAIL<span style="color:#f92672">(</span>20002<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;用户手机号或密码不正确&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">EmBusinessError</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> errCode<span style="color:#f92672">,</span>String errMsg<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">errCode</span><span style="color:#f92672">=</span>errCode<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">errMsg</span><span style="color:#f92672">=</span>errMsg<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> errCode<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> String errMsg<span style="color:#f92672">;</span>
+    
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> errCode<span style="color:#f92672">;</span><span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> errMsg<span style="color:#f92672">;</span><span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> CommonError <span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>String errMsg<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">errMsg</span><span style="color:#f92672">=</span>errMsg<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+</code></pre></div><p>定义装饰器，实现相同的接口，可以调用接口方法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BusinessException</span> <span style="color:#66d9ef">extends</span> Exception <span style="color:#66d9ef">implements</span> CommonError <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">private</span> CommonError commonError<span style="color:#f92672">;</span>
+
+    <span style="color:#75715e">// 直接接收EmBusinessError的传参用于构造异常异常
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">BusinessException</span><span style="color:#f92672">(</span>CommonError commonError<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">=</span>commonError<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">// 接收自定义errMsg的方式构造业务异常
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">BusinessException</span><span style="color:#f92672">(</span>CommonError commonError<span style="color:#f92672">,</span>String errMsg<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">=</span>commonError<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>errMsg<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+        <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span><span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span><span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> CommonError <span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>String errMsg<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>errMsg<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>​    <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf3zn0lmscj31520hiacj.jpg" alt="image-20200525000715147"></p>
 <h2 id="七代理模式">七、代理模式</h2>
 <p>代理模式为另一个对象提供一个替身或占位符以控制对这个对象的访问，被代理的对象可以是远程的对象、创建开销大的对象或需要安全控制的对象。</p>
 <p><img src="https://s2.ax1x.com/2020/03/04/3o5WqA.png" alt="3o5WqA.png"></p>
