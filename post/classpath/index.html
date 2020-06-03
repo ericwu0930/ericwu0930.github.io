@@ -225,6 +225,7 @@
 <li>Excluded Folders:表示的是target文件夹生成的位置，target是IDEA编译后的一些class信息存放地，里面有子目录target-&gt;classes来存储编译后的字节码。</li>
 </ul>
 <p>target-&gt;classes即为classpath路径位置，任何我们需要在classpath：前缀中获取的资源都必须在target-&gt;classes文件夹中找到，否则将出现java.io.FileNotFoundException的错误信息。</p>
+<p>在Java项目中读取文件资源时，经常会用到this.getClass().getResource()或者this.getClassLoader().getResource()，这两种究竟有哪些区别，可以看下这个链接https://www.jianshu.com/p/033afa99e29d</p>
 
 
                 
