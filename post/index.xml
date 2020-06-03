@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 03 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>线程池浅谈</title>
+      <link>https://ericwu0930.github.io/post/threadpool/</link>
+      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/threadpool/</guid>
+      <description>一、回顾： 线程运行的两种方式： 方法一： 创建自定义类extends Thread （或者使用匿名类进行定义） 重写run()方法 调用该类start方法启动 new Thread(){</description>
+    </item>
     
     <item>
       <title>[转]Spring IOC</title>
@@ -306,6 +315,15 @@
       
       <guid>https://ericwu0930.github.io/post/first_year_in_shanghai/</guid>
       <description>自从在家有了充足的午休之后，整个作息全部乱掉了。结果就是连续多天的失眠，比如现在，在床上挣扎了一个小时后，还是毫无睡意，于是决定起身穿衣，在</description>
+    </item>
+    
+    <item>
+      <title>线程池</title>
+      <link>https://ericwu0930.github.io/post/parallel/</link>
+      <pubDate>Mon, 04 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/parallel/</guid>
+      <description></description>
     </item>
     
   </channel>

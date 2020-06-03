@@ -6,10 +6,19 @@
     <description>Recent content in 学习笔记 on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 21 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 03 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>线程池浅谈</title>
+      <link>https://ericwu0930.github.io/post/threadpool/</link>
+      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/threadpool/</guid>
+      <description>一、回顾： 线程运行的两种方式： 方法一： 创建自定义类extends Thread （或者使用匿名类进行定义） 重写run()方法 调用该类start方法启动 new Thread(){</description>
+    </item>
     
     <item>
       <title>反射与注解</title>

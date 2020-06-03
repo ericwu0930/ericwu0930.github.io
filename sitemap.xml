@@ -3,17 +3,47 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://ericwu0930.github.io/post/springioc/</loc>
-    <lastmod>2020-05-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ericwu0930.github.io/categories/</loc>
-    <lastmod>2020-05-23T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/tags/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/categories/tech/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/threadpool/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/springioc/</loc>
     <lastmod>2020-05-23T00:00:00+00:00</lastmod>
   </url>
   
@@ -23,22 +53,7 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/post/</loc>
-    <lastmod>2020-05-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ericwu0930.github.io/tags/spring/</loc>
-    <lastmod>2020-05-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ericwu0930.github.io/tags/</loc>
-    <lastmod>2020-05-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ericwu0930.github.io/categories/tech/</loc>
     <lastmod>2020-05-23T00:00:00+00:00</lastmod>
   </url>
   
@@ -49,11 +64,6 @@
   
   <url>
     <loc>https://ericwu0930.github.io/post/reflection/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2020-05-21T00:00:00+00:00</lastmod>
   </url>
   
@@ -134,11 +144,6 @@
   
   <url>
     <loc>https://ericwu0930.github.io/post/reference/</loc>
-    <lastmod>2020-03-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ericwu0930.github.io/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</loc>
     <lastmod>2020-03-11T00:00:00+00:00</lastmod>
   </url>
   
@@ -275,6 +280,21 @@
   <url>
     <loc>https://ericwu0930.github.io/post/first_year_in_shanghai/</loc>
     <lastmod>2019-07-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/tags/tag1/</loc>
+    <lastmod>2018-06-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/tags/tag2/</loc>
+    <lastmod>2018-06-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/post/parallel/</loc>
+    <lastmod>2018-06-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
