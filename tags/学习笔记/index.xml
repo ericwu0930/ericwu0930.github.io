@@ -35,7 +35,7 @@
       <pubDate>Wed, 13 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/post/classpath/</guid>
-      <description>之前一直有个误解，认为classpath是编译前概念，所以看到src文件夹下有main，有test，有resources等子目录，到底哪个是</description>
+      <description>1. ClassPath到底在哪儿？ 之前一直有个误解，认为classpath是编译前概念，所以看到src文件夹下有main，有test，有res</description>
     </item>
     
     <item>
