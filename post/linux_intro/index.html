@@ -438,8 +438,9 @@ pkill <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</s
 <li>在命令行之后+&amp;，放入后台后出于运行状态（如果需要与前台用户发生交互则仍是出于暂停状态）</li>
 <li>按ctrl+z，放入后台后出于暂停状态</li>
 </ol>
+<h4 id="将后台工作恢复">将后台工作恢复：</h4>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">jobs -l <span style="color:#75715e"># 显示工作的pid</span> 
-fg %工作号 <span style="color:#75715e">#将后台暂停的工作恢复到前台执行</span>
+fg %工作号 <span style="color:#75715e">#将后台暂停的工作恢复到前台执行 工作号！=pid 百分号可以省略</span>
 bg %工作号 <span style="color:#75715e">#将后台暂停的工作恢复到后台执行</span> 
 </code></pre></div><h2 id="4-linux服务管理">4. Linux服务管理</h2>
 <h3 id="41-linux运行级别">4.1 Linux运行级别</h3>
