@@ -219,6 +219,15 @@
     </item>
     
     <item>
+      <title>数据库入门</title>
+      <link>https://ericwu0930.github.io/post/mysql/</link>
+      <pubDate>Mon, 09 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/mysql/</guid>
+      <description>一、MySQL数据库软件 登录 mysql -uroot -p密码 mysql -hip -uroot -p连接目标的密码 mysql &amp;ndash;host=ip &amp;ndash;user=root &amp;ndash;password=连接目标的密码 退出 exit quit MySQL目录结</description>
+    </item>
+    
+    <item>
       <title>JVM类加载机制</title>
       <link>https://ericwu0930.github.io/post/classload/</link>
       <pubDate>Tue, 03 Dec 2019 00:00:00 +0000</pubDate>
