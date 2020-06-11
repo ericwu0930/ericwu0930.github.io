@@ -474,21 +474,63 @@
 </code></pre></div><p>​    <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf3zn0lmscj31520hiacj.jpg" alt="image-20200525000715147"></p>
 <h2 id="七代理模式">七、代理模式</h2>
 <p>代理模式为另一个对象提供一个替身或占位符以控制对这个对象的访问，被代理的对象可以是远程的对象、创建开销大的对象或需要安全控制的对象。</p>
-<p><img src="https://s2.ax1x.com/2020/03/04/3o5WqA.png" alt="3o5WqA.png"></p>
-<p>Java.lang.reflect.Proxy类实现了一种代理模式，我们称之为动态代理。该类中使用一个静态方法newProxyInstance返回代理对象。该方法需要传入三个参数。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Object <span style="color:#a6e22e">newProxyInstance</span><span style="color:#f92672">(</span>ClassLoader loader<span style="color:#f92672">,</span> Class<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span> interfaces<span style="color:#f92672">,</span> InvocationHandler h<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IllegalArgumentException
-<span style="color:#75715e">//loader为一个ClassLoader对象，定义了由哪个ClassLoader对象来对生成的代理对象进行加载
-</span><span style="color:#75715e"></span><span style="color:#75715e">//interfaces:为一个Interface对象的数组，表示的是我将要给我需要代理的对象提供一组什么接口，如果我提供了一组接口给它，那么这个代理对象就宣称实现了该接口(多态)，这样我就能调用这组接口中的方法了
-</span><span style="color:#75715e"></span><span style="color:#75715e">//h为一个InvocationHandler对象，表示的是当我这个动态代理对象在调用方法的时候，会关联到哪一个InvocationHandler对象上
-</span></code></pre></div><p>其中第三个参数InvocationHandler是一个帮助proxy的类（接口），proxy会把调用转发给它处理。InvocationHandler接口中有一个函数invoke，其形式如下</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">invoke<span style="color:#f92672">(</span>Object proxy<span style="color:#f92672">,</span> Method method<span style="color:#f92672">,</span> Object<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<p>以租房为例，我们能更好的理解代理模式。</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfomjeog3bj30l109umxq.jpg" alt="企业微信截图_15880804648754"></p>
+<p>角色分析：</p>
+<ul>
+<li>抽象角色：一般会使用接口或者抽象类来解决</li>
+<li>真实角色：被代理的角色</li>
+<li>代理角色：代理真实角色，代理真实角色后，我们一般会做一些附属操作</li>
+<li>客户：访问代理对象的人</li>
+</ul>
+<p>代理角色代表了真实角色，这两者拥有共同的动作——租房，而客户直接接触到的是代理对象中介，而不是房东；另外中介帮被代理者——房东做了许多事情，比如签合同、装修等等，相当于扩展了租房这个动作。</p>
+<p>Java.lang.reflect.Proxy类实现了一种代理模式，我们称之为动态代理。</p>
+<ul>
+<li>动态代理和静态代理角色一样</li>
+<li>动态代理的代理类是动态生成的，不是我们直接写好的</li>
+<li>动态代理分为两大类：基于接口的动态代理，基于类的动态代理</li>
+</ul>
+<p>需要了解两个类：Proxy代理，InvocationHandler调用处理程序</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">//InvocationHandler中只有一个方法
+</span><span style="color:#75715e"></span>Object <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Object proxy<span style="color:#f92672">,</span> Method method<span style="color:#f92672">,</span> Object<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 <span style="color:#75715e">//proxy为调用方法的代理对象
 </span><span style="color:#75715e"></span><span style="color:#75715e">//method是调用方法的一个反射
 </span><span style="color:#75715e"></span><span style="color:#75715e">//args则是调用方法的参数
 </span><span style="color:#75715e"></span><span style="color:#75715e">//InvocationHandler将请求转发给RealSubject,因此实现InvocationHandler的类中应该持有被代理的对象
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">return</span> method<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>被代理的对象<span style="color:#f92672">,</span>args<span style="color:#f92672">)</span>
-</code></pre></div><p>所谓动态代理，是因为在运行时才会把类创建出来。</p>
+</span></code></pre></div><p>Proxy提供了用于创建动态代理实例的静态方法。该类中使用一个静态方法newProxyInstance返回代理对象。该方法需要传入三个参数。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Object <span style="color:#a6e22e">newProxyInstance</span><span style="color:#f92672">(</span>ClassLoader loader<span style="color:#f92672">,</span> Class<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span> interfaces<span style="color:#f92672">,</span> InvocationHandler h<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IllegalArgumentException
+<span style="color:#75715e">//loader为一个ClassLoader对象，定义了由哪个ClassLoader对象来对生成的代理对象进行加载
+</span><span style="color:#75715e"></span><span style="color:#75715e">//interfaces:为一个Interface对象的数组，表示的是我将要给我需要代理的对象提供一组什么接口，如果我提供了一组接口给它，那么这个代理对象就宣称实现了该接口(多态)，这样我就能调用这组接口中的方法了
+</span><span style="color:#75715e"></span><span style="color:#75715e">//h为一个InvocationHandler对象，表示的是当我这个动态代理对象在调用方法的时候，会关联到哪一个InvocationHandler对象上
+</span></code></pre></div><p>设计动态代理类</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProxyInvocationHandler</span> <span style="color:#66d9ef">implements</span> InvocationHandler <span style="color:#f92672">{</span>
+    
+    <span style="color:#66d9ef">private</span> Rent rent<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setRent</span><span style="color:#f92672">(</span>Rent rent<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">rent</span> <span style="color:#f92672">=</span> rent<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
 
+    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">getProxy</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> Proxy<span style="color:#f92672">.</span><span style="color:#a6e22e">newProxyInstance</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
+                                      rent<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getInterfaces</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span><span style="color:#66d9ef">this</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    
+    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Object proxy<span style="color:#f92672">,</span> Method method<span style="color:#f92672">,</span> Object<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Throwable <span style="color:#f92672">{</span>
+        seeHouse<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        fare<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        Object invoke <span style="color:#f92672">=</span> method<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>rent<span style="color:#f92672">,</span> args<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> invoke<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">seeHouse</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;中介带看&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fare</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;收中介费&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div>
 
                 
 
