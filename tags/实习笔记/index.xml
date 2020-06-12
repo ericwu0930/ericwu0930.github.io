@@ -6,7 +6,7 @@
     <description>Recent content in 实习笔记 on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 15 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/tags/%E5%AE%9E%E4%B9%A0%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Spring AOP在单测中的应用</title>
       <link>https://ericwu0930.github.io/post/aop/</link>
-      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/post/aop/</guid>
       <description>作为鹅厂新晋实习生，已经来鹅厂一个月啦，虽然一直在团队中打杂写单测，但也学到了很多东西，比如最近在看Spring AOP相关的知识，也刚好看到</description>

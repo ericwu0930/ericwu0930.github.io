@@ -21,15 +21,6 @@
     </item>
     
     <item>
-      <title>Spring AOP在单测中的应用</title>
-      <link>https://ericwu0930.github.io/post/aop/</link>
-      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/post/aop/</guid>
-      <description>作为鹅厂新晋实习生，已经来鹅厂一个月啦，虽然一直在团队中打杂写单测，但也学到了很多东西，比如最近在看Spring AOP相关的知识，也刚好看到</description>
-    </item>
-    
-    <item>
       <title>[转]Spring IOC</title>
       <link>https://ericwu0930.github.io/post/springioc/</link>
       <pubDate>Sat, 23 May 2020 00:00:00 +0000</pubDate>
@@ -45,6 +36,15 @@
       
       <guid>https://ericwu0930.github.io/post/reflection/</guid>
       <description>最近在学习Spring框架，分析源码时经常会用到反射和注解机制，这里对注解和反射做一个总结 1. 注解 首先，注解！=注释，注释是用文字描述程序，是</description>
+    </item>
+    
+    <item>
+      <title>Spring AOP在单测中的应用</title>
+      <link>https://ericwu0930.github.io/post/aop/</link>
+      <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/aop/</guid>
+      <description>作为鹅厂新晋实习生，已经来鹅厂一个月啦，虽然一直在团队中打杂写单测，但也学到了很多东西，比如最近在看Spring AOP相关的知识，也刚好看到</description>
     </item>
     
     <item>
