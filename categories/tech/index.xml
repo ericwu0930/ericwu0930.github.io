@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>Spring AOP在单测中的应用</title>
+      <link>https://ericwu0930.github.io/post/aop/</link>
+      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/aop/</guid>
+      <description>作为鹅厂新晋实习生，已经来鹅厂一个月啦，虽然一直在团队中打杂写单测，但也学到了很多东西，比如最近在看Spring AOP相关的知识，也刚好看到</description>
+    </item>
+    
+    <item>
       <title>[转]Spring IOC</title>
       <link>https://ericwu0930.github.io/post/springioc/</link>
       <pubDate>Sat, 23 May 2020 00:00:00 +0000</pubDate>

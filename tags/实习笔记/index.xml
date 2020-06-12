@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Spring on Eric&#39;s Blog</title>
-    <link>https://ericwu0930.github.io/tags/spring/</link>
-    <description>Recent content in Spring on Eric&#39;s Blog</description>
+    <title>实习笔记 on Eric&#39;s Blog</title>
+    <link>https://ericwu0930.github.io/tags/%E5%AE%9E%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+    <description>Recent content in 实习笔记 on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 30 May 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://ericwu0930.github.io/tags/spring/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://ericwu0930.github.io/tags/%E5%AE%9E%E4%B9%A0%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -18,15 +18,6 @@
       
       <guid>https://ericwu0930.github.io/post/aop/</guid>
       <description>作为鹅厂新晋实习生，已经来鹅厂一个月啦，虽然一直在团队中打杂写单测，但也学到了很多东西，比如最近在看Spring AOP相关的知识，也刚好看到</description>
-    </item>
-    
-    <item>
-      <title>[转]Spring IOC</title>
-      <link>https://ericwu0930.github.io/post/springioc/</link>
-      <pubDate>Sat, 23 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/post/springioc/</guid>
-      <description>作者：Mingqi 链接：https://www.zhihu.com/question/23277575/answer/169698662 来源</description>
     </item>
     
   </channel>
