@@ -236,15 +236,18 @@
 <p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gd5a3s16byj30d40aq3yz.jpg" alt="image-20200324170621369"></p>
 <p>快照数据是指该行的之前版本的数据，该实现是通过undo段来完成，而undo用来在事务中回滚数据，因此快照数据本身是没有额外的开销的。</p>
 <p>在InnoDB存储引擎的默认设置下，这是一种默认的读取方式，但是在不同事务隔离级别下，读取的方式不同，并不是在每个事务隔离级别下都是采用非锁定的一致性读，此外即使都是使用非锁定的一致性读，对于快照数据的定义也各不相同。</p>
-<p>一个行记录可能有不止一个快照数据，我们称之为行多版本技术，由此带来的并发控制，称之为多版本并发控制（MVCC）。在事务隔离级别READ COMMITEED和REPEATABLE READ下，InnoDB存储引擎使用非锁定的一致性读，但是在READ COMMITTED事务隔离级别下，对于快照数据，非一致性读总是读取被锁定行的最新一份快照数据，而REPEATABLE READ事务隔离级别下，对于快照数据，非一致性读总是读取本事务开始时的行数据版本。</p>
+<p>一个行记录可能有不止一个快照数据，我们称之为行多版本技术，由此带来的并发控制，称之为多版本并发控制（MVCC）。在事务隔离级别READ COMMITTED和REPEATABLE READ下，InnoDB存储引擎使用非锁定的一致性读，但是在READ COMMITTED事务隔离级别下，对于快照数据，非一致性读总是读取被锁定行的最新一份快照数据，而REPEATABLE READ事务隔离级别下，对于快照数据，非一致性读总是读取本事务开始时的行数据版本。</p>
+<p>例如，下边这样的一个过程，当会话A中第二次查询id=1这一行时，两种隔离级别下得到的结果都是1。这是因为当前id=1正在被修改，被加上了排他锁，一致性非锁定读不会等待这个锁的释放，而是去读取快照，因此结果为1。</p>
+<p>但是在第三次查询id=1时候，两种隔离级别——READ COMMITTED和REPEATABLE READ下，得到的结果是不一样的。对于READ COMMITTED的事务隔离级别，它总是读取行的最新版本，如果行被锁定了，则读取该行版本的最新一个快照，因此结果是3；而对于REPEATABLE READ的事务隔离级别，总是读取事务开始的行数据。</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfpai8oog5j310y0g8jv5.jpg" alt="image-20200612101956272"></p>
 <h2 id="3-一致性锁定读">3. 一致性锁定读</h2>
 <p>在某些情况下，用户需要显式地对数据库读取操作进行加锁以保证数据逻辑的一致性。InnoDB存储引擎对于SELECT语句支持两种一致性的锁定读操作：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">SELECT</span> ... <span style="color:#66d9ef">FOR</span> <span style="color:#66d9ef">UPDATE</span>                   <span style="color:#75715e">#排他锁
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> ... <span style="color:#66d9ef">LOCK</span> <span style="color:#66d9ef">IN</span> SHARE MODE           <span style="color:#75715e">#共享锁
-</span></code></pre></div><p>对于一致性非锁定读，即使读取的行已被执行了SELECT&hellip; FOR UPDATE，也是可以进行读取的。此外，SELECT &hellip; FOR UPDATE, SELECT&hellip; LOCK IN SHARE MODE必须在一个事务中，当事务提交了，锁也就释放了。</p>
+</span></code></pre></div><p>对于一致性非锁定读，即使读取的行已被执行了SELECT&hellip; FOR UPDATE，也是可以进行读取的。此外，SELECT &hellip; FOR UPDATE, SELECT&hellip; LOCK IN SHARE MODE必须在一个事务中，当事务提交了，锁也就释放了。因此在使用上述两句SELECT锁定语句时，务必加上BEGIN, START TRANSACTION 或者 SET AUTOCOMMIT=0</p>
 <h2 id="4-外键和锁">4. 外键和锁</h2>
 <p>外键主要用于引用完整性的约束检查，在InnoDB中，对于一个外键列，如果没有显式地对这个列家索引，InnoDB存储引擎自动对其加一个索引，这样可以避免针对该列的锁定退化为表锁，进而可能会引发<a href="https://blog.csdn.net/xiaowenmu1/article/details/103827526">死锁</a>。</p>
-<p>对于外键值的插入或更新，首先需要查询父表中的记录，即SELECT父表。对父表SELECT时，不是使用一致性非锁定读的方式，因为这样会发生数据不一致的问题，因此这时使用的是SELECT &hellip; LOCK IN SHARE MODE方式，即对父表加一个S锁。</p>
+<p>对于外键值的插入或更新，首先需要查询父表中的记录（判断该外键是否在父表中有值），即SELECT父表。对父表SELECT时，不是使用一致性非锁定读的方式，因为这样会发生数据不一致的问题，因此这时使用的是SELECT &hellip; LOCK IN SHARE MODE方式，即对父表加一个S锁。</p>
 <table>
 <thead>
 <tr>
@@ -311,7 +314,7 @@
 <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> Z <span style="color:#66d9ef">WHERE</span> A<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span> <span style="color:#66d9ef">LOCK</span> <span style="color:#66d9ef">IN</span> SHARE MODE;   <span style="color:#75715e">#阻塞
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> Z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">2</span>;                       <span style="color:#75715e">#阻塞
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> Z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">6</span>,<span style="color:#ae81ff">5</span>;                       <span style="color:#75715e">#阻塞
-</span></code></pre></div><p>显然，查询语句通过索引列b进行查询，使用传统的Next-Key Locking技术加锁，其需要分别进行锁定。对于聚集索引，其仅对a等于5的索引加上Record Lock。而对于辅助索引，其加上的是Next-Key Lock，锁定的范围是(1,3]，<strong>另外需要注意的是InnoDB存储引擎还会对辅助索引下一个键值加上Gap Lock，也就是(3,6)</strong>。这道Gap Lock是为了解决幻读而设置的，可以通过两种方式显示的关闭Gap Lock：</p>
+</span></code></pre></div><p>显然，查询语句通过索引列b进行查询，使用传统的Next-Key Locking技术加锁，其需要分别进行锁定。对于聚集索引，其仅对a等于5的索引加上Record Lock。而对于辅助索引，其加上的是Next-Key Lock，锁定的范围是(1,3]，<strong>另外需要注意的是InnoDB存储引擎还会对辅助索引下一个键值加上Gap Lock，也就是(3,6)</strong>。这道Gap Lock是为了解决幻读而设置的，可以通过两种方式显式的关闭Gap Lock：</p>
 <ul>
 <li>将事务的隔离级别设置为READ COMMITED</li>
 <li>将参数innodb_locks_unsafe_for_binlog设置为1</li>
@@ -365,8 +368,8 @@
 </tr>
 </tbody>
 </table>
-<p>在READ COMMITED这一事务隔离级别下，只是用Record Lock锁，仅仅锁住了5这个单值，会话A中前后两次SELECT得到的结果并不一致，</p>
-<p>而在REPEATABLE READ这一隔离级别下，采用Next-Key Locking的方式进行加锁，锁住的是(2,+∞)，因此任何对这个范围的插入都是不被允许的。</p>
+<p>在READ COMMITED这一事务隔离级别下，只使用Record Lock锁，仅仅锁住了5这个单值，会话A中前后两次SELECT得到的结果并不一致，</p>
+<p>**InnodDB存储引擎默认的事务隔离级别是REPEATABLE READ，在该隔离级别下，采用Next-Key Locking的方式加锁。**锁住的是(2,+∞)，因此任何对这个范围的插入都是不被允许的。</p>
 <h2 id="7-死锁">7. 死锁</h2>
 <p>死锁是指两个或两个以上的事务在执行过程中，因争夺锁资源而造成的一种互相等待的现象。</p>
 <p>在InnoDB中通过两种方法解决死锁问题，一种方法是设置一个超时阈值，若阻塞时间超过这个阈值后一个事物进行回滚，另一个事务继续运行。另一种方法就是使用wait-for graph（等待图）的方式来进行死锁检测，这是一种更主动的方法，如下图t1和t2之间存在环路，故产生了死锁，通常来说InnoDB存储引擎选择回滚undo量最小的事务。</p>
