@@ -248,9 +248,8 @@
   </ul>
 </nav>
                 
-                <p>整体框架来源自 <a href="https://link.jianshu.com?t=http://www.cnblogs.com/sanwenyu/p/6129082.html">MySQL索引背后的数据结构及算法原理</a>
-<a href="https://www.jianshu.com/p/ee7b51056e06">https://www.jianshu.com/p/ee7b51056e06</a> <a href="https://link.jianshu.com?t=http://blog.jobbole.com/24006/">http://blog.jobbole.com/24006/</a>  这是我近几年看到的最好的一篇有关数据库索引的文章，本人重新进行了排版，并将磁盘存取原理这一块替换成更容易理解的内容。</p>
-<p>8.11日补充：最近又读到一本好书《MySQL是怎样运行的：从根儿上理解MySQL》https://juejin.im/book/6844733769996304392/section/6844733770046636045，结合该书对本文做了相应的补充。</p>
+                <p>整体框架来源自 <a href="https://link.jianshu.com?t=http://www.cnblogs.com/sanwenyu/p/6129082.html">MySQL索引背后的数据结构及算法原理</a>这是我近几年看到的最好的一篇有关数据库索引的文章，本人重新进行了排版，并将磁盘存取原理这一块替换成更容易理解的内容。</p>
+<p>8.11日补充：最近又读到一本好书<a href="https://juejin.im/book/6844733769996304392/section/6844733770046636045">《MySQL是怎样运行的：从根儿上理解MySQL》</a>，结合该书对本文做了相应的补充。</p>
 <p>本文以MySQL数据库为研究对象，讨论与数据库索引相关的一些话题。特别需要说明的是，MySQL支持诸多存储引擎，而各种存储引擎对索引的支持也各不相同，因此MySQL数据库支持多种索引类型，如BTree索引，哈希索引，全文索引等等。为了避免混乱，本文将只关注于BTree索引，因为这是平常使用MySQL时主要打交道的索引，至于哈希索引和全文索引本文暂不讨论。</p>
 <p>文章主要内容分为三个部分。</p>
 <ul>

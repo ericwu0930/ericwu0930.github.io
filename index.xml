@@ -17,7 +17,7 @@
       <pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/post/innodb_index/</guid>
-      <description>整体框架来源自 MySQL索引背后的数据结构及算法原理 https://www.jianshu.com/p/ee7b51056e06 http://blog.jobbole.com/24006/ 这是我近几年看到的最好的一篇有关数据库索引的文章，本人重新进行了排版，并将磁盘存取原</description>
+      <description>整体框架来源自 MySQL索引背后的数据结构及算法原理这是我近几年看到的最好的一篇有关数据库索引的文章，本人重新进行了排版，并将磁盘存取原理这</description>
     </item>
     
     <item>
