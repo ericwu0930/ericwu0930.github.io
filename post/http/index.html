@@ -268,6 +268,7 @@
         <li><a href="#响应首部字段">响应首部字段</a></li>
         <li><a href="#实体首部字段">实体首部字段</a></li>
         <li><a href="#为cookie服务的首部字段">为Cookie服务的首部字段</a></li>
+        <li><a href="#通用首部字段中connection的作用">通用首部字段中Connection的作用</a></li>
       </ul>
     </li>
     <li><a href="#7-确保web安全的https">7 确保Web安全的HTTPS</a>
@@ -562,6 +563,14 @@
 </table>
 <h4 id="cookie">Cookie</h4>
 <p>首部字段Cookie会告知服务器，当客户端想获得HTTP状态管理支持时，就会在请求中包含从服务器接收到的Cookie。</p>
+<h3 id="通用首部字段中connection的作用">通用首部字段中Connection的作用</h3>
+<p>Connection首部字段具有两个作用：</p>
+<ol>
+<li>控制不再转发给代理的首部字段</li>
+<li>管理持久化连接</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfsz2lyf1tj31560i0k7k.jpg" alt="image-20200615144630505"></p>
+<p>HTTP/1.1版本的默认连接就是持久连接，客户端会在持久连接上连续发送请求，当服务器端明确断开连接时，则指定Connection首部字段的值为close</p>
 <h2 id="7-确保web安全的https">7 确保Web安全的HTTPS</h2>
 <h3 id="71-http的缺点">7.1 HTTP的缺点</h3>
 <ul>
