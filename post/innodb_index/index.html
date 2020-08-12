@@ -409,7 +409,7 @@ data <span style="color:#f92672">=</span> BTree_Search(root, my_key);
 <h4 id="221-innodb页结构">2.2.1 InnoDB页结构</h4>
 <p>虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同。</p>
 <p>首先InnoDB管理存储空间的基本单位是页，一个页的大小一般是16kb。页结构如下图所示，不需要刻意记忆，只需要有一个概念就好。当我们插入一条记录的时候，都会从Free Space部分中申请一个记录大小的空间划分到User Records部分，当Free Space部分的空间全部被User Records部分代替后，也就意味着这个页被使用完了</p>
-<p><!-- raw HTML omitted --></p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghodc84plzj30u00y9q6i.jpg" alt=""></p>
 <table>
 <thead>
 <tr>

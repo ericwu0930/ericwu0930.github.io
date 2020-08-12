@@ -224,7 +224,7 @@
       <pubDate>Mon, 09 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/post/mysql/</guid>
-      <description>一、MySQL数据库软件 登录 mysql -uroot -p密码 mysql -hip -uroot -p连接目标的密码 mysql &amp;ndash;host=ip &amp;ndash;user=root &amp;ndash;password=连接目标的密码 退出 exit quit MySQL目录结</description>
+      <description>一、MySQL数据库软件 MySQL的结构 MySQL是一个客户端/服务器的架构，它的服务器程序直接和我们存储的数据打交道，然后可以有好多客户端</description>
     </item>
     
     <item>
