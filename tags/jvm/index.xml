@@ -26,7 +26,7 @@
       <pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/post/mem/</guid>
-      <description>Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的“高墙”，墙外面的人想进去，墙里面的人却想出来 1. 运行时数据区域 程序计数器：当前</description>
+      <description>Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的“高墙”，墙外面的人想进去，墙里面的人却想出来 1. 运行时数据区域划分 程序计数器：</description>
     </item>
     
     <item>
