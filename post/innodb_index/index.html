@@ -525,9 +525,41 @@ data <span style="color:#f92672">=</span> BTree_Search(root, my_key);
 <p>该列显示了MySQL在索引里使用的字节数。可以通过这个字节数推断出使用了索引中的多少列。如下面这个例子，其中在utf8下每一个字符最多有3个字节，而a有三个字符（char(3)的意思是有三个字符）；而int 是4个字节（int(11)的意思是显示宽度为11），使用的key_len是13，因此可以推断出，使用了索引中的前两列。</p>
 <p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfnlwt3shuj30t40h0q7w.jpg" alt="image-20200610232324307"></p>
 <h4 id="extra列">Extra列</h4>
+<ol>
+<li>
 <p>Using index：使用了覆盖索引，不需要回表。</p>
-<p>Using where：MySQL服务器将在存储引擎检索行后再进行过滤。</p>
+</li>
+<li>
+<p>Using index condition：有些搜索条件中虽然出现了索引列，但却不能使用到索引，比如下边这个查询：</p>
+<pre><code>SELECT * FROM s1 WHERE key1 &gt; 'z' AND key1 LIKE '%a';
+</code></pre><p>其中的<code>key1 &gt; 'z'</code>可以使用到索引，但是<code>key1 LIKE '%a'</code>却无法使用到索引（后面会讲到详见最左前缀原理情况五），在以前版本的<code>MySQL</code>中，是按照下边步骤来执行这个查询的：</p>
+<ul>
+<li>先根据<code>key1 &gt; 'z'</code>这个条件，从二级索引<code>idx_key1</code>中获取到对应的二级索引记录。</li>
+<li>根据上一步骤得到的二级索引记录中的主键值进行回表，找到完整的用户记录再检测该记录是否符合<code>key1 LIKE '%a'</code>这个条件，将符合条件的记录加入到最后的结果集。</li>
+</ul>
+<p>但是虽然<code>key1 LIKE '%a'</code>不能组成范围区间参与<code>range</code>访问方法的执行，但这个条件毕竟只涉及到了<code>key1</code>列，所以设计<code>MySQL</code>的大叔把上边的步骤改进了一下：</p>
+<ul>
+<li>先根据<code>key1 &gt; 'z'</code>这个条件，定位到二级索引<code>idx_key1</code>中对应的二级索引记录。</li>
+<li>对于指定的二级索引记录，先不着急回表，而是先检测一下该记录是否满足<code>key1 LIKE '%a'</code>这个条件，如果这个条件不满足，则该二级索引记录压根儿就没必要回表。</li>
+<li>对于满足<code>key1 LIKE '%a'</code>这个条件的二级索引记录执行回表操作。</li>
+</ul>
+<p>我们说回表操作其实是一个随机<code>IO</code>，比较耗时，所以上述修改虽然只改进了一点点，但是可以省去好多回表操作的成本。设计<code>MySQL</code>的大叔们把他们的这个改进称之为<code>索引条件下推</code>（英文名：<code>Index Condition Pushdown</code>）。</p>
+<p>如果在查询语句的执行过程中将要使用<code>索引条件下推</code>这个特性，在<code>Extra</code>列中将会显示<code>Using index condition</code>，比如这样：</p>
+<pre><code>mysql&gt; EXPLAIN SELECT * FROM s1 WHERE key1 &gt; 'z' AND key1 LIKE '%b';
+  +----+-------------+-------+------------+-------+---------------+----------+---------+------+------+----------+-----------------------+
+  | id | select_type | table | partitions | type  | possible_keys | key      | key_len | ref  | rows | filtered | Extra                 |
+  +----+-------------+-------+------------+-------+---------------+----------+---------+------+------+----------+-----------------------+
+  |  1 | SIMPLE      | s1    | NULL       | range | idx_key1      | idx_key1 | 303     | NULL |  266 |   100.00 | Using index condition |
+  +----+-------------+-------+------------+-------+---------------+----------+---------+------+------+----------+-----------------------+
+  1 row in set, 1 warning (0.01 sec)
+</code></pre></li>
+<li>
+<p>Using where：当使用索引访问来执行对某个表的查询，并且该语句的<code>WHERE</code>子句中有除了该索引包含的列之外的其他搜索条件时，在<code>Extra</code>列中也会提示上述额外信息。也就是说需要将查询结果返回到MySQL的服务层(Server)再做筛选</p>
+</li>
+<li>
 <p>Using filesort：表明MySQL使用了<code>文件排序</code>，所谓<code>文件排序</code>就是把记录都加载到内存中，再用一些排序算法，比如快速排序、归并排序、吧啦吧啦排序等等在内存中对这些记录进行排序，有的时候可能查询的结果集太大以至于不能在内存中进行排序的话，还可能暂时借助磁盘的空间来存放中间结果，排序操作完成后再把排好序的结果集返回到客户端。当然，在一定情况下MySQL也可以借助索引实现排序</p>
+</li>
+</ol>
 <hr>
 <p><strong>示例数据库</strong></p>
 <p>为了讨论索引策略，需要一个数据量不算小的数据库作为示例。本文选用MySQL官方文档中提供的示例数据库之一：employees。这个数据库关系复杂度适中，且数据量较大。下图是这个数据库的E-R关系图（引用自MySQL官方手册）：</p>
