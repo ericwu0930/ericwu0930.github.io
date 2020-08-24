@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -198,7 +208,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -223,10 +233,7 @@
                 
                 <p>虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制。（不要把类加载和类加载中的一步“加载”混淆）</p>
 <h2 id="一概述">一、概述</h2>
-<p>
-  <img src="https://s2.ax1x.com/2020/02/25/3JodpV.png" alt="3JodpV.png">
-
-</p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3JodpV.png" alt="3JodpV.png"></p>
 <p>类的整个生命周期包括：加载，验证，准备，解析，初始化，使用，卸载7个阶段，其中验证、准备、解析3个部分统称为链接。</p>
 <h2 id="二类加载的过程">二、类加载的过程</h2>
 <h3 id="21-加载">2.1 加载</h3>
@@ -240,10 +247,7 @@
 </li>
 <li>
 <p>在堆中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口</p>
-<p>
-  <img src="https://s2.ax1x.com/2020/02/25/3Jorm4.png" alt="3Jorm4.png">
-
-</p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3Jorm4.png" alt="3Jorm4.png"></p>
 <p>上述过程可以用上图来表示，在jdk1.8之后，方法区被移至Metaspace。在元空间中，类文件用C++的instanceKlass这种数据结构来描述，其中有一项<code>_java_mirror</code>指向储存在堆中Class对象，堆中的Class对象同样也持有指向instanceKlass的指针。
 每个实例对象都有对象头，其中有一部分是类型指针(有的也没有)，该指针指向该类的Class对象。</p>
 </li>
@@ -313,7 +317,7 @@
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -400,8 +404,6 @@
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

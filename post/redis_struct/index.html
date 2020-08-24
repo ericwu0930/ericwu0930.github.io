@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -198,7 +208,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -251,10 +261,7 @@
     //字节数组，用于保存字符串
     char buf[];
 }
-</code></pre><p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmd8rrjj309403yjrc.jpg" alt="image-20200407120803016">
-
-</p>
+</code></pre><p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmd8rrjj309403yjrc.jpg" alt="image-20200407120803016"></p>
 <p>通过使用SDS而不是C字符串，Redis将获取字符串长度所需要的复杂度从O(N)降低到了O(1)，同时因为SDS结构中记录了free的大小，所以杜绝了发生缓冲区溢出的可能性。</p>
 <p>同时，为了减少修改字符串时带来的内存重分配次数，SDS实现<strong>空间预分配</strong>和<strong>惰性空间释放</strong>两种优化策略。</p>
 <p>空间预分配指的就是当需要对SDS进行空间扩展的时候，程序不仅为SDS分配修改所需要的空间，还会为SDS分配额外的未使用空间。通过空间预分配策略，Redis可以减少连续执行字符串增长操作所需的内存重分配次数。</p>
@@ -283,10 +290,7 @@ typedef struct listNode{
     //节点的值
     void *value;
 }listNode;
-</code></pre><p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmge8bnj30eq04wwev.jpg" alt="image-20200407133548317">
-
-</p>
+</code></pre><p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmge8bnj30eq04wwev.jpg" alt="image-20200407133548317"></p>
 <p>Redis的链表实现的特性可以总结如下：</p>
 <ul>
 <li>双端：双向指针</li>
@@ -339,10 +343,7 @@ typedef struct dict{
     // 记录了rehash目前的进度，当rehash不在进行时，值为-1
     int trehashidx；
 }dict;
-</code></pre><p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmj9yr9j30hg09lgmj.jpg" alt="image-20200407134819639">
-
-</p>
+</code></pre><p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmj9yr9j30hg09lgmj.jpg" alt="image-20200407134819639"></p>
 <p>哈希算法和解决键冲突的办法与Java中HashMap大同小异，在此不做赘述，下面主要讲解下rehash的过程。</p>
 <h4 id="rehash">Rehash</h4>
 <p>当一下条件中的任意一个被满足时，程序会自动开始对哈希表执行扩展操作：</p>
@@ -367,10 +368,7 @@ typedef struct dict{
 <p>在渐进式rehash的过程中，增直接发生在ht[1]上，改、查、删则发生在ht[0]和ht[1]上。</p>
 <h3 id="14-跳跃表">1.4 跳跃表</h3>
 <p>跳跃表支持平均O(logN)、最坏O(N)复杂度的节点查找，是有序集合键的底层实现之一。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmm30lej30h606gwfg.jpg" alt="image-20200407142048017">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmm30lej30h606gwfg.jpg" alt="image-20200407142048017"></p>
 <p>Redis的跳跃表由zskiplistNode和zskiplist组成。在zskiplist结构中，该结构包含以下属性</p>
 <ul>
 <li>header: 指向跳表的表头节点</li>
@@ -413,22 +411,13 @@ typedef struct dict{
 <li>将新元素添加到底层数组里。</li>
 </ol>
 <p>如果向整数集合添加新元素时可能会引起升级，则时间复杂度为O(N)。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmoy2i6j30bt04hjri.jpg" alt="image-20200407144920652">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmoy2i6j30bt04hjri.jpg" alt="image-20200407144920652"></p>
 <h3 id="16-压缩列表">1.6 压缩列表</h3>
 <p>压缩列表是Redis为了节约内存而开发的，是由一系列特殊编码的连续内存块组成的顺序性数据结构。</p>
 <p>zlbytes用来记录压缩列表占用的内存字节数；zltail用来记录压缩列表表尾节点距离压缩列表的起始地址有多少字节。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmr6w3fj30hl018glk.jpg" alt="image-20200407144948678">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmr6w3fj30hl018glk.jpg" alt="image-20200407144948678"></p>
 <p>压缩列表的每个节点又是由三部分组成的</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmthqdrj30as019gli.jpg" alt="image-20200407145708538">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmthqdrj30as019gli.jpg" alt="image-20200407145708538"></p>
 <p>其中previous_entry_length用来记录前一个结点的长度。</p>
 <p>（连续更新部分已省略）</p>
 <h2 id="2-redis对象">2. Redis对象</h2>
@@ -484,10 +473,7 @@ OK
 redis &gt; TYPE msg
 string
 </code></pre><p>对象的ptr指针指向对象的底层实现数据结构，而这些数据结构由对象的encoding属性决定。encoding属性记录了对象所使用的的编码，也即是说这个对象使用了什么数据结构作为对象的底层实现。(除了字符串对象有三种底层实现外，其余都为两种)</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmwdy0aj30k008tjus.jpg" alt="image-20200407153601918">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmwdy0aj30k008tjus.jpg" alt="image-20200407153601918"></p>
 <p>可以使用OBJECT ENCODING命令来查看一个数据库键的值对象的编码:</p>
 <pre><code>redis&gt; SET msg &quot;hello world&quot;
 OK
@@ -496,94 +482,46 @@ redis&gt; OBJECT ENCODING msg
 </code></pre><h3 id="22-字符串对象">2.2 字符串对象</h3>
 <p>字符串对象的编码可以是int、raw或者embstr。</p>
 <p>如下图所示，是用int编码的字符串对象</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmz6e1lj306p047jrh.jpg" alt="image-20200407154229553">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbmz6e1lj306p047jrh.jpg" alt="image-20200407154229553"></p>
 <p>如下图所示，是用raw编码的字符串对象</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbn1zfomj30k604dgm1.jpg" alt="image-20200407154115139">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbn1zfomj30k604dgm1.jpg" alt="image-20200407154115139"></p>
 <p>如下图所示，是用embstr编码的字符串对象</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbn5m1ibj30dl01vdft.jpg" alt="image-20200407154140490">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbn5m1ibj30dl01vdft.jpg" alt="image-20200407154140490"></p>
 <p>embstr编码将创建字符串对象所需的内存分配次数从raw编码的两次降低为一次。</p>
 <p><strong>字符串命令的实现</strong></p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbn7y7h9j30jl0i9gtr.jpg" alt="image-20200407154516613">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbn7y7h9j30jl0i9gtr.jpg" alt="image-20200407154516613"></p>
 <p>另外需要注意，字符串对象时Redis五种类型的对象中唯一一种会被其他四种对象嵌套的对象。</p>
 <h3 id="23-列表对象">2.3 列表对象</h3>
 <p>列表对象的编码可以是ziplist或者linkedlist</p>
 <p>ziplist编码的numbers列表对象</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnbcotfj30h604dmxg.jpg" alt="image-20200407154643321">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnbcotfj30h604dmxg.jpg" alt="image-20200407154643321"></p>
 <p>linkedlist编码的numbers列表对象</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbne3h2tj30im0423z3.jpg" alt="image-20200407154654366">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbne3h2tj30im0423z3.jpg" alt="image-20200407154654366"></p>
 <p><strong>列表命令的实现</strong></p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnh1pnaj30j50g1dnk.jpg" alt="image-20200407155032046">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnh1pnaj30j50g1dnk.jpg" alt="image-20200407155032046"></p>
 <h3 id="24-哈希对象">2.4 哈希对象</h3>
 <p>哈希对象的编码可以是ziplist或者hashtable。</p>
 <p>如果编码方式是ziplist，那么每当有新的键值对要加入到哈希对象时，程序会先将键的压缩列表节点推入到压缩列表表尾，然后再将保存了值的压缩列表节点推入到压缩列表表尾。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnk90pjj308404w0sv.jpg" alt="image-20200407155336359">
-
-</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnmlni5j30im02mq3c.jpg" alt="image-20200407155345137">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnk90pjj308404w0sv.jpg" alt="image-20200407155336359"></p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnmlni5j30im02mq3c.jpg" alt="image-20200407155345137"></p>
 <p>如果编码方式方式是hashtable，则字典的每个键都是字符串对象，每个值也都是字符串对象。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnosas0j30bs07gaas.jpg" alt="image-20200407155738535">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnosas0j30bs07gaas.jpg" alt="image-20200407155738535"></p>
 <p><strong>哈希命令的实现</strong></p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnrtyghj30j60cmtdz.jpg" alt="image-20200407155812617">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnrtyghj30j60cmtdz.jpg" alt="image-20200407155812617"></p>
 <h3 id="25-集合对象">2.5 集合对象</h3>
 <p>集合对象的编码可以是intset或者hashtable。注，当使用hashtable作为编码方式时，value没有值</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnuzpezj30e909ggn0.jpg" alt="image-20200407155924621">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnuzpezj30e909ggn0.jpg" alt="image-20200407155924621"></p>
 <p><strong>集合命令的实现</strong></p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnxuhwrj30jb0boteb.jpg" alt="image-20200407160614470">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbnxuhwrj30jb0boteb.jpg" alt="image-20200407160614470"></p>
 <h3 id="26-有序集合对象">2.6 有序集合对象</h3>
 <p>有序集合对象的编码可以是ziplist或者skiplist。</p>
 <p>ziplist编码的有序集合对象使用压缩列表作为底层实现，每个集合元素使用两个紧挨在一起的压缩列表结点来保存，第一个结点保存元素的成员，第二个结点则保存元素的分值。压缩列表内的集合元素按分值从小到大进行排序。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbo13ygwj30gq02eq39.jpg" alt="image-20200407160924488">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbo13ygwj30gq02eq39.jpg" alt="image-20200407160924488"></p>
 <p>skiplist编码的有序集合对象使用跳表作为底层实现，除了跳表之外，还有一个dict字典为有序集合创建了一个从成员到分值的映射。这样既可保证可以使用O(1)的复杂度查找成员分值，也可以保留跳表执行范围型操作的优点。</p>
 <p>下图中重复展示了各个元素的成员和分值，但在实际中，字典和跳跃表会共享元素的成员和分值，并不会造成任何数据重复，不会因此而浪费任何内存。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbo3f33qj30j10gqwh1.jpg" alt="image-20200407161102382">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbo3f33qj30j10gqwh1.jpg" alt="image-20200407161102382"></p>
 <p><strong>有序集命令的实现方法</strong></p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbo83i92j30j50gj45w.jpg" alt="image-20200407161537277">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gdlbo83i92j30j50gj45w.jpg" alt="image-20200407161537277"></p>
 <h3 id="27-内存回收">2.7 内存回收</h3>
 <p>Redis的对象中有一属性refcount用来记录引用数目。使用引用计数法来统计对象被多少个程序所使用的，如果引用计数变为0，则被回收。因此对象的整个生命周期可以划分为创建对象、操作对象、释放对象三个阶段。</p>
 <h3 id="28-对象共享">2.8 对象共享</h3>
@@ -623,7 +561,7 @@ redis&gt; OBJECT ENCODING msg
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -710,8 +648,6 @@ redis&gt; OBJECT ENCODING msg
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

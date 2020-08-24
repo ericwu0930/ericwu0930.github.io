@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -198,7 +208,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -290,16 +300,21 @@
     <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isShutdown</span><span style="color:#f92672">();</span>
     <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isTerminated</span><span style="color:#f92672">();</span>
     <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">awaitTermination</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> timeout<span style="color:#f92672">,</span>TimeUnit unit<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> INterruptedException<span style="color:#f92672">;</span>
+    <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> Future<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">submit</span><span style="color:#f92672">(</span>Callable<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> task<span style="color:#f92672">);</span>
+    <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> Future<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">submit</span><span style="color:#f92672">(</span>Runnable task<span style="color:#f92672">,</span> T result<span style="color:#f92672">);</span>
+    Future<span style="color:#f92672">&lt;?&gt;</span> submit<span style="color:#f92672">(</span>Runnable task<span style="color:#f92672">);</span>
     <span style="color:#75715e">// ...其他用于任务提交的便利方法
 </span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
 </code></pre></div><p>ExecutorService的生命周期有三种状态：运行、关闭和已终止，shutdown平缓关闭，不再接受新的任务，同时等待已经提交的任务执行完成——包括还未开始执行的任务。shutdownNow方法粗暴的关闭，尝试取消所有正在运行的任务。在ExecutorService关闭后提交的任务将由Rejected Execution Handler来处理，它会抛弃任务，或者使得execute方法抛出一个未检查的Rejected ExecutionException。</p>
 <p>可以使用awaitTermination等待ExecutorService到达终止状态，或者调用isTerminated来查询时候已经终止。</p>
+<p>除此之外，ExecutorService还提供了submit接口，返回一个Future对象，可以通过对Future对象调用get方法得到结果。</p>
 <h3 id="callable与future">Callable与Future</h3>
-<p>Runnable接口是一种有很大局限的抽象，它不能返回一个值或抛出一个受检查的异常。Callable是一种更好的抽象，它可以返回一个值，也可以抛出一个异常，Executor执行的任务有4个生命周期阶段：创建、提交、开始和完成。、</p>
-<p>Future表示一个任务的生命周期，并提供了相应的方法来判断是否已经完成或取消，以及获取任务的结果和取消任务等。</p>
+<p>Runnable接口是一种有很大局限的抽象，它不能返回一个值或抛出一个受检查的异常。Callable是一种更好的抽象，它可以返回一个值，也可以抛出一个异常，执行Callable任务后，可以获取一个Future对象。Future表示一个任务的生命周期，并提供了相应的方法来判断是否已经完成或取消，以及获取任务的结果和取消任务等。
+在该对象上调用get就可以获取Callable任务返回的Object了。再结合线程池接口ExecutorService提供的<code>submit</code>方法就可以实现传说中有返回结果的多线程。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Callable</span><span style="color:#f92672">&lt;</span>V<span style="color:#f92672">&gt;{</span>
     V <span style="color:#a6e22e">call</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception<span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
+
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Future</span><span style="color:#f92672">&lt;</span>V<span style="color:#f92672">&gt;{</span>
     <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">cancel</span><span style="color:#f92672">(</span><span style="color:#66d9ef">boolean</span> myInterruptIfRunning<span style="color:#f92672">);</span>
     <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isCanceller</span><span style="color:#f92672">();</span>
@@ -309,10 +324,7 @@
 <span style="color:#f92672">}</span>
 </code></pre></div><p>get方法的行为取决于任务的状态（尚未开始，正在运行，已完成）如果任务已经完成，那么get会立即返回或者抛出一个Exception，否则将阻塞并直到任务完成。可以通过许多方法创建一个Future来描述任务，ExecutorService中的所有submit方法都将返回一个Future</p>
 <h2 id="三threadpoolexecutor线程池">三、ThreadPoolExecutor线程池</h2>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfeui48cwtj30a90dgglx.jpg" alt="image-20200601131724510">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfeui48cwtj30a90dgglx.jpg" alt="image-20200601131724510"></p>
 <p>线程池实现了ExecutorService接口，也即拥有ExecutorService的功能。有两种方法创建一个线程池，使用Executors这一线程池工厂类创建默认的几种线程池，或者自定义线程池。自定义一个线程池需要定义7个参数，默认的线程池无非是在这8个参数中赋上了一定的值。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
 </span><span style="color:#75715e">* Creates a new {@code ThreadPoolExecutor} with the given initial
@@ -340,16 +352,10 @@
                               ThreadFactory threadFactory<span style="color:#f92672">,</span>
                               RejectedExecutionHandler handler<span style="color:#f92672">)</span>
 </code></pre></div><p>线程池中维护着两个队列，线程队列和任务队列，运行顺序是当任务来临时，先调用核心线程去执行，如果核心线程数不够，则将任务放入任务队列中，如果任务队列已满，且线程数小于最大线程池大小，则开启新的非核心线程，这类线程在空闲时间达到keepAliveTime之后会自动释放掉，如果任务队列已满且线程数也达到了最大线程池大小，则执行拒绝策略</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfeui2wiqbj30mw0fi0u3.jpg" alt="image-20200601132530613">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfeui2wiqbj30mw0fi0u3.jpg" alt="image-20200601132530613"></p>
 <h3 id="设置线程池的大小">设置线程池的大小</h3>
 <p>如果线程池过大，大量的线程在相对很少的CPU和内存资源上发生竞争，导致更高的内存使用量以及CPU切换开销；如果线程池过小，将会导致许多空闲的处理器无法执行工作，从而降低吞吐量。如何合理的设置线程数，这里有一个公式：</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfeui3pxs6j30e404st8u.jpg" alt="image-20200602101250873">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfeui3pxs6j30e404st8u.jpg" alt="image-20200602101250873"></p>
 <p>举一个例子可以更好的理解这个公式，有一个八核的cpu，处理http一个请求需要消耗cpu时间20ms，进行io相关操作需要消耗180ms，请问需要开多少线程。可以这样想，如果想让cpu使用率最大化，那么应该在处理io请求，cpu处于空闲状态时再开一个线程处理其他的cpu请求，那么在180ms的时间里可以处理多少个cpu请求呢？答案是9个，加上最初的一个线程，在处理一个http请求的200ms的周期中，10个线程就可以让cpu的一个核心全速运行，那么8个核心一共需要开启80个线程。</p>
 <p>如果我们不想让cpu的占用率100%，那么可以这么考虑，我们不想在180ms的cpu空闲时间内将cpu全部占用起来，也即占用率低于100%，那么可以理解为在200ms的周期中，让cpu工作占用率%的时间，比如想让cpu的一个核心的占有率为50%，那么cpu一共工作的时间为100ms，100ms/20ms=5个线程，所以8个核心就需要40个线程。上面的这个公式就是这个意思。</p>
 <h3 id="阻塞队列">阻塞队列：</h3>
@@ -434,6 +440,9 @@
 <p>newFixedThreadPool：固定长度的线程池，无界队列</p>
 <p>newCachedThreadPool：线程池规模不存在限制，任务队列使用SynchronousQueue进行管理</p>
 <p>newSingleThreadPool：见闻知意，线程池是固定的只有1个线程，任务队列是无界的</p>
+<p>newScheduledThreadPool: 延迟线程池，可以让使任务在延迟指定时间后再执行，起继承关系如下图所示</p>
+<p><img src="https://i.loli.net/2020/08/24/R42rybAl5cWY8Hh.png" alt="image-20200824194538824"></p>
+<p>它使用ScheduledExecutorService接口提供的schedule方法提交任务。</p>
 <h2 id="附录-threadpoolexecutor源码分析">附录 ThreadPoolExecutor源码分析</h2>
 <h3 id="1常用变量的解释">1、常用变量的解释</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 1. `ctl`，可以看做一个int类型的数字，高3位表示线程池状态，低29位表示worker数量
@@ -756,7 +765,7 @@
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -843,8 +852,6 @@
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

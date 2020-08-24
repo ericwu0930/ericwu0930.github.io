@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -198,7 +208,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -220,23 +230,14 @@
 <p>为了实现Models与View分离，将坦克大战程序的显示部分全部放入TankFrame部分，将游戏模型、内部逻辑部分放入到GameModel部分，并将GameModel设计为单例模式，保证只被创建一次。</p>
 <p>在GameModel中期望每次初始化都首先添加一个myTank对象（也就是自己可以控制的坦克对象）</p>
 <p>但是在TankFrame中企图使用GameModel的静态方法getINSTANCE()得到实例的时候，总是报错，提示在初始化Tank（）对象的时候GameModel.getINSTANCE().add(this)有一个空指针异常。程序逻辑如下图所示：</p>
-<p>
-  <img src="https://s2.ax1x.com/2020/03/05/3T5nOJ.png" alt="3T5nOJ.png">
-
-</p>
+<p><img src="https://s2.ax1x.com/2020/03/05/3T5nOJ.png" alt="3T5nOJ.png"></p>
 <p>此时，我瞬间反应过来，应该是在Tank的构造方法中调用GameModel.getINSTANCE()时，还没有完成对GameModel的实例化。所以，Java类中数据初始化的顺序到底是怎样进行的呢？</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TankFrame</span> <span style="color:#66d9ef">extends</span> Frame<span style="color:#f92672">{</span>
     GameModel gm <span style="color:#f92672">=</span> GameModel<span style="color:#f92672">.</span><span style="color:#a6e22e">getINSTANCE</span><span style="color:#f92672">();</span>
     <span style="color:#f92672">...</span>
 <span style="color:#f92672">}</span>
-</code></pre></div><p>
-  <img src="https://s2.ax1x.com/2020/03/05/3T5YlD.png" alt="3T5YlD.png">
-
-</p>
-<p>
-  <img src="https://s2.ax1x.com/2020/03/05/3T5DtP.png" alt="3T5DtP.png">
-
-</p>
+</code></pre></div><p><img src="https://s2.ax1x.com/2020/03/05/3T5YlD.png" alt="3T5YlD.png"></p>
+<p><img src="https://s2.ax1x.com/2020/03/05/3T5DtP.png" alt="3T5DtP.png"></p>
 <h2 id="问题剖析">问题剖析：</h2>
 <p>首先我们要分清一个概念，类的初始化和对象的初始化。类的初始化发生在类加载时，在以下五种情况下可以发生类加载</p>
 <ol>
@@ -343,10 +344,7 @@
 </span><span style="color:#75715e"></span>        38<span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
 </code></pre></div><p>这时我们发现，对象的初始化必然会导致类的初始化（第一次new类对象会加载类），但类的初始化不一定导致对象的初始化（使用类的静态变量和方法）</p>
 <p>所以在调用GameModel.getINSTANCE()时进行的一系列动作如下图所示，为什么报错也就很明朗了</p>
-<p><a href="https://imgchr.com/i/3T5bX4">
-  <img src="https://s2.ax1x.com/2020/03/05/3T5bX4.md.png" alt="3T5bX4.md.png">
-
-</a></p>
+<p><a href="https://imgchr.com/i/3T5bX4"><img src="https://s2.ax1x.com/2020/03/05/3T5bX4.md.png" alt="3T5bX4.md.png"></a></p>
 <h2 id="解决办法">解决办法：</h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">static</span><span style="color:#f92672">{</span>
     <span style="color:#66d9ef">try</span><span style="color:#f92672">{</span>
@@ -396,7 +394,7 @@ Tank myTank<span style="color:#f92672">=</span><span style="color:#66d9ef">null<
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -483,8 +481,6 @@ Tank myTank<span style="color:#f92672">=</span><span style="color:#66d9ef">null<
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

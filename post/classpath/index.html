@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -194,7 +204,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -212,10 +222,7 @@
                 <h2 id="1-classpath到底在哪儿">1. ClassPath到底在哪儿？</h2>
 <p>之前一直有个误解，认为classpath是编译前概念，所以看到src文件夹下有main，有test，有resources等子目录，到底哪个是classpath就很懵。后来发现，其实classpath是.java文件被编译成.class字节码文件后，运行时的一个概念。</p>
 <p>打开IDEA中的Project Structure</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geqokxre9jj30rt0cd0ts.jpg" alt="">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geqokxre9jj30rt0cd0ts.jpg" alt=""></p>
 <p>结构的右边列出了4个项目中的文件类型：</p>
 <ul>
 <li>Source Folders：表示的都是代码源文件目录，生成的class文件会输出到target-&gt;classess文件夹中，但是里面的源文件不会复制到target-&gt;classes文件夹中</li>
@@ -262,10 +269,7 @@
 <span style="color:#f92672">}</span>
 </code></pre></div><p>如果name是“/”开头的，那么将其省略，然后返回这个字符串；如果name不是以&rdquo;/&ldquo;开头，那么先得到该类所在的文件夹名，然后与name进行拼接，返回这个字符串。举例，如果我们传入的是&rdquo;&quot;（空字符串），那么经过resolveName处理，返回的就是该类所在包名（例如 io.github.ericwu0930）；如果传入的是&rdquo;/&quot;，那么经过resolveName处理，返回的是&rdquo;&quot;（空字符串）</p>
 <p>结合类加载器中的相关知识，对于Application ClassLoader这一类加载器，因为Application ClassLoader是从classpath中寻找所需要加载的类，换句话说，classpath是根目录。因此，如果传入的字符串以&rdquo;/&ldquo;开头，那么就是从classpath目录下寻找资源，如果传入的字符串不以&quot;&ldquo;开头，那么就是从该类所在包下寻找资源。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfii3s8l9aj30xe09o0vc.jpg" alt="3JTeuF.png">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfii3s8l9aj30xe09o0vc.jpg" alt="3JTeuF.png"></p>
 <p>通过一个实验可以更清楚些。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> io.github.ericwu0930<span style="color:#f92672">;</span>
 
@@ -318,7 +322,7 @@ file:/Users/eric/javaProjects/getResourceTest/out/production/getResourceTest/
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -405,8 +409,6 @@ file:/Users/eric/javaProjects/getResourceTest/out/production/getResourceTest/
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

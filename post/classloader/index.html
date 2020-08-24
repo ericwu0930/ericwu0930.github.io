@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -198,7 +208,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -216,10 +226,7 @@
                 
                 <p>在类加载过程的加载阶段，“通过一个类的全限定名来获取描述此类的二进制字节流”是通过“类加载器”来实现的。类加载器虽然只用于实现类的加载动作，但在Java程序中起到的作用不限于类加载阶段。<code>比较连个类是否“相等”，只有在这两个类是由同一个类加载器加载的前提下才有意义。</code>
 在JDK1.8中有四种类加载器，如下图所示</p>
-<p>
-  <img src="https://s2.ax1x.com/2020/02/25/3JTeuF.png" alt="3JTeuF.png">
-
-</p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3JTeuF.png" alt="3JTeuF.png"></p>
 <p>注：启动类加载器是用c++编写的，无法查看源码；扩展的类加载器只能加载jar文件包</p>
 <h2 id="一双亲委派模式">一、双亲委派模式</h2>
 <p>所谓双亲委派，就是指用类加载器的loadClass方法时查找类的规则：如果一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每一个层次的类加载器都是如此，因此所有的加载请求最终都应该传送到顶层的启动类加载器中（Bootstrap），只有当父加载器反馈自己无法完成这个加载请求时，子加载器才会尝试自己去加载。
@@ -320,10 +327,7 @@
 <span style="color:#f92672">}</span>
 </code></pre></div><p>先看2) 它最后使用Class.forName完成类的加载和初始化，关联的是应用程序类加载器，因此可以顺利完成类加载</p>
 <p>再看1）它是大名鼎鼎的Service Provider interface(SPI)，约定如下，在jar包的META-INF/services包下，以接口全限定名为文件，文件内容是实现类名称</p>
-<p>
-  <img src="https://s2.ax1x.com/2020/02/25/3JTsv8.png" alt="3JTsv8.png">
-
-</p>
+<p><img src="https://s2.ax1x.com/2020/02/25/3JTsv8.png" alt="3JTsv8.png"></p>
 <p>这样可以使用</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">ServiceLoader<span style="color:#f92672">&lt;</span>接口类型<span style="color:#f92672">&gt;</span> allImpls <span style="color:#f92672">=</span> ServiceLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>接口类型<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
 Iterator<span style="color:#f92672">&lt;</span>接口类型<span style="color:#f92672">&gt;</span> iter <span style="color:#f92672">=</span> allImpls<span style="color:#f92672">.</span><span style="color:#a6e22e">iterator</span><span style="color:#f92672">();</span>
@@ -403,7 +407,7 @@ Iterator<span style="color:#f92672">&lt;</span>接口类型<span style="color:#f
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -490,8 +494,6 @@ Iterator<span style="color:#f92672">&lt;</span>接口类型<span style="color:#f
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

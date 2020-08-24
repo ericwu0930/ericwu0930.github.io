@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -198,7 +208,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -252,10 +262,7 @@
                 <h2 id="一mysql数据库软件">一、MySQL数据库软件</h2>
 <h3 id="mysql的结构">MySQL的结构</h3>
 <p>MySQL是一个客户端/服务器的架构，它的服务器程序直接和我们存储的数据打交道，然后可以有好多客户端程序连接到这个服务器程序，发送增删改查的请求，然后服务器就响应这些请求，从而操作它维护的数据。服务器进程对客户端进程发送的请求做了什么处理，才能产生最后的处理结果呢？客户端可以向服务器发送增删改查各类请求，我们这里以比较复杂的查询请求为例来画个图展示一下大致的过程：</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoeysvse3j31120p0771.jpg" alt="image-20200812224636555">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoeysvse3j31120p0771.jpg" alt="image-20200812224636555"></p>
 <h3 id="存储引擎">存储引擎</h3>
 <p><code>MySQL</code>服务器把数据的存储和提取操作都封装到了一个叫<code>存储引擎</code>的模块里。我们知道<code>表</code>是由一行一行的记录组成的，但这只是一个逻辑上的概念，物理上如何表示记录，怎么从表中读取数据，怎么把数据写入具体的物理存储器上，这都是<code>存储引擎</code>负责的事情。为了实现不同的功能，<code>MySQL</code>提供了各式各样的<code>存储引擎</code>，不同<code>存储引擎</code>管理的表具体的存储结构可能不同，采用的存取算法也可能不同。</p>
 <h3 id="登录">登录</h3>
@@ -270,10 +277,7 @@
 <li>quit</li>
 </ol>
 <h3 id="mysql目录结构">MySQL目录结构</h3>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2reue4j31970u0tq4.jpg" alt="数据库目录">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2reue4j31970u0tq4.jpg" alt="数据库目录"></p>
 <p>MySQL有一个安装目录有一个数据目录，在数据目录中又有这样的几个概念</p>
 <ul>
 <li>数据库：文件夹</li>
@@ -313,10 +317,7 @@
 <p>用来定义数据库的访问权限和安全级别，及创建用户。关键字：GRANT， REVOKE 等</p>
 </li>
 </ol>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2olqysj31v00u07wh.jpg" alt="SQL语句分类">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2olqysj31v00u07wh.jpg" alt="SQL语句分类"></p>
 <h3 id="ddl操作数据库表">DDL：操作数据库、表</h3>
 <p>对于DDL语句，可以分为操作数据库和操作表，并且对于数据库和表，又都可以分为CRUD操作，即Create，Retrieve，Update和Delete。</p>
 <ol>
@@ -844,20 +845,11 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 </li>
 </ol>
 </blockquote>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2ntonej310y0t2aza.jpg" alt="image-20191208224853847">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2ntonej310y0t2aza.jpg" alt="image-20191208224853847"></p>
 <p>分析上表，<strong>学号和课程名称</strong>组成的属性组是码，则这两个属性也就是主属性。可见，姓名只需要学号就可以确定，所以对于码而言，是一个部分函数依赖，系所、系主任也是，因此将其剥离，也就是根据第二范式，可以将上表修改为下图。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2pljs2j31z20u07wh.jpg" alt="image-20191208225906983">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2pljs2j31z20u07wh.jpg" alt="image-20191208225906983"></p>
 <p>但此表仍然存在问题，虽然右边的表满足于范式二，但是存在传递函数依赖，如果此时我想设立一个计算机系，然而该系还未招生，就无法把这种关系表现出来，因此继续剥离，变成以下三个表</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2qgo8tj319x0u0axl.jpg" alt="image-20191208225839666">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2qgo8tj319x0u0axl.jpg" alt="image-20191208225839666"></p>
 <h2 id="六数据库的备份还原">六、数据库的备份还原</h2>
 <ol>
 <li>命令行：
@@ -968,7 +960,7 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -1055,8 +1047,6 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

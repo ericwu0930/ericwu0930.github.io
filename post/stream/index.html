@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -198,7 +208,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -246,10 +256,7 @@
 <span style="color:#f92672">}</span>
 
 </code></pre></div><p>其中，Predicate是一个函数接口，可以使用lambda表达式实现</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geoenjs8vaj30my08zjs4.jpg" alt="image-20200511113051649">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geoenjs8vaj30my08zjs4.jpg" alt="image-20200511113051649"></p>
 <p>可是这也是比较麻烦的 ；而且在之前我们遍历集合的时候就需要循环，或者 Iterator 迭代器来遍历；这也都是很浪费时间和空间的；那有没有一种方法，是我们不用调用方法，直接用语句来获得所有的偶数呢？这个时候我们就需要用到jdk1.8的新特性，Stream流，将数组元素变为一条数据流，然后对这个数据流进行操作，过滤或者收集想要的数据；</p>
 <p>Stream 不是集合元素，它不是数据结构并不保存数据，它是有关算法和计算的，它更像一个<strong>高级版本的 Iterator</strong>。原始版本的 Iterator，用户只能显式地一个一个遍历元素并对其执行某些操作；高级版本的 Stream，用户只要给出需要对其包含的元素执行什么操作，比如 “过滤掉长度大于 10 的字符串”、“获取每个字符串的首字母”等，Stream 会隐式地在内部进行遍历，做出相应的数据转换。</p>
 <p>Stream 就如同一个迭代器（Iterator），单向，不可往复，数据只能遍历一次，遍历过一次后即用尽了，就好比流水从面前流过，一去不复返。</p>
@@ -280,10 +287,7 @@ System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span>
 List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> collect <span style="color:#f92672">=</span> list4<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>i <span style="color:#f92672">-&gt;</span> i <span style="color:#f92672">*</span> 2<span style="color:#f92672">).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
 System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>collect<span style="color:#f92672">);</span>
 </code></pre></div><p>其中Function也是个函数接口</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geoeniwfraj30g207xt95.jpg" alt="image-20200511115253300">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geoeniwfraj30g207xt95.jpg" alt="image-20200511115253300"></p>
 </li>
 <li>
 <p>flatMap 扁平化映射</p>
@@ -456,7 +460,7 @@ System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span>
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -543,8 +547,6 @@ System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span>
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

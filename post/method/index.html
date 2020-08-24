@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -198,7 +208,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -300,84 +310,48 @@ SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
 </code></pre></div><ol>
 <li>
 <p>字节码文件经过类加载器加载到内存中，其中将字节码文件中的常量池加载到运行时常量池，将方法表的内容加载到方法区（运行时常量池在jdk1.8之前其实也属于方法区，这里只是为了表述方便，将其拆开为两部分），根据字节码文件中方法表中的内容（<code>stack=2, locals=4, args_size=1</code>）,分配四个Slot给局部变量（32位数据占1Slot，64位数据占2Slot），操作数栈的最大深度为2
-
-  <img src="https://s2.ax1x.com/2020/03/06/3bYWlT.png" alt="3bYWlT.png">
-
-</p>
+<img src="https://s2.ax1x.com/2020/03/06/3bYWlT.png" alt="3bYWlT.png"></p>
 </li>
 <li>
 <p>Bipush 10 将常量10推入操作数栈
-
-  <img src="https://s2.ax1x.com/2020/03/06/3bY5m4.png" alt="3bY5m4.png">
-
-</p>
+<img src="https://s2.ax1x.com/2020/03/06/3bY5m4.png" alt="3bY5m4.png"></p>
 </li>
 <li>
 <p>istore_1 将操作数栈栈顶元素弹出存入局部变量表1的位置
-
-  <img src="https://s2.ax1x.com/2020/03/06/3bYI0J.png" alt="3bYI0J.png">
-
-</p>
+<img src="https://s2.ax1x.com/2020/03/06/3bYI0J.png" alt="3bYI0J.png"></p>
 </li>
 <li>
 <p>Ldc #3 将运行时常量表中的32768存入操作数栈中（比较小的数字随字节码指令存放在一起，一旦数字的范围超过Short整数的最大值，则会存放在常量池中）
-
-  <img src="https://s2.ax1x.com/2020/03/06/3bYX6O.png" alt="3bYX6O.png">
-
-</p>
+<img src="https://s2.ax1x.com/2020/03/06/3bYX6O.png" alt="3bYX6O.png"></p>
 </li>
 <li>
 <p>istore_2 将操作栈栈顶元素弹出，保存在局部变量表2的位置
-
-  <img src="https://s2.ax1x.com/2020/03/06/3bYxne.png" alt="3bYxne.png">
-
-</p>
+<img src="https://s2.ax1x.com/2020/03/06/3bYxne.png" alt="3bYxne.png"></p>
 </li>
 <li>
 <p>iload_1 iload_2这两个指令将局部变量1、2再次加载到了操作数栈中
-
-  <img src="https://s2.ax1x.com/2020/03/06/3btCtI.png" alt="3btCtI.png">
-
-</p>
+<img src="https://s2.ax1x.com/2020/03/06/3btCtI.png" alt="3btCtI.png"></p>
 </li>
 <li>
 <p>iadd将栈中元素相加，并将结果置于栈顶
-
-  <img src="https://s2.ax1x.com/2020/03/06/3btk1f.png" alt="3btk1f.png">
-
-</p>
+<img src="https://s2.ax1x.com/2020/03/06/3btk1f.png" alt="3btk1f.png"></p>
 </li>
 <li>
 <p>istore_3
-
-  <img src="https://s2.ax1x.com/2020/03/06/3btEjS.png" alt="3btEjS.png">
-
-</p>
+<img src="https://s2.ax1x.com/2020/03/06/3btEjS.png" alt="3btEjS.png"></p>
 </li>
 <li>
 <p>getstatic #4 该指令获取类变量的一个引用，System.out这个类变量存放在堆内存中，于是将System.out的引用存放于操作数栈中
-
-  <img src="https://s2.ax1x.com/2020/03/06/3btZng.png" alt="3btZng.png">
-
-</p>
+<img src="https://s2.ax1x.com/2020/03/06/3btZng.png" alt="3btZng.png"></p>
 </li>
 <li>
 <p>iload3 将局部变量3加载到操作数栈中
-
-  <img src="https://s2.ax1x.com/2020/03/06/3btm7j.png" alt="3btm7j.png">
-
-</p>
+<img src="https://s2.ax1x.com/2020/03/06/3btm7j.png" alt="3btm7j.png"></p>
 </li>
 <li>
 <p>invokevirtual #5 调用运行时常量池中5所引用的方法，定位到方法区，然后由方法区生成新的栈帧，传递参数，执行新栈帧中的字节码。执行完毕后，将println的栈帧弹出，清楚main操作栈中的内容
-
-  <img src="https://s2.ax1x.com/2020/03/06/3btuAs.png" alt="3btuAs.png">
-
-</p>
-<p>
-  <img src="https://s2.ax1x.com/2020/03/06/3btKNn.png" alt="3btKNn.png">
-
-</p>
+<img src="https://s2.ax1x.com/2020/03/06/3btuAs.png" alt="3btuAs.png"></p>
+<p><img src="https://s2.ax1x.com/2020/03/06/3btKNn.png" alt="3btKNn.png"></p>
 </li>
 <li>
 <p>Return 完成主方法，main的栈帧也弹出</p>
@@ -411,7 +385,7 @@ SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -498,8 +472,6 @@ SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

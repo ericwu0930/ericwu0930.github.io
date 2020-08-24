@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -198,7 +208,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -231,10 +241,7 @@
                 <p>由于Mysql数据库中的存储引擎是插件式的，而存储引擎又是基于表的，因此可以根据不同的需要使用不同的存储引擎创建表。</p>
 <p>InnoDB是Mysql默认的存储引擎，基于从磁盘存储，其特点是行锁设计、支持MVCC、支持外键、提供一致性非锁定读，同时被设计用来最有效的利用以及使用内存和CPU。</p>
 <h2 id="1-innodb体系结构">1. InnoDB体系结构</h2>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/8T8Hh9.png" alt="8T8Hh9.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/8T8Hh9.png" alt="8T8Hh9.png"></p>
 <h3 id="11-后台线程">1.1 后台线程</h3>
 <p><strong>Master Thread</strong>(InnoDB 1.0.x版本之前)</p>
 <p>Master Thread是一个非常核心的后台线程，主要负责脏页面的刷新、合并插入缓冲、UNDO页的回收等。Master Thread具有最高的线程优先级别。其内部由多个循环组成：主循环、后台循环、刷新循环、暂停循环。Master Thread会根据数据库运行的状态在loop、background loop、flush loop和suspend loop中进行切换。</p>
@@ -324,10 +331,7 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
 <p><strong>Purge Thread</strong></p>
 <p>事务被提交后，其所使用的的undolog可能不再需要，需要PurgeThread来回收已经使用并分配的undo页。从InnoDB 1.1版本开始，purge操作可以独立到单独的线程中进行。</p>
 <h3 id="12-内存">1.2 内存</h3>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/8T8vnK.png" alt="8T8vnK.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/8T8vnK.png" alt="8T8vnK.png"></p>
 <p>缓冲池中缓存的数据页类型有：索引页、数据页、undo页、插入缓冲(insert buffer)、自适应哈希索引、数据字典信息等。</p>
 <p>缓冲池是一个很大的内存区与，数据库中的缓冲池是通过LRU算法进行管理的。在InnoDB存储引擎中，缓冲池中页的大小默认为16KB。InnoDB对LRU进行了一些优化，在LRU列表中加入了midpoint位置，新读取到的页不是直接放入到LRU列表的首部，而是放入到LRU列表的midpoint位置。midpoint之前的是new列表，midpoint之后的列表是old列表。Innodb_old_blocks_time用于表示页读取到mid位置后需要等待多久才会被加入到LRU列表的热端。</p>
 <p>在数据库刚启动时，LRU列表是空的，这时页都存放在Free列表中，需要从缓冲池中分页时，首先从Free列表中查找是否有可用的空闲页，若有则将该页从Free列表中删除，放入到LRU列表中。否则，根据LRU算法，淘汰LRU列表末尾的页，将该内存空间分配给新的页。</p>
@@ -344,10 +348,7 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
 <p>数据库放生宕机时，数据库不需要重做所有的日志，只需要对Checkpoint后的重做日志进行恢复，这缩短了恢复的时间。</p>
 <p>当缓冲池不够用时，根据LRU算法，淘汰某页，如果该页是脏页，需要强制执行Checkpoint，将脏页也就是页的新版本刷回磁盘。</p>
 <p>重做日志出现不可用的情况是因为数据库操作系统对日志的设计都是循环使用的，并不是让其无限增大的。为了实现重做日志文件的重用，必须的强制产生Checkpoint。</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/8TGkct.png" alt="8TGkct.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/8TGkct.png" alt="8TGkct.png"></p>
 <blockquote>
 <p>InnoDB存储引擎先写重做日志文件1，当达到文件的最后时，会切换至重做日志文件2，再当重做日志文件2也被写满时，会切换到日志文件3，当日志文件3也被写满时，会重写日志文件1，如此进行循环。</p>
 <p>重做日志文件不能设置的太大，如果设置的太大，恢复时可能需要很长的时间；另一方面也不能设置的太小，否则可能导致一个失误的日志需要多次切换重做日志文件。</p>
@@ -376,10 +377,7 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
 <h3 id="31-插入缓冲">3.1 插入缓冲</h3>
 <p>B+树的特性决定了非聚集索引插入的离散性（例如以主键顺序依次插入行，但这些行对于非聚集索引来说是离散的，定位非聚集索引的叶子结点是随机读取），对于非聚集索引的插入或更新操作，不是每一次直接插入到索引页中，而是先判断插入的非聚集索引页是否在缓冲池中，若在，直接插入，若不在，则先放入到一个Insert Buffer对象中，然后再以一定的频率和情况进行Insert Buffer和辅助索引叶子结点的merge操作，这时通常能将多个插入合并到一个操作中，大大提高了对于非聚集索引插入的性能。</p>
 <h3 id="32-两次写">3.2 两次写</h3>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/8TGnAg.png" alt="8TGnAg.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/8TGnAg.png" alt="8TGnAg.png"></p>
 <p>两次写带给InnoDB存储引擎的是数据页的可靠性。</p>
 <p>在对缓冲池的脏页进行刷新时，并不直接写磁盘，而是现将其写入到doublewrite buffer，然后通过doublewrite buffer分两次，每次1MB顺序地写入共享表空间的物理磁盘上的doublewrite中，然后再doublewrite buffer中的内容写到各个表空间文件中。</p>
 <p>如果操作系统在将页写入磁盘的过程中发生崩溃，在恢复过程中，InnoDB可以从doublewrite中找到该页的一个副本，将其复制到表空间文件，再应用重做日志进行恢复。</p>
@@ -419,7 +417,7 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -506,8 +504,6 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

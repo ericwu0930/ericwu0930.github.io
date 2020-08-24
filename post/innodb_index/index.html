@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -198,7 +208,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -252,10 +262,7 @@
 <p>MySQL官方对索引的定义为：<strong>索引（Index）是帮助MySQL高效获取数据的数据结构</strong>。提取句子主干，就可以得到索引的本质：索引是数据结构。</p>
 <p>我们知道，数据库查询是数据库的最主要功能之一。我们都希望查询数据的速度能尽可能的快，因此数据库系统的设计者会从查询算法的角度进行优化。最基本的查询算法当然是<a href="https://link.jianshu.com?t=http://en.wikipedia.org/wiki/Linear_search">顺序查找</a>（linear search），这种复杂度为O(n)的算法在数据量很大时显然是糟糕的，好在计算机科学的发展提供了很多更优秀的查找算法，例如<a href="https://link.jianshu.com?t=http://en.wikipedia.org/wiki/Binary_search_algorithm">二分查找</a>（binary search）、<a href="https://link.jianshu.com?t=http://en.wikipedia.org/wiki/Binary_search_tree">二叉树查找</a>（binary tree search）等。如果稍微分析一下会发现，每种查找算法都只能应用于特定的数据结构之上，例如二分查找要求被检索数据有序，而二叉树查找只能应用于<a href="https://link.jianshu.com?t=http://en.wikipedia.org/wiki/Binary_search_tree">二叉查找树</a>上，但是数据本身的组织结构不可能完全满足各种数据结构（例如，理论上不可能同时将两列都按顺序进行组织），所以，<strong>在数据之外，数据库系统还维护着满足特定查找算法的数据结构，这些数据结构以某种方式引用（指向）数据，这样就可以在这些数据结构上实现高级查找算法。这种数据结构，就是索引</strong>。</p>
 <p>看一个例子：</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/8TzzqO.png" alt="8TzzqO.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/8TzzqO.png" alt="8TzzqO.png"></p>
 <p>上图展示了一种可能的索引方式。左边是数据表，一共有两列七条记录，最左边的是数据记录的物理地址（注意逻辑上相邻的记录在磁盘上也并不是一定物理相邻的）。为了加快Col2的查找，可以维护一个右边所示的二叉查找树，每个节点分别包含索引键值和一个指向对应数据记录物理地址的指针，这样就可以运用二叉查找在O(log2n)的复杂度内获取到相应数据。</p>
 <p>虽然这是一个货真价实的索引，但是实际的数据库系统几乎没有使用二叉查找树或其进化品种<a href="https://link.jianshu.com?t=http://en.wikipedia.org/wiki/Red-black_tree">红黑树</a>（red-black tree）实现的，原因会在下文介绍。</p>
 <h3 id="12-b-tree和btree">1.2 B-Tree和B+Tree</h3>
@@ -299,10 +306,7 @@
 <li>
 <p>如果某个指针在节点node的左右相邻key分别是keyi和keyi+1且不为null，则其指向节点的所有key小于v(keyi+1)且大于v(keyi)。
 图2是一个d=2的B-Tree示意图。</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/87S9de.png" alt="87S9de.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/87S9de.png" alt="87S9de.png"></p>
 </li>
 </ol>
 <p>由于B-Tree的特性，在B-Tree中按key检索数据的算法非常直观：首先从根节点进行二分查找，如果找到则返回对应节点的data，否则对相应区间的指针指向的节点递归进行查找，直到找到节点或找到null指针，前者查找成功，后者查找失败。B-Tree上查找算法的伪代码如下：</p>
@@ -334,28 +338,19 @@ data <span style="color:#f92672">=</span> BTree_Search(root, my_key);
 <p>下图是一个简单的B+Tree示意。</p>
 </li>
 </ol>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/87SFJA.png" alt="87SFJA.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/87SFJA.png" alt="87SFJA.png"></p>
 <p>由于并不是所有节点都具有相同的域，因此B+Tree中叶节点和内节点一般大小不同。这点与B-Tree不同，虽然B-Tree中不同节点存放的key和指针可能数量不一致，但是每个节点的域和上限是一致的，所以在实现中B-Tree往往对每个节点申请同等大小的空间。</p>
 <p>一般来说，B+Tree比B-Tree更适合实现外存储索引结构，具体原因与外存储器原理及计算机存取原理有关，将在下面讨论。</p>
 <h4 id="带有顺序访问指针的btree">带有顺序访问指针的B+Tree</h4>
 <p>一般在数据库系统或文件系统中使用的B+Tree结构都在经典B+Tree的基础上进行了优化，增加了顺序访问指针。</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/87S1Wn.png" alt="87S1Wn.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/87S1Wn.png" alt="87S1Wn.png"></p>
 <p>如上图所示，在B+Tree的每个叶子节点增加一个指向相邻叶子节点的指针，就形成了带有顺序访问指针的B+Tree。做这个优化的目的是为了提高区间访问的性能，例如图4中如果要查询key为从18到49的所有数据记录，当找到18后，只需顺着节点和指针顺序遍历就可以一次性访问到所有数据节点，极大提到了区间查询效率。</p>
 <h4 id="为什么使用b-treebtree">为什么使用B-Tree（B+Tree）</h4>
 <p>上文说过，红黑树等数据结构也可以用来实现索引，但是文件系统及数据库系统普遍采用B-/+Tree作为索引结构，这一节将结合计算机组成原理相关知识讨论B-/+Tree作为索引的理论基础。</p>
 <p>一般来说，索引本身也很大，不可能全部存储在内存中，因此索引往往以索引文件的形式存储的磁盘上。这样的话，索引查找过程中就要产生磁盘I/O消耗，相对于内存存取，I/O存取的消耗要高几个数量级，所以<strong>评价一个数据结构作为索引的优劣最重要的指标就是在查找过程中磁盘I/O操作次数的渐进复杂</strong>度。换句话说，索引的结构组织要尽量减少查找过程中磁盘I/O的存取次数。下面先介绍内存和磁盘存取原理，然后再结合这些原理分析B-/+Tree作为索引的效率。</p>
 <h3 id="13-主存存取原理">1.3 主存存取原理</h3>
 <p>目前计算机使用的主存基本都是随机读写存储器（RAM），现代RAM的结构和存取原理比较复杂，这里本文抛却具体差别，抽象出一个十分简单的存取模型来说明RAM的工作原理。</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/87SUwF.png" alt="87SUwF.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/87SUwF.png" alt="87SUwF.png"></p>
 <p>从抽象角度看，主存是一系列的存储单元组成的矩阵，每个存储单元存储固定大小的数据。每个存储单元有唯一的地址，现代主存的编址规则比较复杂，这里将其简化成一个二维地址：通过一个行地址和一个列地址可以唯一定位到一个存储单元。图5展示了一个4 x 4的主存模型。</p>
 <p>主存的存取过程如下：
 当系统需要读取主存时，则将地址信号放到地址总线上传给主存，主存读到地址信号后，解析信号并定位到指定存储单元，然后将此存储单元数据放到数据总线上，供其它部件读取。
@@ -363,10 +358,7 @@ data <span style="color:#f92672">=</span> BTree_Search(root, my_key);
 <p>这里可以看出，主存存取的时间仅与存取次数呈线性关系，因为不存在机械操作，两次存取的数据的“距离”不会对时间有任何影响，例如，先取A0再取A1和先取A0再取D3的时间消耗是一样的。</p>
 <h3 id="14-磁盘存取原理">1.4 磁盘存取原理</h3>
 <p>上文说过，索引一般以文件形式存储在磁盘上，索引检索需要磁盘I/O操作。与主存不同，磁盘I/O存在机械运动耗费，因此磁盘I/O的时间消耗是巨大的。</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/8Tc5k9.jpg" alt="8Tc5k9.jpg">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/8Tc5k9.jpg" alt="8Tc5k9.jpg"></p>
 <p>当磁盘驱动器执行读/写功能时。盘片装在一个主轴上，并绕主轴高速旋转，当磁道在读/写头(又叫磁头) 下通过时，就可以进行数据的读 / 写了。</p>
 <p>一般磁盘分为固定头盘(磁头固定)和活动头盘。固定头盘的每一个磁道上都有独立的磁头，它是固定不动的，专门负责这一磁道上数据的读/写。</p>
 <p>活动头盘 (如上图)的磁头是可移动的。每一个盘面上只有一个磁头(磁头是双向的，因此正反盘面都能读写)。它可以从该面的一个磁道移动到另一个磁道。所有磁头都装在同一个动臂上，因此不同盘面上的所有磁头都是同时移动的(行动整齐划一)。当盘片绕主轴旋转的时候，磁头与旋转的盘片形成一个圆柱体。各个盘面上半径相同的磁道组成了一个圆柱面，我们称为柱面 。因此，柱面的个数也就是盘面上的磁道数。</p>
@@ -408,25 +400,16 @@ data <span style="color:#f92672">=</span> BTree_Search(root, my_key);
 <p>在MySQL中，索引属于存储引擎级别的概念，不同存储引擎对索引的实现方式是不同的，本文主要讨论MyISAM和InnoDB两个存储引擎的索引实现方式。</p>
 <h3 id="21-myisam索引实现">2.1 MyISAM索引实现</h3>
 <p>MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数据记录的地址。下图是MyISAM索引的原理图：</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/87SsQx.png" alt="87SsQx.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/87SsQx.png" alt="87SsQx.png"></p>
 <p>这里设表一共有三列，假设我们以Col1为主键，则图8是一个MyISAM表的主索引（Primary key）示意。可以看出MyISAM的索引文件仅仅保存数据记录的地址。<strong>在MyISAM中，主索引和辅助索引（Secondary key）在结构上没有任何区别，只是主索引要求key是唯一的，而辅助索引的key可以重复</strong>。如果我们在Col2上建立一个辅助索引，则此索引的结构如下图所示：</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/87SRTe.png" alt="87SRTe.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/87SRTe.png" alt="87SRTe.png"></p>
 <p>这也意味着，MyISAM所建立的索引全部都是二级索引。</p>
 <p>同样也是一颗B+Tree，data域保存数据记录的地址。因此，<strong>MyISAM中索引检索的算法为首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则取出其data域的值，然后以data域的值为地址，读取相应数据记录</strong>。MyISAM的索引方式也叫做“非聚集”的，之所以这么称呼是为了与InnoDB的聚集索引区分。</p>
 <h3 id="22-innodb索引实现">2.2 InnoDB索引实现</h3>
 <h4 id="221-innodb页结构">2.2.1 InnoDB页结构</h4>
 <p>虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同。</p>
 <p>首先InnoDB管理存储空间的基本单位是页，一个页的大小一般是16kb。页结构如下图所示，不需要刻意记忆，只需要有一个概念就好。当我们插入一条记录的时候，都会从Free Space部分中申请一个记录大小的空间划分到User Records部分，当Free Space部分的空间全部被User Records部分代替后，也就意味着这个页被使用完了</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghodc84plzj30u00y9q6i.jpg" alt="">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghodc84plzj30u00y9q6i.jpg" alt=""></p>
 <table>
 <thead>
 <tr>
@@ -482,40 +465,25 @@ data <span style="color:#f92672">=</span> BTree_Search(root, my_key);
 </tbody>
 </table>
 <p>其中最小记录和最大记录是两条虚拟的记录，用来指向本页中主键最小的记录和主键最大的记录。InnoDB中数据的存储格式就如下图所示。各个数据页可以组成一个双向链表，每个数据页中的记录会按照主键值从小到大的顺序组成一个单向链表。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghmm8wiqpmj30uc09gdgw.jpg" alt="">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghmm8wiqpmj30uc09gdgw.jpg" alt=""></p>
 <h4 id="222-innodb中的索引方案">2.2.2 InnoDB中的索引方案</h4>
 <p><strong>InnoDB的数据文件本身就是索引文件</strong>。从上文知道，MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。而在InnoDB中，表数据文件本身就是按B+Tree组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引。</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/87Sq0S.png" alt="87Sq0S.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/87Sq0S.png" alt="87Sq0S.png"></p>
 <p>上图是InnoDB主索引（同时也是数据文件）的示意图，可以看到叶节点包含了完整的数据记录。这种索引叫做聚集索引。因为InnoDB的数据文件本身要按主键聚集，所以InnoDB要求表必须有主键（MyISAM可以没有），如果没有显式指定，则MySQL系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整形。</p>
 <p><strong>InnoDB的辅助索引data域存储相应记录主键的值而不是地址</strong>。换句话说，InnoDB的所有辅助索引都引用主键作为data域。下图为定义在Col3上的一个辅助索引：</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/87SXkQ.png" alt="87SXkQ.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/87SXkQ.png" alt="87SXkQ.png"></p>
 <p>这里以英文字符的ASCII码作为比较准则。<strong>聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录</strong>。对于上图对应的表而言，我们做如下查询操作</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表名</span> <span style="color:#66d9ef">where</span> name <span style="color:#f92672">&gt;</span> <span style="color:#e6db74">&#39;Alice&#39;</span> <span style="color:#66d9ef">AND</span> name <span style="color:#f92672">&lt;</span> <span style="color:#e6db74">&#39;Jim&#39;</span>
 </code></pre></div><p>首先需要在这个二级索引中取出name在Alice~Jim之间的用户记录，由于该二级索引只包含了name没有其他信息，所以需要把上一步获得的所有id字段都到聚簇索引对应的B+树中找到完整的用户记录，也就是回表。第一步因为&rsquo;Alice'~'Jim&rsquo;之间的记录在磁盘中的存储是相连的，所以是<code>顺序I/O</code>；而第二步中因为聚簇索引是根据<code>id</code>的顺序排列的，所以根据第一步得到的<code>id</code>取记录是<code>随机I/O</code>；因此，<strong>需要回表的记录越多，使用二级索引的性能就越低</strong>，甚至某些查询宁愿使用全表扫描也不使用<code>二级索引</code>。比如说<code>name</code>在Alice~Jim之间的用户记录数量占全部记录数量的90%以上，那么如果使用这个二级索引的话，90%多的<code>id</code>值需要回表，还不如进行全表扫描。</p>
 <p>上图所示的索引结构其实是一种简化版，它没有展示页究竟是如何存储的。其实上图展示的B+树的每一个节点，都是一个页。我们知道InnoDB中最小存储单位是页，记录会存储在页中，同样的索引也会以一条记录的形式存储在页中，只不过它的两列是主键和页号。叶子节点上是数据项组成的页，而非叶子节点则是由目录项组成的页。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghmppqkhm8j30u00g30uc.jpg" alt="">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghmppqkhm8j30u00g30uc.jpg" alt=""></p>
 <p>了解不同存储引擎的索引实现方式对于正确使用和优化索引都非常有帮助，例如知道了InnoDB的索引实现后，就很容易明白为什么不建议使用过长的字段作为主键，因为所有辅助索引都引用主索引，过长的主索引会令辅助索引变得过大。再例如，用非单调的字段作为主键在InnoDB中不是个好主意，因为InnoDB数据文件本身是一颗B+Tree，非单调的主键会造成在插入新记录时数据文件为了维持B+Tree的特性而频繁的分裂调整，十分低效，而使用自增字段作为主键则是一个很好的选择。</p>
 <h2 id="三索引使用策略及优化">三、索引使用策略及优化</h2>
 <p>索引并不是百利而无一害的东西，首先索引在空间上是有代价的，这是显而易见的，每建立一个索引都要为它建立一棵B+树，每棵B+树的每一个节点都是一个数据页，每个数据页都会占用16KB的存储空间。同时在对表中的数据进行增删改的时候，都要去修改各个B+树索引，这无疑会消耗大量时间。</p>
 <p>MySQL的优化主要分为结构优化（Scheme optimization）和查询优化（Query optimization）。本章讨论的高性能索引策略主要属于结构优化范畴。本章的内容完全基于上文的理论基础，实际上一旦理解了索引背后的机制，那么选择高性能的策略就变成了纯粹的推理，并且可以理解这些策略背后的逻辑。</p>
 <h3 id="30-explain命令">3.0 EXPLAIN命令</h3>
 <p>在介绍索引优化之前，先介绍一下EXPLAIN命令，该命令是查看查询优化器如何决定执行查询的主要方法，因此读懂EXPLAIN命令的返回值非常重要，这里着重介绍几个EXPLAIN命令的列。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfnljx589rj30sk0cy774.jpg" alt="image-20200610231101059">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfnljx589rj30sk0cy774.jpg" alt="image-20200610231101059"></p>
 <h4 id="type列">type列</h4>
 <p>MySQL对某个表执行查询时的访问方法，以下是几种常见的访问方法，性能依次提高</p>
 <ul>
@@ -555,10 +523,7 @@ data <span style="color:#f92672">=</span> BTree_Search(root, my_key);
 <p>这一列显示了MySQL决定采用哪个索引来优化对该表的访问。</p>
 <h4 id="key_len列">key_len列</h4>
 <p>该列显示了MySQL在索引里使用的字节数。可以通过这个字节数推断出使用了索引中的多少列。如下面这个例子，其中在utf8下每一个字符最多有3个字节，而a有三个字符（char(3)的意思是有三个字符）；而int 是4个字节（int(11)的意思是显示宽度为11），使用的key_len是13，因此可以推断出，使用了索引中的前两列。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfnlwt3shuj30t40h0q7w.jpg" alt="image-20200610232324307">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfnlwt3shuj30t40h0q7w.jpg" alt="image-20200610232324307"></p>
 <h4 id="extra列">Extra列</h4>
 <ol>
 <li>
@@ -598,10 +563,7 @@ data <span style="color:#f92672">=</span> BTree_Search(root, my_key);
 <hr>
 <p><strong>示例数据库</strong></p>
 <p>为了讨论索引策略，需要一个数据量不算小的数据库作为示例。本文选用MySQL官方文档中提供的示例数据库之一：employees。这个数据库关系复杂度适中，且数据量较大。下图是这个数据库的E-R关系图（引用自MySQL官方手册）：</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/87Svfs.png" alt="87Svfs.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/87Svfs.png" alt="87Svfs.png"></p>
 <p>MySQL官方文档中关于此数据库的页面为<a href="https://link.jianshu.com?t=http://dev.mysql.com/doc/employee/en/employee.html">http://dev.mysql.com/doc/employee/en/employee.html</a>。里面详细介绍了此数据库，并提供了下载地址和导入方法，如果有兴趣导入此数据库到自己的MySQL可以参考文中内容。</p>
 <h3 id="31-最左前缀原理与相关优化">3.1 最左前缀原理与相关优化</h3>
 <p>高效使用索引的首要条件是知道什么样的查询会使用到索引，这个问题和B+Tree中的“最左前缀原理”有关，下面通过例子说明最左前缀原理。</p>
@@ -810,44 +772,29 @@ Index Selectivity = Cardinality / #T</p>
 经常看到有帖子或博客讨论主键选择问题，有人建议使用业务无关的自增主键，有人觉得没有必要，完全可以使用如学号或身份证号这种唯一字段作为主键。不论支持哪种论点，大多数论据都是业务层面的。如果从数据库索引优化角度看，使用InnoDB引擎而不使用自增主键绝对是一个糟糕的主意。
 上文讨论过InnoDB的索引实现，InnoDB使用聚集索引，数据记录本身被存于主索引（一颗B+Tree）的叶子节点上。这就要求同一个叶子节点内（大小为一个内存页或磁盘页）的各条数据记录按主键顺序存放，因此每当有一条新的记录插入时，MySQL会根据其主键将其插入适当的节点和位置，如果页面达到装载因子（InnoDB默认为15/16），则开辟一个新的页（节点）。
 如果表使用自增主键，那么每次插入新的记录，记录就会顺序添加到当前索引节点的后续位置，当一页写满，就会自动开辟一个新的页。如下图所示：</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/87pp60.png" alt="87pp60.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/87pp60.png" alt="87pp60.png"></p>
 <p>这样就会形成一个紧凑的索引结构，近似顺序填满。由于每次插入时也不需要移动已有数据，因此效率很高，也不会增加很多开销在维护索引上。
 如果使用非自增主键（如果身份证号或学号等），由于每次插入主键的值近似于随机，因此每次新纪录都要被插到现有索引页得中间某个位置：</p>
-<p>
-  <img src="https://s1.ax1x.com/2020/03/23/87pF7F.png" alt="87pF7F.png">
-
-</p>
+<p><img src="https://s1.ax1x.com/2020/03/23/87pF7F.png" alt="87pF7F.png"></p>
 <p>此时MySQL不得不为了将新记录插到合适位置而移动数据，甚至目标页面可能已经被回写到磁盘上而从缓存中清掉，此时又要从磁盘上读回来，这增加了很多开销，同时频繁的移动、分页操作造成了大量的碎片，得到了不够紧凑的索引结构，后续不得不通过OPTIMIZE TABLE来重建表并优化填充页面。
 因此，只要可以，请尽量在InnoDB上采用自增字段做主键。</p>
 <h3 id="34-覆盖索引">3.4 覆盖索引</h3>
 <p>MySQL也可以使用索引来直接获取列的数据，这样就不需要读取数据行。在InnoDB中，如果二级索引在叶子节点中保存了行的主键值，二级主键能够覆盖查询，避免了对主键索引的二次查询。</p>
 <p>当发起一个被索引覆盖的查询时，在EXPLAIN的Extra列可以看到&quot;Using index&quot;的信息，如下面这个查询，在表sakila.inventory中有一个多级索引（store_id,film_id）。MySQL只需要访问这两列，就可以使用这个索引做覆盖索引。</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfnlpiyij8j30e106gwer.jpg" alt="image-20200610090938224">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfnlpiyij8j30e106gwer.jpg" alt="image-20200610090938224"></p>
 <h3 id="35-使用索引扫描来做排序">3.5 使用索引扫描来做排序</h3>
 <p>MySQL有两种方式可以生成有序的结果：通过排序操作；按照索引顺序扫描；如果EXPLAIN出来的type列的值为&quot;index&rdquo;，则说明MySQL使用了索引扫描来排序。</p>
 <p>只有当索引的列顺序和ORDER BY子句的顺序完全一致，并且所有列的排序方向都一样时，MySQL才能够使用索引来对结果进行排序。如果查询需要关联多张表，只有当ORDER BY子句引用的字段全部为第一张表时，才能使用索引进行排序。ORDER BY子句和查找型查询的限制是一样的：需要满足索引的最左前缀要求；否则MySQL都需要执行排序操作，而无法进行索引排序。</p>
 <p>不过也有例外，如果查询为索引的第一列提供了常量条件，而使用第二列进行排序，将两列组合在一起，就形成了索引的最左前缀。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql">... <span style="color:#66d9ef">WHERE</span> rental_date<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;2005-05-25&#39;</span> <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> iventory_id <span style="color:#66d9ef">DESC</span>;
-</code></pre></div><p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfnkv3jhfdj30dp055dgp.jpg" alt="image-20200610095258056">
-
-</p>
+</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfnkv3jhfdj30dp055dgp.jpg" alt="image-20200610095258056"></p>
 <p>可以看到没有出现文件排序的操作（filesort）</p>
 <h3 id="36-索引和锁">3.6 索引和锁</h3>
 <p>索引可以让查询锁定更少的行，InnoDB只有在访问行的时候才会对其加锁，而索引能够减少InnoDB访问的行数，从而减少锁的数量。但这只有当InnoDB在存储引擎层能够过滤掉所有不需要的行时才有效。如果索引无法过滤掉无效的行，那么在InnoDB检索到数据并返回给服务层以后，MySQL服务器才能应用WHERE子句，这时候已经无法避免锁定行了。</p>
 <p>例如：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> actor_id <span style="color:#66d9ef">FROM</span> sakila.actor <span style="color:#66d9ef">WHERE</span>	actor_id <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">5</span> <span style="color:#66d9ef">AND</span> actor_id <span style="color:#f92672">&lt;&gt;</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">FOR</span> <span style="color:#66d9ef">UPDATE</span>;
 </code></pre></div><p>虽然这条查询仅会返回2~4之间的行，但是实际上获取了1~4之间的行的排他锁。因为MySQL为该查询选择的执行计划是索引范围扫描：</p>
-<p>
-  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfnkvnb6cgj30gc03y74n.jpg" alt="image-20200610101555058">
-
-</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfnkvnb6cgj30gc03y74n.jpg" alt="image-20200610101555058"></p>
 <h2 id="四后记">四、后记</h2>
 <p>这篇文章断断续续写了半个月，主要内容就是上面这些了。不可否认，这篇文章在一定程度上有纸上谈兵之嫌，因为我本人对MySQL的使用属于菜鸟级别，更没有太多数据库调优的经验，在这里大谈数据库索引调优有点大言不惭。就当是我个人的一篇学习笔记了。</p>
 <p>其实数据库索引调优是一项技术活，不能仅仅靠理论，因为实际情况千变万化，而且MySQL本身存在很复杂的机制，如查询优化策略和各种引擎的实现差异等都会使情况变得更加复杂。但同时这些理论是索引调优的基础，只有在明白理论的基础上，才能对调优策略进行合理推断并了解其背后的机制，然后结合实践中不断的实验和摸索，从而真正达到高效使用MySQL索引的目的。</p>
@@ -888,7 +835,7 @@ Index Selectivity = Cardinality / #T</p>
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -975,8 +922,6 @@ Index Selectivity = Cardinality / #T</p>
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -194,7 +204,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -288,10 +298,7 @@ ReferenceQueue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef"
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>可以看到，该类继承了WeakReference，并且在初始化时把一个弱引用指向了一个ThreadLocal对象作为Key值，使用弱引用的原因与上面Vector容器的例子是类似的，是为了防止内存泄漏。如果没有强引用指向ThreadLocal对象时，ThreadLocal对象可以被回收。</p>
-<p>
-  <img src="https://s2.ax1x.com/2020/03/11/8kmplj.png" alt="8kmplj.png">
-
-</p>
+<p><img src="https://s2.ax1x.com/2020/03/11/8kmplj.png" alt="8kmplj.png"></p>
 <p>但是ThreadLocal中同样会存在一个，当指向ThreadLocal对象的强引用消失后，ThreadLocal对象会被回收，但是ThreadLocalMap这一结构还存在，并且之前的记录还会存在且Value指向了一个对象，因此一个好习惯是不再是要用ThreadLocal对象时，使用tl.remove()将该条记录删除。</p>
 </li>
 <li>
@@ -299,10 +306,7 @@ ReferenceQueue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef"
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">PhantomReference<span style="color:#f92672">&lt;</span>M<span style="color:#f92672">&gt;</span> phantomReference <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> PhantomReference<span style="color:#f92672">&lt;&gt;(</span><span style="color:#66d9ef">new</span> M<span style="color:#f92672">(),</span> Queue<span style="color:#f92672">);</span>
 </code></pre></div><p>注意，PhantomReference必须与一个引用队列相关联，并且无法通过phantomReference取值。当虚引用指向的对象被回收时，虚引用自己会被加入到引用队列中，可以通过再开一个线程不断地查看这个队列中是否有值做出相应的操作。其常用在对直接内存的回收场景下。</p>
 <p>例如NIO包中的ByteBuffer类</p>
-<p>
-  <img src="https://s2.ax1x.com/2020/03/11/8kmCXn.png" alt="8kmCXn.png">
-
-</p>
+<p><img src="https://s2.ax1x.com/2020/03/11/8kmCXn.png" alt="8kmCXn.png"></p>
 </li>
 </ol>
 
@@ -333,7 +337,7 @@ ReferenceQueue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef"
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -420,8 +424,6 @@ ReferenceQueue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef"
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">

@@ -47,6 +47,9 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -64,6 +67,13 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -198,7 +208,7 @@
 
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -220,43 +230,25 @@
 </nav>
                 
                 <p>加密是为了满足以下需求：在不安全的信道上保护所传输信息的机密性、完整性以及可认证性。有两种重要的加密算法——对称密钥与非对称密钥。</p>
-<p>
-  <img src="https://i.loli.net/2020/02/14/ZqFWaQbjPp4Jo5X.png" alt="image-20200214191330790.png">
-
-</p>
+<p><img src="https://i.loli.net/2020/02/14/ZqFWaQbjPp4Jo5X.png" alt="image-20200214191330790.png"></p>
 <h3 id="对称密钥">对称密钥</h3>
 <p>在对称密钥系统中，由于加密与解密的算法相同，它们的密钥也是相同的。多年来，最流行的对称密码算法是数据加密标准（DES）。DES是一种分组密码，也就是说每次对固定数目的比特块进行操作。DES使用64比特的数据块与56位的密钥。如今被更高级的AES所取代，AES的不同版本提供了长度不同的密钥，比如128位，192位以及256位，即AES-128，AES-192以及AES-256。</p>
-<p>
-  <img src="https://s2.ax1x.com/2020/02/16/3pWPZd.png" alt="3pWPZd.png">
-
-</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pWPZd.png" alt="3pWPZd.png"></p>
 <p>它加密过程效率高，但是密钥的分配和保存是一个问题，在互联网上转发密钥时，如果通信被监听那么密钥就可落入攻击者者手中，加密也就丧失了意义。</p>
 <h3 id="非对称密钥">非对称密钥</h3>
-<p>
-  <img src="https://s2.ax1x.com/2020/02/16/3pfWcT.png" alt="3pfWcT.png">
-
-</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pfWcT.png" alt="3pfWcT.png"></p>
 <p>上图过程是加密的过程，因为公钥是可以公开的，那么任何人都可以给私钥的拥有者发送信息，而接受者无法追溯信息的来源。如果这个过程翻过来，就变成了一个认证过程。例如A用自己的私钥加密了一个邮件（<strong>用私钥加密也被称为签名</strong>），发送给B，B有A的公钥，知道该信息一定来源于A，因为只有A有A的私钥。但是这样，该信息就丧失了加密的属性，因为大家都有A的公钥。</p>
 <p>如何即实现加密，又实现认证呢？</p>
 <p>仍然是A给B发信息，先用A的私钥进行加密，然后再用B的公钥加密，传递给B。这样技能够认证消息经A授权，又能够保证其对B的机密性。</p>
 <p>非对称加密的过程效率比较低，在混合密码系统中，用非对称密钥对一会话密钥进行加密（对称的），然后用会话密钥对文件进行加密。</p>
-<p>
-  <img src="https://s2.ax1x.com/2020/02/16/3pWZz8.png" alt="3pWZz8.png">
-
-</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pWZz8.png" alt="3pWZz8.png"></p>
 <h3 id="数字签名过程">数字签名过程</h3>
 <p>非对称加密还是存在一些问题，那就是无法证明公开密钥本身就是货真价实的公开密钥，比如正准备和某台服务器建立公开密钥加密方式下的通信，如何证明收到的公开密钥就是原本预想的那台服务器发型的公开密钥。或许在公开密钥传输途中，真正的公开密钥已经被攻击者替换掉了。</p>
 <p>数字签名的功能可用于维护信息的可认证性与不可抵赖性。证书的办法过程如下图所示。</p>
-<p>
-  <img src="https://s2.ax1x.com/2020/02/16/3pWnsg.png" alt="3pWnsg.png">
-
-</p>
+<p><img src="https://s2.ax1x.com/2020/02/16/3pWnsg.png" alt="3pWnsg.png"></p>
 <h3 id="消息认证码">消息认证码</h3>
 <p>消息认证码（简称为MAC，有时候也叫MIC）用于保证消息的完整性。</p>
-<p><a href="https://imgchr.com/i/3pW3iq">
-  <img src="https://s2.ax1x.com/2020/02/16/3pW3iq.md.png" alt="3pW3iq.md.png">
-
-</a></p>
+<p><a href="https://imgchr.com/i/3pW3iq"><img src="https://s2.ax1x.com/2020/02/16/3pW3iq.md.png" alt="3pW3iq.md.png"></a></p>
 <p>以上图为例，介绍消息认证过程。A公司要给B公司发送一个文件，为了保证文件的完整性，A公司首先对文件用加密散列函数进行处理，得到一个固定大小的摘要（或指纹）。加密列散函数需要满足三个特征：</p>
 <ol>
 <li>原像不可计算性：在给定摘要而未知消息的情况下，很难计算出消息得值。</li>
@@ -293,7 +285,7 @@
             </div>
             
             <div class="
-                col-lg-11 col-lg-offset-1
+                col-lg-8 col-lg-offset-2
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -380,8 +372,6 @@
                     
                     
                     
-            
-            
             
                 </ul>
 		<p class="copyright text-muted">
