@@ -47,9 +47,6 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
-    <link rel="stylesheet" href="/css/syntax.css">
-    
-    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -67,13 +64,6 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
-
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -208,7 +198,7 @@
 
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -230,21 +220,30 @@
 <p>Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的“高墙”，墙外面的人想进去，墙里面的人却想出来</p>
 </blockquote>
 <h2 id="1-运行时数据区域划分">1. 运行时数据区域划分</h2>
-<p><img src="https://s2.ax1x.com/2020/03/05/37rmuV.png" alt="37rmuV.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/05/37rmuV.png" alt="37rmuV.png">
+
+</p>
 <ul>
 <li>程序计数器：当前线程所执行的字节码的行号指示器，为线程私有，程序计数器是唯一一个不会出现 OutOfMemoryError 的内存区域</li>
 <li>Java虚拟机栈：线程私有，生命周期与线程相同。每个java方法运行时都会创建一个栈帧，每个栈帧中会用于存放局部变量表，操作数栈，动态链接，方法出口等信息；当进入一个方法时，这个方法需要多大的局部变量时完全确定的。如果线程请求的栈深度大于虚拟机所允许的深度，会抛出StackOverflowError异常；如果虚拟机栈允许动态扩展，扩展时无法申请到足够的内存时，就会抛出OutOfMemoryError异常。</li>
 <li>本地方法栈：为虚拟机使用到的<code>Native</code>方法服务，与操作系统有关 ，不是java编写的方法，比如Object类中的clone()方法</li>
-<li>Java堆：被所有的线程共享的一块内存区域，唯一目的是存放对象实例（<code>new</code>出来的对象），它是垃圾收集器管理的主要区域，因此很多时候也被称为“GC堆”。从内存回收的角度来看，由于现在收集器基本都采用分代收集算法，所以Java堆可以继续细分为：新生代和老年代；其中新生代可以被进一步划分。关于每一部分的用途会在GC中具体说明。如果在堆中没有内存完成实例分配，并且堆也无法再扩展时，将会抛出<code>OutOfMemoryError</code>异常
-<img src="https://s2.ax1x.com/2020/03/05/37rMEF.png" alt="37rMEF.png"></li>
+<li>Java堆：被所有的线程共享的一块内存区域，唯一目的是存放对象实例（<code>new</code>出来的对象），它是垃圾收集器管理的主要区域，因此很多时候也被称为“GC堆”。从内存回收的角度来看，由于现在收集器基本都采用分代收集算法，所以Java堆可以继续细分为：新生代和老年代；其中新生代可以被进一步划分。关于每一部分的用途会在GC中具体说明。如果在堆中没有内存完成实例分配，并且堆也无法再扩展时，将会抛出<code>OutOfMemoryError</code>异常 
+
+  <img src="https://s2.ax1x.com/2020/03/05/37rMEF.png" alt="37rMEF.png">
+
+</li>
 <li>Java方法区：被各个线程所共享的内存区域，它用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据，很多人更愿意把方法去称为“永生代”（Permanent Generation），主要是因为GC一般会分代收集垃圾，为了不需要在方法区中另外指定额外的垃圾回收机制，于是将本属于堆的分代概念延伸到方法区，并将方法区等同于“永生代”。</li>
 <li>运行时常量池：属于方法区的一部分。Class文件中除了有类的版本、字段、方法、接口等描述信息外，还有一项信息是常量池，用于存放编译期生成的各种字面量和<strong>符号引用</strong>（？），这部分内容在类加载后进入方法区的运行时常量池中存放。</li>
 </ul>
 <hr>
 <ol>
-<li><strong>为了简述Java内存中，各个区域存放什么东西，举出下图这一例子</strong>
-<img src="https://s2.ax1x.com/2020/03/05/37r83R.png" alt="37r83R.png">
-Jvm首先将两个Class加载到方法区，具体细节在此不列出，然后jvm会寻找含有main方法的类，并将main方法压栈，开始执行。
+<li><strong>为了简述Java内存中，各个区域存放什么东西，举出下图这一例子</strong> 
+
+  <img src="https://s2.ax1x.com/2020/03/05/37r83R.png" alt="37r83R.png">
+
+
+Jvm首先将两个Class加载到方法区，具体细节在此不列出，然后jvm会寻找含有main方法的类，并将main方法压栈，开始执行。 
 <code>new</code>出来的对象都会在堆中，例如new一个class，在栈中的变量会指向一个堆中的对象实例，堆中的变量都会被初始化，成员方法存储一个地址，指向方法区中的成员方法。</li>
 <li><strong>由上图其实也可以引出局部变量和成员变量的区别</strong>
 <ol>
@@ -258,7 +257,7 @@ Jvm首先将两个Class加载到方法区，具体细节在此不列出，然后
 <p>默认值不一样：局部变量必须赋初值，成员变量有默认的初始值</p>
 </li>
 <li>
-<p>作用范围不一样：局部变量作用域方法内，成员变量作用于整个类内。
+<p>作用范围不一样：局部变量作用域方法内，成员变量作用于整个类内。 
 个人感觉，3、4点都是由2点导致的。</p>
 </li>
 </ol>
@@ -266,10 +265,13 @@ Jvm首先将两个Class加载到方法区，具体细节在此不列出，然后
 </ol>
 <hr>
 <h2 id="2-对象的创建过程">2. 对象的创建过程</h2>
-<p><img src="https://s2.ax1x.com/2020/03/05/37rNDK.png" alt="37rNDK.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/05/37rNDK.png" alt="37rNDK.png">
+
+</p>
 <ol>
 <li><strong>类加载检查</strong>：检查这个指令的参数是否能在常量池中定位到一个类的符号引用，并检查这个符号引用代表的类是否被加载、解析和初始化过。如果没有，那么必须先执行相应的加载过程。</li>
-<li><strong>分配内存</strong>：有两种分配方式，“指针碰撞”和“空闲链表”；如果堆中内存是规整的，分配内存的过程仅仅是把指针向空闲内存区域那边移动一段与对象大小相等的距离，这称之为“指针碰撞”；如果内存不规整，虚拟机必须维护一个列表，记录哪些内存块是可用的，这称之为“空闲链表”。选择哪种分配方式由Java堆是否规整决定，而Java对是否规整又取决于采用的垃圾收集器是否带有压缩整理的功能。
+<li><strong>分配内存</strong>：有两种分配方式，“指针碰撞”和“空闲链表”；如果堆中内存是规整的，分配内存的过程仅仅是把指针向空闲内存区域那边移动一段与对象大小相等的距离，这称之为“指针碰撞”；如果内存不规整，虚拟机必须维护一个列表，记录哪些内存块是可用的，这称之为“空闲链表”。选择哪种分配方式由Java堆是否规整决定，而Java对是否规整又取决于采用的垃圾收集器是否带有压缩整理的功能。 
 在分配内存时，还需考虑线程安全问题，例如，正在给A分配内存，指针还没来得及修改，对象B又同时使用了原来的指针来分配内存。有两种解决方案，一种是保证更新操作的原子性；另一种是把内存分配动作按照线程划分在不同的空间之中进行，即每个线程在Java堆中预先分配一小块内存，称之为本地线程分配缓冲（TLAB）</li>
 <li><strong>初始化零值</strong>：内存分配完成后，虚拟机需要将分配到的内存空间都初始化为零值（不包括对象头），这一步操作保证了对象的实例字段在 Java 代码中可以不赋初始值就直接使用，程序能访问到这些字段的数据类型所对应的零值。</li>
 <li><strong>设置对象头</strong>：所谓对象头就是指明对象属于哪个类、如何才能找到类的元数据信息、对象的哈希码、对象的CG分代年龄等信息</li>
@@ -321,14 +323,26 @@ Jvm首先将两个Class加载到方法区，具体细节在此不列出，然后
 <p>建立对象是为了使用对象，我们的Java程序需要通过栈上的reference数据来操作堆上的具体对象。主流的有两种对象的访问方式:</p>
 <ol>
 <li>句柄访问：reference存储的是对象的句柄地址，Java堆中会划分出一块内存来作为句柄池，此时，查找对象的元数据信息不会经过对象本身
-<img src="https://s2.ax1x.com/2020/03/05/37rwUe.jpg" alt="37rwUe.jpg"></li>
+
+  <img src="https://s2.ax1x.com/2020/03/05/37rwUe.jpg" alt="37rwUe.jpg">
+
+</li>
 <li>直接指针访问，reference中存储的直接是对象地址，这也是hotspot采用的方式。
-<img src="https://s2.ax1x.com/2020/03/05/37rgDf.jpg" alt="37rgDf.jpg"></li>
+
+  <img src="https://s2.ax1x.com/2020/03/05/37rgDf.jpg" alt="37rgDf.jpg">
+
+</li>
 </ol>
 <h2 id="4java内存区与变迁">4.Java内存区与变迁</h2>
 <p>在JDK1.8中，将方法区移除，取而代之的是称之为元空间的内存区域，且该区域直接在本机内存上。</p>
-<p><img src="https://s2.ax1x.com/2020/03/05/37rTvq.png" alt=""></p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghpkc7t12uj30ja0i34ay.jpg" alt=""></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/05/37rTvq.png" alt="">
+
+</p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghpkc7t12uj30ja0i34ay.jpg" alt="">
+
+</p>
 
 
                 
@@ -357,7 +371,7 @@ Jvm首先将两个Class加载到方法区，具体细节在此不列出，然后
             </div>
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -444,6 +458,8 @@ Jvm首先将两个Class加载到方法区，具体细节在此不列出，然后
                     
                     
                     
+            
+            
             
                 </ul>
 		<p class="copyright text-muted">

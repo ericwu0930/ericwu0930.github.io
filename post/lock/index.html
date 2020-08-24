@@ -47,9 +47,6 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
-    <link rel="stylesheet" href="/css/syntax.css">
-    
-    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -67,13 +64,6 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
-
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -208,7 +198,7 @@
 
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -233,13 +223,19 @@
                 
                 <h2 id="1-java内存模型">1. Java内存模型</h2>
 <h3 id="11-硬件的效率与一致性">1.1 硬件的效率与一致性</h3>
-<p><img src="https://s2.ax1x.com/2020/03/11/8AMdpT.png" alt="8AMdpT.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/11/8AMdpT.png" alt="8AMdpT.png">
+
+</p>
 <p>基于高速缓存的存储交互很好的解决了处理器与内存的速度矛盾，但也为计算机系统带来更高的复杂度，因为它引入了新的问题：缓存一致性。在多处理器系统中，每个处理器都有自己的高速缓存，而它们又共享同一个主存，如上图所示，为了保证主存的一致性，在高速缓存和主存之间引入了缓存一致性协议，这类协议有MSI，MESI等。</p>
 <p><code>所谓的内存模型是指在特定的操作协议下，对特定的内存或告诉缓存进行读写访问的过程抽象。</code></p>
 <p>另外为了使得处理器内部的运算单元能尽量被充分使用，处理器会在保证最终输出结果一致的情况下，对输入代码进行指令重排序。</p>
 <h3 id="12-java的内存模型">1.2 Java的内存模型</h3>
 <p>Java虚拟机规范中定义了一种Java内存模型来屏蔽各种硬件和操作系统的内存访问差异，如下图所示。</p>
-<p><img src="https://s2.ax1x.com/2020/03/11/8AM0cF.png" alt="8AM0cF.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/11/8AM0cF.png" alt="8AM0cF.png">
+
+</p>
 <p>主内存可以理解为硬件内存，每条线程有自己的工作内存，线程对变量的所有操作都必须在工作内存中进行，而不能直接读写在主内存中的变量。JVM为了保证缓存的一致性，Java内存模型中定义了8中操作，通过对这8中操作添加一些约束条件来实现。这八种操作为：</p>
 <table>
 <thead>
@@ -297,12 +293,12 @@
 <p>在DLC中，我们使用了一个volatile来修饰instance变量，原因为何？</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">{</span>
     <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">volatile</span> <span style="color:#66d9ef">static</span> Singleton instance<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Singleton <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-            <span style="color:#66d9ef">synchronized</span><span style="color:#f92672">(</span>Singleton<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-                <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
-                    instance<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Singleton<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">(){};</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Singleton <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(){</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">){</span>
+            <span style="color:#66d9ef">synchronized</span><span style="color:#f92672">(</span>Singleton<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">){</span>
+                <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance<span style="color:#f92672">==</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+                    instance<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Singleton<span style="color:#f92672">();</span>
             <span style="color:#f92672">}</span>
         <span style="color:#f92672">}</span>
         <span style="color:#66d9ef">return</span> instance<span style="color:#f92672">;</span>
@@ -371,7 +367,7 @@
             </div>
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -458,6 +454,8 @@
                     
                     
                     
+            
+            
             
                 </ul>
 		<p class="copyright text-muted">

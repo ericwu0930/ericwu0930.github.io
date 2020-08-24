@@ -47,9 +47,6 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
-    <link rel="stylesheet" href="/css/syntax.css">
-    
-    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -67,13 +64,6 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
-
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -204,7 +194,7 @@
 
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -222,7 +212,10 @@
                 
                 <h2 id="0-事务回顾">0. 事务回顾</h2>
 <p>MySQL中有四种事务隔离级别，READ UNCOMMITTED，READ COMMITTED， REPEATABLE READ，SERIALIZABLE，这四种隔离级别依次解决了脏读、不可重复读和幻读。其中幻读是指<strong>一个事务先根据某些条件查询出一些记录，之后另一个事务又向表中插入了符合这些条件的记录，原先的事务再次按照该条件查询时，能把另一个事务插入的记录也读出来</strong>（侧重点是读到了之前没有读到的数据）如下图所示</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghnau6ei9rj317w0do0up.jpg" alt=""></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghnau6ei9rj317w0do0up.jpg" alt="">
+
+</p>
 <h2 id="1-版本链">1. 版本链</h2>
 <p>我们前边说过，对于使用<code>InnoDB</code>存储引擎的表来说，它的聚簇索引记录中都包含两个必要的隐藏列：</p>
 <ul>
@@ -234,12 +227,18 @@
 <span style="color:#f92672">+</span><span style="color:#75715e">--------+--------+---------+
 </span><span style="color:#75715e"></span><span style="color:#f92672">|</span> number <span style="color:#f92672">|</span> name   <span style="color:#f92672">|</span> country <span style="color:#f92672">|</span>
 <span style="color:#f92672">+</span><span style="color:#75715e">--------+--------+---------+
-</span><span style="color:#75715e"></span><span style="color:#f92672">|</span>      <span style="color:#ae81ff">1</span> <span style="color:#f92672">|</span> <span style="color:#960050;background-color:#1e0010">刘</span><span style="color:#960050;background-color:#1e0010">备</span>   <span style="color:#f92672">|</span> <span style="color:#960050;background-color:#1e0010">蜀</span>      <span style="color:#f92672">|</span>
+</span><span style="color:#75715e"></span><span style="color:#f92672">|</span>      <span style="color:#ae81ff">1</span> <span style="color:#f92672">|</span> <span style="color:#960050;background-color:#1e0010">刘备</span>   <span style="color:#f92672">|</span> <span style="color:#960050;background-color:#1e0010">蜀</span>      <span style="color:#f92672">|</span>
 <span style="color:#f92672">+</span><span style="color:#75715e">--------+--------+---------+
 </span><span style="color:#75715e"></span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">row</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">set</span> (<span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">07</span> sec)
-</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghnayr9ljyj31am0p6jud.jpg" alt=""></p>
+</code></pre></div><p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghnayr9ljyj31am0p6jud.jpg" alt="">
+
+</p>
 <p>则会形成一条如下所示的版本链</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghnazefs2ej31as0q2ti2.jpg" alt="image-20200811234525293"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghnazefs2ej31as0q2ti2.jpg" alt="image-20200811234525293">
+
+</p>
 <h2 id="2-readview">2. ReadView</h2>
 <p>对于使用<code>READ UNCOMMITTED</code>隔离级别的事务来说，由于可以读到未提交事务修改过的记录，所以直接读取记录的最新版本就好了；对于使用<code>SERIALIZABLE</code>隔离级别的事务来说，设计<code>InnoDB</code>的大叔规定使用加锁的方式来访问记录；对于使用<code>READ COMMITTED</code>和<code>REPEATABLE READ</code>隔离级别的事务来说，都必须保证读到已经提交了的事务修改过的记录，也就是说假如另一个事务已经修改了记录但是尚未提交，是不能直接读取最新版本的记录的，核心问题就是：<strong>需要判断一下版本链中的哪个版本是当前事务可见的</strong>。为此MySQL的设计者提出了ReadView这一概念。</p>
 <p>其中ReadView中包含4个比较重要的内容：</p>
@@ -280,7 +279,7 @@
             </div>
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -367,6 +366,8 @@
                     
                     
                     
+            
+            
             
                 </ul>
 		<p class="copyright text-muted">

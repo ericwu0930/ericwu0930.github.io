@@ -47,9 +47,6 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
-    <link rel="stylesheet" href="/css/syntax.css">
-    
-    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -67,13 +64,6 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
-
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -208,7 +198,7 @@
 
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -239,7 +229,10 @@
 <h2 id="2-锁类型">2. 锁类型</h2>
 <p>在InnoDB的READ COMMITTED以及REPEATABLE READ事务隔离级别下，都是使用MVCC的方式进行读取，也就是无锁读，不过我们也可以显示的执行有锁读操作。</p>
 <p>MySQL锁的类型分为共享锁<code>S锁</code>和排他锁<code>X锁</code>，如果两种类型的锁是可以同时存在的则我们称之为兼容，否则称之为不兼容；</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghocr30phsj30n20900sx.jpg" alt="image-20200812213206010"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghocr30phsj30n20900sx.jpg" alt="image-20200812213206010">
+
+</p>
 <p>对读取的记录加S锁的显示操作：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> ... <span style="color:#66d9ef">LOCK</span> <span style="color:#66d9ef">IN</span> <span style="color:#66d9ef">SHARE</span> <span style="color:#66d9ef">MODE</span>;
 </code></pre></div><p>对读取的记录加X锁的显示操作：</p>
@@ -250,7 +243,10 @@
 <li>意向独占锁，英文名：<code>Intention Exclusive Lock</code>，简称<code>IX锁</code>。当事务准备在某条记录上加<code>X锁</code>时，需要先在表级别加一个<code>IX锁</code>。</li>
 </ul>
 <p>IS、IX锁是表级锁，它们的提出仅仅为了在之后加表级别的S锁和X锁时可以快速判断表中的记录是否被上锁，以避免用遍历的方式来查看表中有没有上锁的记录，也就是说其实IS锁和IX锁是兼容的，IX锁和IX锁是兼容的。下表展示了<strong>表级锁</strong>的兼容性</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoddgeys9j31240emjs3.jpg" alt="image-20200812215338604"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoddgeys9j31240emjs3.jpg" alt="image-20200812215338604">
+
+</p>
 <h2 id="4-外键和锁">4. 外键和锁</h2>
 <p>外键主要用于引用完整性的约束检查，在InnoDB中，对于一个外键列，如果没有显式地对这个列加索引，InnoDB存储引擎自动对其加一个索引，这样可以避免针对该列的锁定退化为表锁，进而可能会引发<a href="https://blog.csdn.net/xiaowenmu1/article/details/103827526">死锁</a>。</p>
 <p>对于外键值的插入或更新，首先需要查询父表中的记录（判断该外键是否在父表中有值），即SELECT父表。对父表SELECT时，不是使用一致性非锁定读的方式，因为这样会发生数据不一致的问题，因此这时使用的是SELECT &hellip; LOCK IN SHARE MODE方式，即对父表加一个S锁。</p>
@@ -344,7 +340,10 @@
 </ul>
 <p>Record Lock：总是会锁住索引所指向的行。</p>
 <p>Gap Locks：gap lock是为了解决幻读而诞生的。在事务第一次执行读取操作的时候，幻影记录是不存在的，我们无法给幻影记录加上记录锁。因此我们在两个记录之间加上Gap Lock，如下图所示</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoe1k15caj30zm0imdmg.jpg" alt="image-20200812221649474"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoe1k15caj30zm0imdmg.jpg" alt="image-20200812221649474">
+
+</p>
 <p>如图中为<code>number</code>值为<code>8</code>的记录加了<code>gap锁</code>，意味着不允许别的事务在<code>number</code>值为<code>8</code>的记录前边的<code>间隙</code>插入新记录，其实就是<code>number</code>列的值<code>(3, 8)</code>这个区间的新记录是不允许立即插入的。比方说有另外一个事务再想插入一条<code>number</code>值为<code>4</code>的新记录，它定位到该条新记录的下一条记录的<code>number</code>值为8，而这条记录上又有一个<code>gap锁</code>，所以就会阻塞插入操作，直到拥有这个<code>gap锁</code>的事务提交了之后，<code>number</code>列的值在区间<code>(3, 8)</code>中的新记录才可以被插入。</p>
 <p>不知道大家发现了一个问题没，给一条记录加了<code>gap锁</code>只是不允许其他事务往这条记录前边的间隙插入新记录，那对于最后一条记录之后的间隙，也就是<code>hero</code>表中<code>number</code>值为<code>20</code>的记录之后的间隙该咋办呢？也就是说给哪条记录加<code>gap锁</code>才能阻止其他事务插入<code>number</code>值在<code>(20, +∞)</code>这个区间的新记录呢？这时候应该想起我们在前边唠叨<code>数据页</code>时介绍的两条伪记录了：</p>
 <ul>
@@ -352,14 +351,26 @@
 <li><code>Supremum</code>记录，表示该页面中最大的记录。</li>
 </ul>
 <p>为了实现阻止其他事务插入<code>number</code>值在<code>(20, +∞)</code>这个区间的新记录，我们可以给索引中的最后一条记录，也就是<code>number</code>值为<code>20</code>的那条记录所在页面的<code>Supremum</code>记录加上一个<code>gap锁</code>，画个图就是这样：</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoe3l1xlnj30zk0hyjx6.jpg" alt="image-20200812221846305"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoe3l1xlnj30zk0hyjx6.jpg" alt="image-20200812221846305">
+
+</p>
 <p>Next-Key Lock：结合了Gap Lock和Record Lock的一种锁定算法。</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoe7c7bh3j310a0fun39.jpg" alt="image-20200812222219811"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoe7c7bh3j310a0fun39.jpg" alt="image-20200812222219811">
+
+</p>
 <h2 id="7-死锁">7. 死锁</h2>
 <p>死锁是指两个或两个以上的事务在执行过程中，因争夺锁资源而造成的一种互相等待的现象。</p>
 <p>在InnoDB中通过两种方法解决死锁问题，一种方法是设置一个超时阈值，若阻塞时间超过这个阈值后一个事物进行回滚，另一个事务继续运行。另一种方法就是使用wait-for graph（等待图）的方式来进行死锁检测，这是一种更主动的方法，如下图t1和t2之间存在环路，故产生了死锁，通常来说InnoDB存储引擎选择回滚undo量最小的事务。</p>
-<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gd5a3l4mnpj30g407074z.jpg" alt="image-20200324200301192"></p>
-<p><img src="https://tva1.sinaimg.cn/large/00831rSTly1gd5a3os20yj306a04kdg0.jpg" alt="image-20200324200735196"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gd5a3l4mnpj30g407074z.jpg" alt="image-20200324200301192">
+
+</p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/00831rSTly1gd5a3os20yj306a04kdg0.jpg" alt="image-20200324200735196">
+
+</p>
 
 
                 
@@ -388,7 +399,7 @@
             </div>
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -475,6 +486,8 @@
                     
                     
                     
+            
+            
             
                 </ul>
 		<p class="copyright text-muted">

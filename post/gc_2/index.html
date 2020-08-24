@@ -47,9 +47,6 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
-    <link rel="stylesheet" href="/css/syntax.css">
-    
-    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -67,13 +64,6 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
-
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -208,7 +198,7 @@
 
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -236,7 +226,10 @@
                 <blockquote>
 <p>如果说收集算法是内存回收的方法论，那么垃圾收集器就是内存回收的具体实现。</p>
 </blockquote>
-<p><img src="http://static.zybuluo.com/Rico123/9hswys8w1pqy0ch06vmlbqi2/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8.jpg" alt="垃圾收集器.jpg-64.2kB"></p>
+<p>
+  <img src="http://static.zybuluo.com/Rico123/9hswys8w1pqy0ch06vmlbqi2/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8.jpg" alt="垃圾收集器.jpg-64.2kB">
+
+</p>
 <h2 id="一串行">一、串行</h2>
 <ul>
 <li>单线程</li>
@@ -245,7 +238,10 @@
 <li>新生代使用复制算法，老年代使用标记-整理算法，但工作模式相似</li>
 <li>只使用一个CPU或一条收集线程去完成垃圾收集工作，必须暂停其他所有的工作线程，直到它收集结束。</li>
 </ul>
-<p><img src="https://s2.ax1x.com/2020/02/25/3JfX5V.png" alt="3JfX5V.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/25/3JfX5V.png" alt="3JfX5V.png">
+
+</p>
 <h2 id="二吞吐量优先单位时间stw的时间最短">二、吞吐量优先（单位时间STW的时间最短）</h2>
 <ul>
 <li>多线程</li>
@@ -257,7 +253,10 @@
 <li>-XX:GCTimeRatio=ratio，ratio默认为99，含义为垃圾回收的时间不能超过总时间的0.01（1/(1+99)），根据这个指标调整堆大小（调大堆使GC频率下降）</li>
 <li>-XX:MaxGCPauseMillis=ms，最大垃圾回收时间，如果超过了这个时间那么将堆缩小。与上面的参数是矛盾的</li>
 </ul>
-<p><img src="https://s2.ax1x.com/2020/02/25/3Jh9KJ.png" alt="3Jh9KJ.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/25/3Jh9KJ.png" alt="3Jh9KJ.png">
+
+</p>
 <h2 id="三响应时间优先单次stw的时间最短">三、响应时间优先（单次STW的时间最短）</h2>
 <ul>
 <li>多线程</li>
@@ -268,7 +267,10 @@
 <li>-XX:ConcGCThreads=threads并发垃圾回收线程数，建议设置为cpu核心数的四分之一</li>
 <li>-XX:+CMSScavengeBeforeRemark在重新标记的时，新生代的对象可能会引用老年代的对象，但是有些新生代是要被马上回收的，为了避免做无用功，可以在发生Full GC的时候先进行一次Minor GC（ParNewGC）</li>
 </ul>
-<p><img src="https://s2.ax1x.com/2020/02/25/3Jhmxe.png" alt="3Jhmxe.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/25/3Jhmxe.png" alt="3Jhmxe.png">
+
+</p>
 <p>CMS收集器有以下几个缺点：</p>
 <ol>
 <li>CMS收集器对CPU资源非常敏感，会占用CPU数量，降低程序的运行速度，在CPU数量低时尤其明显</li>
@@ -290,14 +292,26 @@
 </ul>
 <h3 id="43-g1垃圾回收阶段">4.3 G1垃圾回收阶段</h3>
 <p>G1在进行垃圾回收时，会在这三种状态之间循环</p>
-<p><img src="https://s2.ax1x.com/2020/02/25/3JhGPf.png" alt="3JhGPf.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/25/3JhGPf.png" alt="3JhGPf.png">
+
+</p>
 <ol>
 <li>
 <p>Young Collection</p>
 <p>新生代的垃圾回收有通过以下三张图来表示。新生代垃圾回收会发生Stop the world，在这个时候也会进行GC Root的初始化标记，并通过复制算法，将幸存者拷贝到幸存区；经过一段时间之后，再次发生新生代垃圾回收时，幸存区中的对象如果达到晋升年龄，则被移到老年区（O），如果年龄不够，且幸存，则连同Eden区中幸存对象一起被拷贝进幸存区</p>
-<p><img src="https://s2.ax1x.com/2020/02/25/3JhYRS.jpg" alt="3JhYRS.jpg"></p>
-<p><img src="https://s2.ax1x.com/2020/02/25/3Jhtxg.jpg" alt="3Jhtxg.jpg"></p>
-<p><img src="https://s2.ax1x.com/2020/02/25/3Jh2M4.png" alt="3Jh2M4.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/25/3JhYRS.jpg" alt="3JhYRS.jpg">
+
+</p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/25/3Jhtxg.jpg" alt="3Jhtxg.jpg">
+
+</p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/25/3Jh2M4.png" alt="3Jh2M4.png">
+
+</p>
 </li>
 <li>
 <p>Young Collection+CM（Concurrent marking）
@@ -308,15 +322,24 @@
 <p>Mixed Collection
 会对E、S、O进行全面垃圾回收，在发生混合标记的时候，会进行最终标记，此时会Stop the world。对新生的垃圾回收如之前所述，但对老年代的垃圾回收则会根据设定的暂停时间，筛选回收价值最高的Region，如下图，虚框的O区都是需要回收的老年代，但是为了满足停顿要求，会有选择的筛选一部分，换句话说G1收集器是可预测停顿的。
 -XX:MaxGCPauseMillis=ms可设置暂停时间</p>
-<p><img src="https://s2.ax1x.com/2020/02/25/3JhLsH.jpg" alt="3JhLsH.jpg"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/25/3JhLsH.jpg" alt="3JhLsH.jpg">
+
+</p>
 </li>
 </ol>
 <h3 id="44-young-collection跨带引用问题">4.4 Young Collection跨带引用问题</h3>
 <p>如果老年代的对象对新生代有引用，那么要找新生代对象的根对象。在老年代中，根对象存活的比较多，那么在遍历的时候就要消耗大量的时间。为了加快时间，使用卡表与Remembered Set，如下图所示，老年代有一个卡表，其中粉红色区域即为存在跨代引用的区域，称之为脏卡，在新生代，有一个Remembered Set记录incoming reference，在对新生代进行垃圾回收时，即可通过Remembered Set找到脏卡，然后根据脏卡进行GC Root，节省了时间。</p>
-<p><img src="https://s2.ax1x.com/2020/02/25/3Jhxot.jpg" alt="3Jhxot.jpg"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/25/3Jhxot.jpg" alt="3Jhxot.jpg">
+
+</p>
 <h3 id="45-重新标记阶段">4.5 重新标记阶段</h3>
 <p>现在考虑这样一种情况，如下图所示，在并发标记阶段，C对象没有被强引用所引用，被当做垃圾，但是因为此时用户线程并发执行，又将A指向了C，G1如何处理这种情况呢？这时需要重新标记阶段。具体做法是当对象引用发生改变时，会触发一个写屏障（pre-write barrier），此时会将C对象放入一个名为satb_mark_queue的队列，之后会对其再判断。</p>
-<p><img src="https://s2.ax1x.com/2020/02/25/3J4SFP.png" alt="3J4SFP.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/25/3J4SFP.png" alt="3J4SFP.png">
+
+</p>
 
 
                 
@@ -345,7 +368,7 @@
             </div>
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -432,6 +455,8 @@
                     
                     
                     
+            
+            
             
                 </ul>
 		<p class="copyright text-muted">

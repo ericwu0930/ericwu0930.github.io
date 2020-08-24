@@ -47,9 +47,6 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
-    <link rel="stylesheet" href="/css/syntax.css">
-    
-    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -67,13 +64,6 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
-
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -208,7 +198,7 @@
 
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -292,7 +282,10 @@
 <h3 id="11-http的诞生">1.1 Http的诞生</h3>
 <p>CERN的蒂姆·伯纳斯-李博士提出一种让全球研究者共享知识的设想：借助多文档之间互相关联形成的超文本，连成可相互参阅的WWW（World Wide Web），WWW由HTML作为语言，HTTP作为文档传递协议，以URL标记文档所在地构成。</p>
 <h3 id="12-各种协议与http协议的关系">1.2 各种协议与HTTP协议的关系</h3>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pInVe.png" alt="3pInVe.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pInVe.png" alt="3pInVe.png">
+
+</p>
 <h3 id="13-uri和url">1.3 URI和URL</h3>
 <p>统一资源标志符URI就是在某一规则下能把一个资源独一无二地标识出来。当然我们可以通过地址的形式将该资源标识出来，也就是说我们熟知的URL统一资源定位符。因此URL是URI的一个子集。</p>
 <p>URI的格式如下</p>
@@ -303,13 +296,25 @@
 <p>HTTP协议用于客户端和服务器端之间的通信，通过请求和响应的交换达成通信。HTTP是一种不保存状态，即<strong>无状态的协议</strong>，也就是说每当有新的请求发送到服务器时，服务器都会有对应的新响应产生，而不受过去状态的影响。这符合HTTP协议设计的初衷——简单。HTTP/1.1虽然是无状态协议，但为了实现期望的保持状态功能，于是引入了Cookie技术。</p>
 <h3 id="22-http报文结构">2.2 HTTP报文结构</h3>
 <p>HTTP报文大致可分为报文首部和报文主体两块。两块中间由空行（CR+LF）间隔。通常，并不一定要有报文主体。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pI12t.png" alt="3pI12t.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pI12t.png" alt="3pI12t.png">
+
+</p>
 <p>请求报文是由请求方法、 请求 URI、 协议版本、 可选的请求首部字段和内容实体构成的。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pINVg.png" alt="3pINVg.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pINVg.png" alt="3pINVg.png">
+
+</p>
 <p>响应报文基本上由协议版本、 状态码（表示请求成功或失败的数字代码）、 用以解释状态码的原因短语、 可选的响应首部字段以及实体主体构成。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pIhGR.png" alt="3pIhGR.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pIhGR.png" alt="3pIhGR.png">
+
+</p>
 <h3 id="23-请求uri定位资源">2.3 请求URI定位资源</h3>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pIoM6.png" alt="3pIoM6.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pIoM6.png" alt="3pIoM6.png">
+
+</p>
 <p>当客户端请求访问资源而发送请求时，HTTP报文需要将URI包含在内。指定URI的方式有很多，如上图所示。可以在请求行中写明URI，或者可以在Host首部中写明网络域名或者IP地址。在Host首部中写出主机名还可以用来访问放在同一个IP地址的主机上不同的网站。</p>
 <p>除此之外，如果不是访问特定资源还是对服务器本身发起请求，可以用一个*来代替请求URI，例如查询HTTP服务器端支持的HTTP方法种类。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-http" data-lang="http"><span style="color:#a6e22e">OPTIONS</span> * <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
@@ -343,16 +348,25 @@
 <h3 id="25-持久连接节省通信量">2.5 持久连接节省通信量</h3>
 <p>在HTTP协议的初始版本中，每进行一次HTTP通信就要断开一次TCP连接，例如访问一个多图的HTML页面的时候，每加载一张图都要建立TCP连接，然后断开连接，增加了通信量的开销。</p>
 <p>为了避免这一情况，在HTTP/1.1中提出了持久连接，只要任意一端没有明确提出断开连接，则保持TCP连接状态。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pILIH.png" alt="3pILIH.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pILIH.png" alt="3pILIH.png">
+
+</p>
 <p>持久连接使得多数请求以管线化方式发送称为可能。也就是不用等待响应就可以发送下一个请求。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pIxzt.png" alt="3pIxzt.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pIxzt.png" alt="3pIxzt.png">
+
+</p>
 <h3 id="26-使用cookie的状态管理">2.6 使用Cookie的状态管理</h3>
 <p>HTTP不保存状态，可以减少服务器的CPU及内存资源的消耗。但是不保存状态又会给用户访问页面带来许多麻烦。Cookie技术通过在请求和响应报文中写入Cookie信息来控制客户端的状态。</p>
 <p>Cookie 会根据从服务器端发送的响应报文内的一个叫做 Set-Cookie 的 首部字段信息，通知客户端保存 Cookie。当下次客户端再往该服务器 发送请求时，客户端会自动在请求报文中加入 Cookie 值后发送出去。</p>
 <p>服务器端发现客户端发送过来的 Cookie 后，会去检查究竟是从哪一 个客户端发来的连接请求，然后对比服务器上的记录，最后得到之前的状态信息。</p>
 <h2 id="3-http报文内的http信息">3 HTTP报文内的HTTP信息</h2>
 <h3 id="31-请求报文以及响应报文的结构">3.1 请求报文以及响应报文的结构</h3>
-<p><img src="https://s2.ax1x.com/2020/02/16/3poVWn.png" alt="3poVWn.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3poVWn.png" alt="3poVWn.png">
+
+</p>
 <ul>
 <li>请求行：包含用于请求的方法，请求URI和HTTP版本</li>
 <li>状态行：包含表明响应结果的状态码，原因短语和HTTP版本</li>
@@ -504,25 +518,43 @@
 <p>转发请求或响应时，不对报文做任何加工的代理类型称为<strong>透明代理</strong>。</p>
 <h3 id="53-网关">5.3 网关</h3>
 <p>网关能使通信线路上的服务器提供非HTTP协议服务。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3powwD.png" alt="3powwD.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3powwD.png" alt="3powwD.png">
+
+</p>
 <h3 id="54-隧道">5.4 隧道</h3>
 <p>隧道可按要求建立起一条与其他服务器的通信线路，届时使用SSL等加密手段进行通信。隧道的目的是确保客户端能与服务器进行安全通信。</p>
 <h3 id="55-缓存">5.5 缓存</h3>
 <p>缓存是指代理服务器或客户端本地磁盘内保存的资源副本。 利用缓存可减少对源服务器的访问， 因此也就节省了通信流量和通信时间。</p>
 <h4 id="551-缓存的有效期限">5.5.1 缓存的有效期限</h4>
 <p>当服务器上资源更新时，代理服务器上缓存的资源就变成了“旧”资源，因此即使存在缓存，也会因为客户端的要求、 缓存的有效期等因素， 向源服务器确认资源的有效性。 若判断缓存失效， 缓存服务器将会再次从源服务器上获取“新”资源。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3poDFH.png" alt="3poDFH.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3poDFH.png" alt="3poDFH.png">
+
+</p>
 <h4 id="552-客户端的缓存">5.5.2 客户端的缓存</h4>
 <p>缓存不仅可以存在缓存服务器内，也可以存在客户端浏览器中。与缓存服务器相同，当判定缓存过期后，会向源服务器确认资源的有效性。 若判断浏览器缓存失效， 浏览器会再次请求新资源。</p>
 <h2 id="6-http首部略">6. HTTP首部（略）</h2>
 <h3 id="通用首部字段">通用首部字段</h3>
-<p><img src="https://s2.ax1x.com/2020/02/16/3po2Of.png" alt="3po2Of.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3po2Of.png" alt="3po2Of.png">
+
+</p>
 <h3 id="请求首部字段">请求首部字段</h3>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pohTg.png" alt="3pohTg.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pohTg.png" alt="3pohTg.png">
+
+</p>
 <h3 id="响应首部字段">响应首部字段</h3>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pxvWT.png" alt="3pxvWT.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pxvWT.png" alt="3pxvWT.png">
+
+</p>
 <h3 id="实体首部字段">实体首部字段</h3>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pzPm9.png" alt="3pzPm9.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pzPm9.png" alt="3pzPm9.png">
+
+</p>
 <h3 id="为cookie服务的首部字段">为Cookie服务的首部字段</h3>
 <p>管理服务器与客户端之间状态的Cookie，虽然没有编入标准化HTTP/1.1中，但在Web网站方面得到了广泛的应用。</p>
 <p>Cookie的工作机制是用户识别及状态管理。Web网站为了管理用户的状态会通过Web浏览器，把一些数据临时写入用户的计算机内，接着当用户访问该Web网站时，可通过通信方式取回之前发放的Cookie。</p>
@@ -569,7 +601,10 @@
 <li>控制不再转发给代理的首部字段</li>
 <li>管理持久化连接</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfsz2lyf1tj31560i0k7k.jpg" alt="image-20200615144630505"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfsz2lyf1tj31560i0k7k.jpg" alt="image-20200615144630505">
+
+</p>
 <p>HTTP/1.1版本的默认连接就是持久连接，客户端会在持久连接上连续发送请求，当服务器端明确断开连接时，则指定Connection首部字段的值为close</p>
 <h2 id="7-确保web安全的https">7 确保Web安全的HTTPS</h2>
 <h3 id="71-http的缺点">7.1 HTTP的缺点</h3>
@@ -580,10 +615,16 @@
 </ul>
 <h3 id="72-http加密认证完整性保护https">7.2 HTTP+加密+认证+完整性保护=HTTPS</h3>
 <p>HTTPS不是应用层的一种新协议，只是HTTP的通信接口部分使用SSL和TLS协议代替。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pzFT1.png" alt="3pzFT1.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pzFT1.png" alt="3pzFT1.png">
+
+</p>
 <p>SSL使用的是一种混合加密技术，<a href="https://ericwu0930.github.io/post/security/" title="加密与安全机制">处理方式详见该博文</a>。</p>
 <h3 id="73-https的安全通信机制">7.3 HTTPS的安全通信机制</h3>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pzEY6.png" alt="3pzEY6.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pzEY6.png" alt="3pzEY6.png">
+
+</p>
 <p><strong>步骤 1：</strong> 客户端通过发送 Client Hello 报文开始 SSL通信。 报文中包含客户端支持的 SSL的指定版本、 加密组件（Cipher Suite） 列表（所使用的加密算法及密钥长度等） 。<br>
 <strong>步骤 2：</strong> 服务器可进行 SSL通信时， 会以 Server Hello 报文作为应答。和客户端一样， 在报文中包含 SSL版本以及加密组件。 服务器的加密组件内容是从接收到的客户端加密组件内筛选出来的。</p>
 <p><strong>步骤 3：</strong> 之后服务器发送 Certificate 报文。 报文中包含公开密钥证书。</p>
@@ -597,17 +638,26 @@
 <p><strong>步骤 11：</strong> 应用层协议通信， 即发送 HTTP 响应。</p>
 <p><strong>步骤 12：</strong> 最后由客户端断开连接。 断开连接时， 发送 close_notify 报文。 上图做了一些省略， 这步之后再发送 TCP FIN 报文来关闭与 TCP的通信。</p>
 <p>在以上流程中，应用层发送数据时会附加MAC，查知报文是否遭到篡改。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pzmlD.png" alt="3pzmlD.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pzmlD.png" alt="3pzmlD.png">
+
+</p>
 <h3 id="74-https的缺点">7.4 HTTPS的缺点</h3>
 <p>当使用SSL时，它的处理速度会变慢，其原因有二，一是通信慢，在正常的http基础上要进行SSL通信；二是处理速度慢，在服务器和客户端都需要进行加密和解密的运算处理。HTTPS要比HTTP慢2到100倍。</p>
 <h2 id="8-确认访问用户身份的认证">8 确认访问用户身份的认证</h2>
 <h3 id="81-basic认证">8.1 BASIC认证</h3>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pzuOH.png" alt="3pzuOH.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pzuOH.png" alt="3pzuOH.png">
+
+</p>
 <p>客户端将用户名和密码中间用冒号连接，然后经过Base64编码处理，发送给服务器。Base64编码不是加密处理，不需要任何附加信息就可以对其解码，除此之外想再进行一次 BASIC 认证时，一般的浏览器却无法实现认证注销操作，且达不到多数Web网站期望的安全性登记，因此并不常用。</p>
 <h3 id="82-基于表单认证">8.2 基于表单认证</h3>
 <p>基于表单的认证方法并不是在HTTP协议中定义的，而是由Web应用程序各自实现的。通过服务器端的 Web 应用， 将客户端发送过来的用户ID和密码与之前登录过的信息做匹配来进行认证的。</p>
 <p>基于表单认证一般会使用Cookie来管理Session。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pzdmj.png" alt="3pzdmj.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pzdmj.png" alt="3pzdmj.png">
+
+</p>
 
 
                 
@@ -636,7 +686,7 @@
             </div>
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -723,6 +773,8 @@
                     
                     
                     
+            
+            
             
                 </ul>
 		<p class="copyright text-muted">

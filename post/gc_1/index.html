@@ -47,9 +47,6 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
-    <link rel="stylesheet" href="/css/syntax.css">
-    
-    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -67,13 +64,6 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
-
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -208,7 +198,7 @@
 
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -245,9 +235,15 @@
 <p>垃圾收集器在对堆进行回收前，第一件事情就是要确定这些对象之中，哪些还“存活”，哪些已经死去，这里有两种常用的判断算法，引用计数算法和可达性分析算法。</p>
 <ul>
 <li>引用计数算法：Python使用了该算法，其原理为给对象中添加一个计数器，每当一个地方引用它时，计数器加1，引用失效时，计数器减1；任何时刻计数器为0的对象就是不可能再被使用的。但是一个缺点是无法解决对象之间相互循环引用的问题。如下图，objA中引用objB，objB引用objA。
-<img src="https://s2.ax1x.com/2020/03/05/3HSDiT.png" alt="3HSDiT.png"></li>
+
+  <img src="https://s2.ax1x.com/2020/03/05/3HSDiT.png" alt="3HSDiT.png">
+
+</li>
 <li>可达性分析算法：被Java、C#等语言所使用的，这个算法的基本思路是通过一系列称为“GC Roots”的对象作为起始点，从这些节点开始向下搜索，所走过的路径称为引用链，当一个对象到GC Roots没有任何引用链想连时，则证明此对象是不可用的。
-<img src="https://s2.ax1x.com/2020/03/05/3HSWe1.png" alt="3HSWe1.png">
+
+  <img src="https://s2.ax1x.com/2020/03/05/3HSWe1.png" alt="3HSWe1.png">
+
+
 在Java中，可作为GC Roots的对象包括下面几种：虚拟机栈中引用的<strong>对象</strong>、方法区中类静态属性引用的<strong>对象</strong>、方法区中常量引用的<strong>对象</strong>、本地方法栈中引用的<strong>对象</strong></li>
 </ul>
 <hr>
@@ -261,18 +257,27 @@
 <ul>
 <li>
 <p>标记-清除算法：分为“标记”和“清除”两个阶段；有两个缺陷，一是效率不高，二是空间碎片太多
-<img src="https://s2.ax1x.com/2020/03/05/3HSIJO.png" alt="3HSIJO.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/05/3HSIJO.png" alt="3HSIJO.png">
+
+</p>
 </li>
 <li>
 <p>复制算法：它将可用内存按容量划分为大小相等的两部分，如图所示分为A、B两个区，当A区域全部用完时，把存活的对象复制到B区，然后一次性清除掉A区，此时，内存分配时就不再考虑内存碎片等复杂情况了。而且新生代中的对象98%是朝生夕死的，并不需要按照1：1来划分内存空间。</p>
 <p>Hotspot虚拟机中Eden和Survivor的大小比例是8：1，将Eden区以及幸存区From中存活的对象复制到幸存区To中，将Eden和幸存区From中的对象全部清空，然后将幸存区From和幸存区To调换。</p>
 <p>如果Survivor空间不够用时需要依赖其他内存（老年代）进行分配担保，如果另外一块Survivor空间没有足够空间存放上一次新生代收集下来的存活对象，这些对象直接通过分配担保机制进入老年代。</p>
 <p>该算法适用于对象存活率较低的新生代。</p>
-<p><img src="https://s2.ax1x.com/2020/03/05/3HSHQH.png" alt="3HSHQH.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/05/3HSHQH.png" alt="3HSHQH.png">
+
+</p>
 </li>
 <li>
 <p>标记-整理算法：如果对象存活率较高时，需要进行较多的复制操作，效率会变低。所以在老年代不选用这种算法。标记-整理算法的标记过程与标记-清理算法一致，但是清理过程是让所有存活的对象都向一端移动，然后直接清理掉端边界意外的内存。
-<img src="https://s2.ax1x.com/2020/03/05/3HSjTP.png" alt="3HSjTP.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/05/3HSjTP.png" alt="3HSjTP.png">
+
+</p>
 </li>
 </ul>
 <hr>
@@ -316,7 +321,7 @@ HotSpot虚拟机是准确式GC（虚拟机知道内存中存储的是地址还�
             </div>
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -403,6 +408,8 @@ HotSpot虚拟机是准确式GC（虚拟机知道内存中存储的是地址还�
                     
                     
                     
+            
+            
             
                 </ul>
 		<p class="copyright text-muted">

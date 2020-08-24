@@ -47,9 +47,6 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
-    <link rel="stylesheet" href="/css/syntax.css">
-    
-    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -67,13 +64,6 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
-
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -208,7 +198,7 @@
 
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -304,7 +294,7 @@ chgrp 组名   文件名
 </code></pre></div><h3 id="23-yum在线安装">2.3 yum在线安装</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 配置yum的源文件</span>
 vi /etc/yum.repos.d/CentOS-Base.repo
-<span style="color:#f92672">[</span>base<span style="color:#f92672">]</span> 容器名称，一定要写在<span style="color:#f92672">[</span><span style="color:#f92672">]</span>中
+<span style="color:#f92672">[</span>base<span style="color:#f92672">]</span> 容器名称，一定要写在<span style="color:#f92672">[]</span>中
 name   容器说明，可以自己随便写
 mirrorlist  镜像站点
 baseurl     yum源头服务器的地址
@@ -389,7 +379,10 @@ ps -le
 <span style="color:#75715e">#查看系统中所有进程，使用Linux标准命令格式，会显示进程的优先级</span>
 pstree
 <span style="color:#75715e">#显示进程树</span>
-</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genhr7utyfj31i2030750.jpg" alt="image-20200510173930705"></p>
+</code></pre></div><p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genhr7utyfj31i2030750.jpg" alt="image-20200510173930705">
+
+</p>
 <ul>
 <li>VSZ：占用虚拟内存</li>
 <li>RSS：占用实际内存</li>
@@ -409,7 +402,10 @@ P：以cpu使用率排序
 M：以内存的使用率排序
 N：以PID排序
 q：退出top
-</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geni7hgrusj31ko06y7dm.jpg" alt="image-20200510175510808"></p>
+</code></pre></div><p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geni7hgrusj31ko06y7dm.jpg" alt="image-20200510175510808">
+
+</p>
 <p>系统当前时间   系统运行时间    用户数    系统在之前1分钟，5分钟，15分钟的平均负载</p>
 <p>进程状态：</p>
 <p>CPU状态：us被用户态占用的cpu百分比，sy被内核态占用的百分比，id空闲CPU的CPU百分比</p>
@@ -420,10 +416,10 @@ q：退出top
 	信号名称：HUP <span style="color:#ae81ff">1</span> 平滑重启，重新读取配置文件之后重启
 			KILL <span style="color:#ae81ff">9</span> 强制终止
 kill -HUP pid号 <span style="color:#75715e"># 杀死pid进程</span>
-killall <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span><span style="color:#f92672">[</span>信号<span style="color:#f92672">]</span> 进程名
+killall <span style="color:#f92672">[</span>选项<span style="color:#f92672">][</span>信号<span style="color:#f92672">]</span> 进程名
 	-i 交互
 	-I 忽略大小写
-pkill <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span><span style="color:#f92672">[</span>信号<span style="color:#f92672">]</span> 进程名
+pkill <span style="color:#f92672">[</span>选项<span style="color:#f92672">][</span>信号<span style="color:#f92672">]</span> 进程名
 	-t 终端号：按照终端号踢出用户，终端号可以通过w命令查看
 </code></pre></div><h3 id="32-工作管理">3.2 工作管理</h3>
 <p>工作管理指的是在单个登录终端中同时管理多个工作的行为（也就是windows中最小化之后开启别的任务），在LInux中使用<em>jobs</em>命令查看工作</p>
@@ -444,15 +440,24 @@ fg %工作号 <span style="color:#75715e">#将后台暂停的工作恢复到前�
 bg %工作号 <span style="color:#75715e">#将后台暂停的工作恢复到后台执行</span> 
 </code></pre></div><h2 id="4-linux服务管理">4. Linux服务管理</h2>
 <h3 id="41-linux运行级别">4.1 Linux运行级别</h3>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genmhgl4gvj31o20oen8g.jpg" alt="image-20200510202309126"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genmhgl4gvj31o20oen8g.jpg" alt="image-20200510202309126">
+
+</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 可以使用init命令进入Linux某个运行级别</span>
 init x
 </code></pre></div><h3 id="42-服务的分类">4.2 服务的分类</h3>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genlsf7gkfj317i0l8q9x.jpg" alt="image-20200510195904602"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genlsf7gkfj317i0l8q9x.jpg" alt="image-20200510195904602">
+
+</p>
 <h3 id="43-查询已安装的服务">4.3 查询已安装的服务</h3>
 <h4 id="rpm包安装的服务">RPM包安装的服务</h4>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">chkconfig --list
-</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genmmdaqa0j31bm0bu40u.jpg" alt="image-20200510202752654"></p>
+</code></pre></div><p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genmmdaqa0j31bm0bu40u.jpg" alt="image-20200510202752654">
+
+</p>
 <p>上图中的0-6对应Linux的runlevel</p>
 <h4 id="源码包安装的服务">源码包安装的服务：</h4>
 <p>一般是在/usr/local/下查看</p>
@@ -483,7 +488,10 @@ PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>
 source 配置文件
 . 配置文件
 </code></pre></div><p>一个正常的启动过程加载配置文件的过程，后一个配置文件可以覆盖前一个配置文件中定义的环境变量</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geoa5v06tej31pw0qgq9y.jpg" alt="image-20200511100200544"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geoa5v06tej31pw0qgq9y.jpg" alt="image-20200511100200544">
+
+</p>
 <p>在/etc/profile 中修改历史命令条数 HISTSIZE</p>
 <p>在~/.bashrc 中修改别名 alias</p>
 <p>在/etc/bashrc 修改登录提示符PS1</p>
@@ -499,7 +507,7 @@ source 配置文件
 	
 telnet ip地址 端口号 <span style="color:#75715e"># 探测端口号</span>
 
-find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672">]</span><span style="color:#f92672">[</span>搜索条件<span style="color:#f92672">]</span>  <span style="color:#75715e"># 在linux中通配符 *匹配任意内容 ？匹配任意一个字符 []匹配任意一个中括号内的字符</span>
+find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672">][</span>搜索条件<span style="color:#f92672">]</span>  <span style="color:#75715e"># 在linux中通配符 *匹配任意内容 ？匹配任意一个字符 []匹配任意一个中括号内的字符</span>
 	搜索条件：
 		-iname 不区分大小写
 		-user 按照所有者
@@ -538,7 +546,7 @@ find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672"
             </div>
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -625,6 +633,8 @@ find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672"
                     
                     
                     
+            
+            
             
                 </ul>
 		<p class="copyright text-muted">

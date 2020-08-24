@@ -47,9 +47,6 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
-    <link rel="stylesheet" href="/css/syntax.css">
-    
-    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -67,13 +64,6 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
-
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -208,7 +198,7 @@
 
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -222,11 +212,11 @@
     <li><a href="#2-tcp头部和封装">2. TCP头部和封装</a></li>
     <li><a href="#3-tcp连接管理">3. TCP连接管理</a>
       <ul>
-        <li><a href="#31-为什么是三次握手">3.1 为什么是三次握手？</a></li>
-        <li><a href="#32-为什么是四次挥手">3.2 为什么是四次挥手？</a></li>
-        <li><a href="#33-连接建立超时">3.3 连接建立超时</a></li>
-        <li><a href="#34-初始序列号">3.4 初始序列号</a></li>
-        <li><a href="#35-tcp状态转换">3.5 TCP状态转换</a></li>
+        <li><a href="#31-为什么是三次握手"><strong>3.1 为什么是三次握手</strong>？</a></li>
+        <li><a href="#32-为什么是四次挥手"><strong>3.2 为什么是四次挥手</strong>？</a></li>
+        <li><a href="#33-连接建立超时"><strong>3.3 连接建立超时</strong></a></li>
+        <li><a href="#34-初始序列号"><strong>3.4 初始序列号</strong></a></li>
+        <li><a href="#35-tcp状态转换"><strong>3.5 TCP状态转换</strong></a></li>
         <li><a href="#36-重置报文段">3.6 重置报文段</a></li>
         <li><a href="#37-tcp的路径最大传输单元发现">3.7 TCP的路径最大传输单元发现</a></li>
         <li><a href="#38-syn泛洪攻击原理">3.8 syn泛洪攻击原理</a></li>
@@ -234,22 +224,22 @@
     </li>
     <li><a href="#4-tcp超时与重传">4. TCP超时与重传</a>
       <ul>
-        <li><a href="#41-带时间戳选项的rtt测量">4.1 带时间戳选项的RTT测量</a></li>
-        <li><a href="#42-设置重传超时rto">4.2 设置重传超时（RTO）</a></li>
-        <li><a href="#43-基于计时器的重传">4.3 基于计时器的重传</a></li>
-        <li><a href="#44-快速重传">4.4 快速重传</a></li>
-        <li><a href="#45-带选择确认的重传">4.5 带选择确认的重传</a></li>
-        <li><a href="#46-伪超时与重传">4.6 伪超时与重传</a></li>
-        <li><a href="#47-包失序">4.7 包失序</a></li>
-        <li><a href="#48-重复">4.8 重复</a></li>
+        <li><a href="#41-带时间戳选项的rtt测量"><strong>4.1 带时间戳选项的RTT测量</strong></a></li>
+        <li><a href="#42-设置重传超时rto"><strong>4.2 设置重传超时（RTO）</strong></a></li>
+        <li><a href="#43-基于计时器的重传"><strong>4.3 基于计时器的重传</strong></a></li>
+        <li><a href="#44-快速重传"><strong>4.4 快速重传</strong></a></li>
+        <li><a href="#45-带选择确认的重传"><strong>4.5 带选择确认的重传</strong></a></li>
+        <li><a href="#46-伪超时与重传"><strong>4.6 伪超时与重传</strong></a></li>
+        <li><a href="#47-包失序"><strong>4.7 包失序</strong></a></li>
+        <li><a href="#48-重复"><strong>4.8 重复</strong></a></li>
         <li><a href="#49-重新组包">4.9 重新组包</a></li>
       </ul>
     </li>
     <li><a href="#5-tcp数据流与窗口管理">5. TCP数据流与窗口管理</a>
       <ul>
-        <li><a href="#51-交互式通信">5.1 交互式通信</a></li>
-        <li><a href="#52-延时确认">5.2 延时确认</a></li>
-        <li><a href="#53-nagle算法">5.3 Nagle算法</a></li>
+        <li><a href="#51-交互式通信"><strong>5.1 交互式通信</strong></a></li>
+        <li><a href="#52-延时确认"><strong>5.2 延时确认</strong></a></li>
+        <li><a href="#53-nagle算法"><strong>5.3 Nagle算法</strong></a></li>
         <li><a href="#54-流量控制与窗口管理">5.4 流量控制与窗口管理</a></li>
       </ul>
     </li>
@@ -278,7 +268,10 @@
 <li>使用序列号，TCP接收端可以丢弃重复的报文段和记录以杂乱次序到达的报文段</li>
 </ol>
 <h2 id="2-tcp头部和封装">2. TCP头部和封装</h2>
-<p><img src="/img/image-20200208221619513.png" alt=""></p>
+<p>
+  <img src="/img/image-20200208221619513.png" alt="">
+
+</p>
 <p>标准TCP头部由20个字节构成，TCP头部必须是32位的倍数。阴影字段用于与该报文段发送方关联的相反方向的数据流。</p>
 <p>序列号代表着包含该序列号的报文段的数据<strong>从哪一个字节开始</strong>。SYN和FIN会消耗一个字节，而ACk则不消耗。消耗一个序列号意味着使用重传进行可靠传输。也就是说如果一个纯ACK数据报的序列号是K，那么相同方向下一个数据报的序列号依然是K。</p>
 <table>
@@ -381,7 +374,10 @@
 </li>
 </ul>
 <h2 id="3-tcp连接管理">3. TCP连接管理</h2>
-<p><img src="/img/image-20200210213656465.png" alt="image-20200210213656465"></p>
+<p>
+  <img src="/img/image-20200210213656465.png" alt="image-20200210213656465">
+
+</p>
 <h3 id="31-为什么是三次握手"><strong>3.1 为什么是三次握手</strong>？</h3>
 <p>如果是两次握手，B不知道A是否建立了连接，比如A主动提出建立连接，但是因为网络原因，该报文段消失于网络中，于是A重传了一个SYN报文段，并在传输完信息后断开了连接，若此时，之前的SYN报文段来到了B，则B建立了连接，但其实A是空闲状态的。</p>
 <h3 id="32-为什么是四次挥手"><strong>3.2 为什么是四次挥手</strong>？</h3>
@@ -392,8 +388,14 @@
 <p>一个IP地址和一个端口组成的网络单位被称为一个端点或套接字，它是两台机器间通信的端点。TCP链接是被一对套接字唯一表示。</p>
 <p>一个TCP报文段同时具备连接的4元组与当前活动窗口的序列号才会在通信过程中被对方认为是正确的，这也体现了TCP的脆弱性，为了抵御这一脆弱，一种方法是使初始序列号变得更加难以猜出。</p>
 <h3 id="35-tcp状态转换"><strong>3.5 TCP状态转换</strong></h3>
-<p><img src="/img/image-20200208230254019.png" alt="image-20200208230254019"></p>
-<p><img src="/img/image-20200208230314520.png" alt="image-20200208230314520"></p>
+<p>
+  <img src="/img/image-20200208230254019.png" alt="image-20200208230254019">
+
+</p>
+<p>
+  <img src="/img/image-20200208230314520.png" alt="image-20200208230314520">
+
+</p>
 <h4 id="351-time_wait状态"><strong>3.5.1 TIME_WAIT状态</strong></h4>
 <p>TIME_WAIT状态也称为2MSL等待状态，它有两个用途</p>
 <ol>
@@ -421,7 +423,10 @@
 <h2 id="4-tcp超时与重传">4. TCP超时与重传</h2>
 <p>有两种方式的重传：第一种称为基于计时器的<strong>超时重传</strong>，TCP在发送数据时会设置一个计时器，并设置一个阈值（RTO）若计时器超时时仍未收到数据确认信息，则会引发超时重传。另一种方式称为<strong>快速重传</strong>，若TCP累计确认无法返回新的ACK，或者当ACK包含选择确认信息表明出现失序报文段时，发送端会推断出丢包的范围并且进行重传。</p>
 <h3 id="41-带时间戳选项的rtt测量"><strong>4.1 带时间戳选项的RTT测量</strong></h3>
-<p><img src="/img/image-20200210113052567.png" alt="image-20200210113052567"></p>
+<p>
+  <img src="/img/image-20200210113052567.png" alt="image-20200210113052567">
+
+</p>
 <ol>
 <li>接收端发送一个ACK，并更新LastACK</li>
 <li>当接收到新数据时，如果序列号==LastACK，记录下该报文段的TSV，记为TsRecent</li>
@@ -463,16 +468,25 @@
 <h3 id="47-包失序"><strong>4.7 包失序</strong></h3>
 <p>如果失序发生在反向ACK链路，就会使得TCP发送端窗口快速前移。由于TCP的拥塞控制行为，这种情况会导致发送端出现不必要的流量突发行为，影响可用网络带宽。</p>
 <p>如果失序发生在正向链路，当失序程度很大，发送端会因为收到多个重复ACK而触发快速重传。幸运的是，严重的包失序并不常见，并且可以通过动态调整dupthresh来避免因包失序导致的伪重传。</p>
-<p><img src="/img/image-20200210162639503.png" alt="image-20200210162639503"></p>
+<p>
+  <img src="/img/image-20200210162639503.png" alt="image-20200210162639503">
+
+</p>
 <h3 id="48-重复"><strong>4.8 重复</strong></h3>
-<p><img src="/img/image-20200210163110857.png" alt="image-20200210163110857"></p>
+<p>
+  <img src="/img/image-20200210163110857.png" alt="image-20200210163110857">
+
+</p>
 <p>发送5，6包之后仍收到A3，会引发快速重传，但是利用SACK就可以简单地忽略这个问题，因为该情况下，SACK没有空缺。</p>
 <h3 id="49-重新组包">4.9 重新组包</h3>
 <p>当TCP超时重传，它并不需要完全重传相同的报文段。TCP允许执行重新组包，发送一个更大的报文段来提高性能。</p>
 <h2 id="5-tcp数据流与窗口管理">5. TCP数据流与窗口管理</h2>
 <h3 id="51-交互式通信"><strong>5.1 交互式通信</strong></h3>
 <p>交互式数据传输的报文段通常小于SMSS（发送最大报文段），例如在SSH中，每在客户端输一个字符，都会发送一个数据报，然后接收端返回一个ACK；之后接收端再返回一个回显，发送端再返回一个ACK。通常，第2和第3段可以合并，称之为捎带延时确认。</p>
-<p><img src="/img/image-20200211101603757.png" alt="image-20200211101603757"></p>
+<p>
+  <img src="/img/image-20200211101603757.png" alt="image-20200211101603757">
+
+</p>
 <h3 id="52-延时确认"><strong>5.2 延时确认</strong></h3>
 <p>在许多情况下，TCP不对每一个到来的数据包都返回ACK，累积确认可以允许TCP延迟一段时间发送ACK，一边将ACK和相同方向上需要传的数据结合发送。TCP不能任意时长的延迟ACK；否则对方会误认为数据丢失而出现不必要的重传。</p>
 <h3 id="53-nagle算法"><strong>5.3 Nagle算法</strong></h3>
@@ -480,12 +494,18 @@
 <p>Nagle算法实现了自时钟控制：ACK返回越快，数据传输越快。</p>
 <p>Nagle算法传输的包数目更少而长度更长，但同时传输时延也更长。</p>
 <p>如果延时ACK与Nagle算法结合起来，可能会导致死锁。一边延时ACK，等待更多的数据一起返回，一边没有收到ACK则不再发送数据。这种死锁不是永久的，在延时ACK计时器超时后，死锁会解除。</p>
-<p><img src="/img/image-20200211102550638.png" alt="image-20200211102550638"></p>
+<p>
+  <img src="/img/image-20200211102550638.png" alt="image-20200211102550638">
+
+</p>
 <h3 id="54-流量控制与窗口管理">5.4 流量控制与窗口管理</h3>
 <p>窗口通告数值表示接收端可用缓存空间的大小。当TCP应用程序空闲时，就会排队处理这些数据，致使窗口大小字段保持不变。当系统处理速度较慢，或者程序忙于执行其他操作，到来的数据返回ACK后，就需要排队等待被读取或“消耗”。若这种排队状况持续，新数据的可用存储空间就会减小，窗口大小值也随之减小。最终，若应用程序一直不处理这些数据，没有空间来存储新数据，将窗口通告设为0。</p>
 <h4 id="541-滑动窗口">5.4.1 滑动窗口</h4>
 <p>TCP连接的每一端都可收发数据。连接的收发数据量是通过一组窗口结构来维护的。每个TCP活动连接的两端都维护一个<strong>发送窗口结构</strong>和<strong>接收窗口结构</strong>。</p>
-<p><img src="/img/image-20200211111230819.png" alt="image-20200211111230819"></p>
+<p>
+  <img src="/img/image-20200211111230819.png" alt="image-20200211111230819">
+
+</p>
 <p>由接收端通告的窗口称为<strong>提供窗口</strong>(awnd)。可用窗口即它可以立即发送的数据量。其计算方法为提供窗口大小减去在传数据值。</p>
 <p>用三种术语来描述窗口左右边界的运动：</p>
 <ol>
@@ -495,7 +515,10 @@
 </ol>
 <p>当得到的ACK号增大而窗口大小保持不变时，我们就说窗口向前“滑动”。窗口大小可能减小，但是窗口的右边界不会左移，以此避免窗口收缩。</p>
 <p>接收端也维护一个窗口结构，但比发送端窗口简单。该窗口可以保证其接收数据的正确性。对接收端而言，到达序列号小于左窗口边界，被认为是重复数据而丢弃，超过右边界的则超出处理范围，也被丢弃。使用SACK选项，窗口内的其他报文段也可以被确认，但只有当数据序列号等于左边界时，窗口才能向前滑动。</p>
-<p><img src="/img/image-20200211141403330.png" alt="image-20200211141403330"></p>
+<p>
+  <img src="/img/image-20200211141403330.png" alt="image-20200211141403330">
+
+</p>
 <h4 id="542-零窗口与tcp持续计时器">5.4.2 零窗口与TCP持续计时器</h4>
 <p>TCP通过接收端的通告窗口来实现流量控制，当窗口值变为0时，可以阻止发送端继续发送数据。当接收端重新获得可用空间时，会给发送端传输一个窗口更新，告知其可继续发送数据。这样的窗口更新通常都不包含数据（纯ACK），不能保证其传输的可靠性。如果一个包含窗口更新的ACK丢失，通信双方都会一直处于等待状态，为了防止这种死锁发生，发送端会采用一个<strong>持续计时器</strong>查询接收端，看其窗口是否增长。持续计时器会触发<strong>窗口探测</strong>的传输，强制要求接收端返回ACK。窗口探测包含至少一个字节的数据（往往会捎带更多的数据），采用TCP可靠传输。其捎带的数据是否会被接收，取决于接收端的可用缓存空间大小。</p>
 <p>与TCP重传计时器类似，采用指数时间退避来计算持续计时器的超时。</p>
@@ -543,7 +566,10 @@ $$
 <li>当接收到一个好的ACK，cwnd重设为ssthresh</li>
 </ol>
 <p>若发生重传超时，则触发慢启动。</p>
-<p><img src="/img/image-20200213112734708.png" alt="image-20200213112734708"></p>
+<p>
+  <img src="/img/image-20200213112734708.png" alt="image-20200213112734708">
+
+</p>
 
 
                 
@@ -572,7 +598,7 @@ $$
             </div>
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -659,6 +685,8 @@ $$
                     
                     
                     
+            
+            
             
                 </ul>
 		<p class="copyright text-muted">

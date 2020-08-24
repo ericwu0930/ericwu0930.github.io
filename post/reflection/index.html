@@ -47,9 +47,6 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
-    <link rel="stylesheet" href="/css/syntax.css">
-    
-    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -67,13 +64,6 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
-
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -208,7 +198,7 @@
 
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -312,7 +302,10 @@
 <li>在运行时使用反射分析对象</li>
 <li>利用Method对象，实现类型程序指针的用途</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gezuw5nqiuj31hc0u0gqz.jpg" alt="反射"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gezuw5nqiuj31hc0u0gqz.jpg" alt="反射">
+
+</p>
 <p>Class类对象其实是类的字节码文件的对象，每个Class类对象中都会分为成员变量部分、构造方法部分以及成员方法部分，这几部分都被封装成了对象。</p>
 <p>举一例子说明反射的应用，在IDE中，我们输入一个对象，会出现这个对象各个方法的列表，这其实就是使用了反射机制。</p>
 <h3 id="21-获取class对象的方式">2.1 获取Class对象的方式</h3>
@@ -420,30 +413,30 @@
 <p>通过第一章的介绍，我们了解到注解的实质是一个接口，而这个接口中可以编写一些“属性”（其实就是接口的方法，只不过在注解这个语境下称谓属性）</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">//注解
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">@interface</span> Pro<span style="color:#f92672">{</span>
-    String <span style="color:#a6e22e">className</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    String <span style="color:#a6e22e">methodName</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    String <span style="color:#a6e22e">className</span><span style="color:#f92672">();</span>
+    String <span style="color:#a6e22e">methodName</span><span style="color:#f92672">();</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>我们知道通过反射可以在运行时候分析类的能力，那能否使用反射得到加载类上的注解呢？答案是肯定的，如下面这段代码所示，使用Class类中的getAnnotation()方法得到加在该类上的“注解”。然后调用注解的“属性”，获得“赋给属性的值。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Pro</span><span style="color:#f92672">(</span>className<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;cn.itcast.annotation.Demo1&#34;</span><span style="color:#f92672">,</span>methodName<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;show&#34;</span><span style="color:#f92672">)</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ReflectTest</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception<span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception<span style="color:#f92672">{</span>
         <span style="color:#75715e">//解析注解
 </span><span style="color:#75715e"></span>        <span style="color:#75715e">//获取该类的字节码问价对象
 </span><span style="color:#75715e"></span>        Class<span style="color:#f92672">&lt;</span>ReflectTest<span style="color:#f92672">&gt;</span> reflectTestClass<span style="color:#f92672">=</span>ReflectTest<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">;</span>
         <span style="color:#75715e">//获取注解对象
 </span><span style="color:#75715e"></span>        <span style="color:#75715e">//getAnnotation实际上在内存中生成了一个该注解接口的子类实现对象
-</span><span style="color:#75715e"></span>        Pro an<span style="color:#f92672">=</span>reflectTestClass<span style="color:#f92672">.</span><span style="color:#a6e22e">getAnnotation</span><span style="color:#f92672">(</span>Pro<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</span><span style="color:#75715e"></span>        Pro an<span style="color:#f92672">=</span>reflectTestClass<span style="color:#f92672">.</span><span style="color:#a6e22e">getAnnotation</span><span style="color:#f92672">(</span>Pro<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
         <span style="color:#75715e">//调用注解对象中定义的抽象方法，获取返回值
-</span><span style="color:#75715e"></span>        String className<span style="color:#f92672">=</span>an<span style="color:#f92672">.</span><span style="color:#a6e22e">className</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</span><span style="color:#75715e"></span>        String className<span style="color:#f92672">=</span>an<span style="color:#f92672">.</span><span style="color:#a6e22e">className</span><span style="color:#f92672">();</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>此处你心头可能会有疑惑，注解本质上是一个接口，那么调用getAnnotation()莫非得到的是一个接口对象？接口是不能实例化为对象的，因此答案显然是否定的。调用getAnnotation的过程实际上是创建了注解接口的实现类，然后根据该类上注解属性的值相应的实现注解的“属性”（方法），详见下面这段代码</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">//getAnnotation在内存中创建的接口的子类对象
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProImpl</span> <span style="color:#66d9ef">implements</span> Pro<span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">className</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">className</span><span style="color:#f92672">(){</span>
         <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;cn.itcast.annotation.Demo1&#34;</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
-    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">methodName</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">methodName</span><span style="color:#f92672">(){</span>
         <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;show&#34;</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
@@ -487,7 +480,7 @@
             </div>
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -574,6 +567,8 @@
                     
                     
                     
+            
+            
             
                 </ul>
 		<p class="copyright text-muted">

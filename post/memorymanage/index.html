@@ -47,9 +47,6 @@
     <link rel="stylesheet" href="/css/hux-blog.min.css">
 
     
-    <link rel="stylesheet" href="/css/syntax.css">
-    
-    
     <link rel="stylesheet" href="/css/zanshang.css">
     
     
@@ -67,13 +64,6 @@
     
     
     <script src="/js/hux-blog.min.js"></script>
-
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
 
     
     
@@ -208,7 +198,7 @@
 
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 post-container">
 
@@ -248,21 +238,36 @@
 <h2 id="1-虚拟内存">1. 虚拟内存</h2>
 <h3 id="11-页表">1.1 页表</h3>
 <p>虚拟内存的基本思想是：每个进程拥有独立的地址空间，这个空间被分为大小相等的多个块，称为<strong>页</strong>(Page)。这些页被映射到物理内存，在物理内存中对应的单元被称为<strong>页框</strong>，并不是所有的页都被放入主存中。为了建立从虚拟页到物理页之间的映射，我们需要一个名为<strong>页表</strong>的数据结构。</p>
-<p><img src="https://s2.ax1x.com/2020/03/08/3xbdvF.png" alt="3xbdvF.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/08/3xbdvF.png" alt="3xbdvF.png">
+
+</p>
 <p>另外，操作系统为了提供手段来控制对内存系统的访问，在页表上增添了权限位。因为每次CPU生成一个地址时，地址反映硬件都会读一个页表项，因此很有效的实现了对内存访问的控制。</p>
-<p><img src="https://s2.ax1x.com/2020/03/08/3xbDb9.png" alt="3xbDb9.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/08/3xbDb9.png" alt="3xbDb9.png">
+
+</p>
 <p>页面大小是操作系统可以选择的一个参数，页面过大或过小都不可以。</p>
 <p>如果页面过大，会使得内部碎片过多（分配的页面没有被充分使用）；如果页表过小，页表项势必会增多，从磁盘到内存传输页表的时间必然会增多，另外这也会使得TLB的命中率降低。</p>
 <h3 id="12-地址翻译">1.2 地址翻译</h3>
 <p>页表提供了从虚拟页到物理页的映射关系，那么如何实现从虚拟地址到物理地址的转换呢？</p>
-<p><img src="https://s2.ax1x.com/2020/03/08/3xb4DH.png" alt="3xb4DH.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/08/3xb4DH.png" alt="3xb4DH.png">
+
+</p>
 <p>实现地址翻译的是一个被被称为MMU的硬件单元，它接收CPU发出的虚拟地址指令，MMU通过计算得到页表项的地址，然后找到页表中的这个页表项，得到物理页号，将物理页号替代虚拟页号得到物理地址。</p>
-<p><img src="https://s2.ax1x.com/2020/03/08/3xboVA.png" alt="3xboVA.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/08/3xboVA.png" alt="3xboVA.png">
+
+</p>
 <h3 id="13-快表">1.3 快表</h3>
 <p>在MMU中集成一个快表，含有少量表项。将一个虚拟地址放入MMU中进行转换时，硬件首先通过将该虚拟页号与TLB中所有表象进行匹配，判断页面是否在其中。如果在，则将页框取出而不必访问页表；否则，会进行正常的页表查询，接着从TLB中淘汰一个表项，然后用新找到的页表项代替它。</p>
 <h3 id="14-多级页表">1.4 多级页表</h3>
 <p>考虑这样一个数字，对于一个32位的地址空间，4KB的页面大小和一个表项占4字节，则应该拥有2^32/2^12=2^20个表项，每个表项4字节，则该页表一共占有2^20*4=2^22=4MB，如果是64位系统则页表会更大。引入多级页表的原因是避免把全部页面一直保存在内存中。特别是那些从不需要的页表就不应该保留。</p>
-<p><img src="https://s2.ax1x.com/2020/03/08/3xbOxS.png" alt="3xbOxS.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/08/3xbOxS.png" alt="3xbOxS.png">
+
+</p>
 <h2 id="2-页面置换算法">2. 页面置换算法</h2>
 <ol>
 <li>
@@ -278,7 +283,10 @@
 <p>为了实现 LRU，需要在内存中维护一个所有页面的链表。当一个页面被访问时，将这个页面移到链表表头。这样就能保证链表表尾的页面是最近最久未访问的。</p>
 <p>因为每次访问都需要更新链表，因此这种方式实现的 LRU 代价很高。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">4，7，0，7，1，0，1，2，1，2，6
-</code></pre></div><p><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/eb859228-c0f2-4bce-910d-d9f76929352b.png" alt="img"></p>
+</code></pre></div><p>
+  <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/eb859228-c0f2-4bce-910d-d9f76929352b.png" alt="img">
+
+</p>
 </li>
 <li>
 <p><strong>先进先出（FIFO）</strong></p>
@@ -297,9 +305,15 @@
 <h3 id="41-纯分段的实现">4.1 纯分段的实现</h3>
 <p>虚拟内存采用的是分页技术，也就是将地址空间划分成固定大小的页，每一页再与内存进行映射。</p>
 <p>下图为一个编译器在编译过程中建立的多个表，有 4 个表是动态增长的，如果使用分页系统的一维地址空间，动态增长的特点会导致覆盖问题的出现。</p>
-<p><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/22de0538-7c6e-4365-bd3b-8ce3c5900216.png" alt="img"></p>
+<p>
+  <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/22de0538-7c6e-4365-bd3b-8ce3c5900216.png" alt="img">
+
+</p>
 <p>分段的做法是把每个表分成段，一个段构成一个独立的地址空间。每个段的长度可以不同，并且可以动态增长。</p>
-<p><img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/e0900bb2-220a-43b7-9aa9-1d5cd55ff56e.png" alt="img"></p>
+<p>
+  <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/e0900bb2-220a-43b7-9aa9-1d5cd55ff56e.png" alt="img">
+
+</p>
 <h3 id="42-段页式">4.2 段页式</h3>
 <p>程序的地址空间划分成多个拥有独立地址空间的段，每个段上的地址空间划分成大小相同的页。这样既拥有分段系统的共享和保护，又拥有分页系统的虚拟内存功能。</p>
 <p>在MULTICS系统中，一个地址由两部分构成：段和段内地址。段内地址又进一步分为页和页内的字。在进行内存访问时，执行下面的算法：</p>
@@ -310,8 +324,14 @@
 <li>把偏移量加到页面的起始地址上，得到要访问的字在内存中的地址</li>
 <li>最后进行读或写操作</li>
 </ol>
-<p><img src="https://s2.ax1x.com/2020/03/08/3xqnaR.png" alt="3xqnaR.png"></p>
-<p><img src="https://s2.ax1x.com/2020/03/08/3xqlRK.png" alt="3xqlRK.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/08/3xqnaR.png" alt="3xqnaR.png">
+
+</p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/08/3xqlRK.png" alt="3xqlRK.png">
+
+</p>
 <h3 id="43-分段与分页的比较">4.3 分段与分页的比较</h3>
 <ul>
 <li>对程序员的透明性：分页透明，但是分段需要程序员显式划分每个段。</li>
@@ -347,7 +367,7 @@
             </div>
             
             <div class="
-                col-lg-8 col-lg-offset-2
+                col-lg-11 col-lg-offset-1
                 col-md-10 col-md-offset-1
                 sidebar-container">
 
@@ -434,6 +454,8 @@
                     
                     
                     
+            
+            
             
                 </ul>
 		<p class="copyright text-muted">
