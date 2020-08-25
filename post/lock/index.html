@@ -21,9 +21,9 @@
     
 
     
-    <meta name="description" content="总结自《深入理解Java虚拟机》">
-    <meta property="og:description" content="总结自《深入理解Java虚拟机》" />
-    <meta property="twitter:description" content="总结自《深入理解Java虚拟机》" />
+    <meta name="description" content="Java内存模型 volatile关键字 线程安全 锁优化">
+    <meta property="og:description" content="Java内存模型 volatile关键字 线程安全 锁优化" />
+    <meta property="twitter:description" content="Java内存模型 volatile关键字 线程安全 锁优化" />
     
 
     
@@ -227,7 +227,12 @@
         <li><a href="#15--先行发生原则happens-before">1.5  先行发生原则（happens-before）</a></li>
       </ul>
     </li>
-    <li><a href="#2-锁优化">2. 锁优化</a></li>
+    <li><a href="#2-高效并发">2. 高效并发</a>
+      <ul>
+        <li><a href="#21-线程安全的实现方法">2.1 线程安全的实现方法</a></li>
+        <li><a href="#22-锁优化">2.2 锁优化</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
                 
@@ -335,14 +340,86 @@
 <li>传递性：A先行发生于B，B先行发生于C，A先行发生于C</li>
 </ol>
 <p>注：一个操作“时间上的先发生”不代表这个操作会“先行发生”。</p>
-<h2 id="2-锁优化">2. 锁优化</h2>
+<h2 id="2-高效并发">2. 高效并发</h2>
+<h3 id="21-线程安全的实现方法">2.1 线程安全的实现方法</h3>
+<h4 id="1-互斥同步">1. 互斥同步</h4>
+<p>同步是指在多个线程并发访问共享数据的时候，保证共享数据在同一时刻只被一个（或者一些线程使用）。而互斥是实现同步的一种手段。互斥是因，同步是果。</p>
+<p>在Java中常见的互斥同步手段就是synchronized关键字。synchronized 关键字修饰的代码块，在编译期会自动生成monitorenter和monitorexit这两个字节码指令，这两个字节码都需要一个reference类型的参数来指明要锁定和解锁的对象，在成员方法中默认是<code>this</code>，在静态方法中则默认是<code>.class</code>对象。而这个要被锁定的对象正是管程中的条件变量，只不过只有一个条件变量。</p>
+<p>Synchronized同步块对于同一条线程而言是可重入的，不会出现自己把自己锁死的问题。Java的线程都是映射到操作系统的原生线程之上的，阻塞或者唤醒一个线程都需要操作系统来帮忙完成，这就需要用户态到内核态的转换，这是相当耗时的。所以synchronized是Java语言中一个重量级的操作。</p>
+<p><img src="https://i.loli.net/2020/08/24/SvFOJ2bWpC79yrE.png" alt="管程"></p>
+<p>除了synchronized之外，我们还可以使用java.util.concurrent包中的重入锁（ReentrantLock）来实现同步。synchronized是jvm（原生语法层面的互斥锁），而另一个则是api层面的。除此之外ReentrantLock增加了一些高级特性。</p>
 <ol>
-<li>锁消除：JVM消除不必要的锁</li>
-<li>锁粗化：频繁地加锁解锁（特别是对循环块内加锁）很耗费性能，JVM会将锁范围扩大</li>
-<li>自旋锁：避免进入内核态，但是占用CPU时间，如果锁被占用的时间多自旋效果还是很好的</li>
-<li>偏向锁：在对象头Mark Word中指明该对象偏向于哪个线程，如果该线程对其进行访问，永远不需要进行同步</li>
-<li>轻量级锁：如果对象没有被锁定，虚拟机首先将在当前线程的栈帧中穿件一个名为锁记录Lock Record的空间，用于存储锁对象目前的Mark Word拷贝，然后使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针。如果这个更新成功了则获得锁，并且对象的Mark Word会变成轻量级锁。如果更新失败，JVM会检查对象的Mark Word是否指向当前线程的栈帧，如果是，则直接进入同步块继续执行，否则说明这个锁对象已经被其他线程抢占。如果有两条以上的线程争用这个锁，轻量级锁膨胀为重量级锁。</li>
+<li>等待可中断是指当持有锁的线程长期不释放时，正在等待的线程可以选择放弃等待，改为处理其他事情。</li>
+<li>公平锁：多个线程在等待同一个锁时，必须按照申请的时间顺序来依次获得锁；</li>
+<li>绑定多个条件变量：通过newCondition()方法可以绑定多个条件变量。</li>
 </ol>
+<h4 id="2-非阻塞同步">2. 非阻塞同步</h4>
+<p>通俗的说，先进行操作，如果没有其他线程竞争共享数据，操作就成功了；如果共享数据有争用，产生了冲突，那就采取其他补偿措施，比如不断的重试。</p>
+<p>非阻塞的同步需要需要硬件指令集的支持，因为我们需要操作和冲突检测这两个步骤都具有原子性，比如CAS（Compare-and-Swap）。</p>
+<p>CAS需要3个操作数，分别是内存位置、旧的预期值和新的预期值。CAS指令操作中，当且仅当V符合旧预期值的时，处理器用新值更新旧值。JDK1.5后支持了CAS，该操作由sun.misc.Unsafe类中的compareAndSwapInt()和compareAndSwapLong()等几个方法包装提供。</p>
+<p>Unsafe类不是提供给用户程序调用的类，但我们可以通过JUC包里的compareAndSet()和getAndIncrement()等方法使用Unsafe类的CAS操作。</p>
+<p>incrementAndGet()的jdk源码如下，可以看到incrementAndGet通过忙等，实现自增的操作。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">incrementAndGet</span><span style="color:#f92672">(){</span>
+    <span style="color:#66d9ef">for</span><span style="color:#f92672">(;;){</span>
+        <span style="color:#66d9ef">int</span> current <span style="color:#f92672">=</span> get<span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">int</span> next <span style="color:#f92672">=</span> current <span style="color:#f92672">+</span> 1<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>compareAndSet<span style="color:#f92672">(</span>current<span style="color:#f92672">,</span>next<span style="color:#f92672">))</span>
+            <span style="color:#66d9ef">return</span> next<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>CAS看起来尽管很美，但是可能会出现ABA的这种情况，也就是如果一个变量V初次读取的时候是A值，并且在准备赋值的时候检查到它仍然是A值，能排除它曾经是B然后被改为A么？为此JUC包提供了一个带有标记的原子引用类“AtomicStampedReference”，它可以通过控制变量的版本来保证CAS的正确性。</p>
+<h4 id="3-无同步方案threadlocal类">3. 无同步方案——ThreadLocal类</h4>
+<p>使共享数据在同一个线程中执行，例如Java中的ThreadLocal类。ThreadLocal类中可以设置一个线程独享的变量。其set函数如下所示。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>T value<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    Thread t <span style="color:#f92672">=</span> Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">();</span>
+    ThreadLocalMap map <span style="color:#f92672">=</span> getMap<span style="color:#f92672">(</span>t<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>map <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+        map<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">,</span> value<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">else</span>
+        createMap<span style="color:#f92672">(</span>t<span style="color:#f92672">,</span> value<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>其中ThreadLocalMap是ThreadMap的一个内部类，也是Thread对象的一个成员变量。而ThreadLocalMap实质是一个Entry数组即Entry[]，而Entry继承自WeakReference&lt;ThreadLocal&lt;?&raquo;。Entry的定义如下，可以看到一个Entry其实是一个k-v对，其中k是一个指向ThreadLocal对象的弱引用。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Entry</span> <span style="color:#66d9ef">extends</span> WeakReference<span style="color:#f92672">&lt;</span>ThreadLocal<span style="color:#f92672">&lt;?&gt;&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#75715e">/** The value associated with this ThreadLocal. */</span>
+    Object value<span style="color:#f92672">;</span>
+
+    Entry<span style="color:#f92672">(</span>ThreadLocal<span style="color:#f92672">&lt;?&gt;</span> k<span style="color:#f92672">,</span> Object v<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span>k<span style="color:#f92672">);</span>
+        value <span style="color:#f92672">=</span> v<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>为什么这里要使用弱引用呢？弱引用指向的对象的特性是遇到gc就会被回收。当我们创建一个<code>ThreadLocal t1=new ThreadLocal()</code>，并且<code>set</code>了一个对象时，内存图如下所示：</p>
+<p><img src="https://i.loli.net/2020/08/25/F3hOIXmriq4fdHe.png" alt="image-20200825191637807"></p>
+<p>如果没有了指向ThreadLocal对象的引用时候，ThreadLocal对象不会因为还有ThreadLocalMap指向的引用而无法释放导致内存泄漏。但同时也有一个问题，即value所指的对象不会释放，所以要记住使用t1.remove()删除ThreadLocalMap中的记录。</p>
+<h3 id="22-锁优化">2.2 锁优化</h3>
+<p>Java的锁优化是对synchronized加锁的优化。</p>
+<h4 id="1-自旋锁">1. 自旋锁</h4>
+<p>在互斥同步中，对线程的挂起和恢复需要转入内核态中完成，这些操作给系统的并发性能带来了很大的压力。如果共享数据的锁定状态只会持续很短的时间，为了这段时间去挂起和恢复线程并不值得。此时，我们可以让等待线程执行一个忙循环来等待。</p>
+<p>如果锁被占用的时间很短，自选等待的效果会很好，反之，如果锁被占用的时间很长，则自选的线程会白白浪费消耗处理器的资源，因此会有一个自旋上限。</p>
+<h4 id="2-锁消除">2. 锁消除</h4>
+<p>锁消除主要基于逃逸分析的数据支持，如果判断在一段代码中，堆上的所有数据都不会逃逸出去从而被其他线程访问到，就可以把它当做栈上数据对待，同步加锁操作自然就无需进行。比如下面这个例子</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">concatString</span><span style="color:#f92672">(</span>String s1<span style="color:#f92672">,</span> String s2<span style="color:#f92672">,</span> String s3<span style="color:#f92672">){</span>
+    <span style="color:#66d9ef">return</span> s1<span style="color:#f92672">+</span>s2<span style="color:#f92672">+</span>s3<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>在jdk1.5之前，该语句会转换成如下，StringBuffer是一个线程安全的类，也就意味着以下三个append语句都是加锁的。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">StringBuffer sb <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> StringBuffer<span style="color:#f92672">();</span>
+sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s1<span style="color:#f92672">);</span>
+sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s2<span style="color:#f92672">);</span>
+sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s3<span style="color:#f92672">);</span>
+<span style="color:#66d9ef">return</span> sb<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">();</span>
+</code></pre></div><p>然而sb对象是不会逃逸到concatString方法之外的，其他线程无法访问它，因此就会把此处的加锁去除。</p>
+<h4 id="3-锁粗化">3. 锁粗化</h4>
+<p>频繁地加锁解锁（特别是对循环块内加锁）很耗费性能，JVM会将锁范围扩大</p>
+<h4 id="4-轻量级锁">4. 轻量级锁</h4>
+<p><img src="https://i.loli.net/2020/08/25/d9FoWjvRgzKeaZh.png" alt="image-20200825200521386"></p>
+<p>如果对象没有被锁定，虚拟机首先将在当前线程的栈帧中创建一个名为锁记录Lock Record的空间，用于存储锁对象目前的Mark Word拷贝，然后使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针。如果这个更新成功了则获得锁，并且对象的Mark Word会变成轻量级锁。如果更新失败，JVM会检查对象的Mark Word是否指向当前线程的栈帧，如果是，则直接进入同步块继续执行，否则说明这个锁对象已经被其他线程抢占。如果有两条以上的线程争用这个锁，轻量级锁膨胀为重量级锁。</p>
+<p><img src="https://i.loli.net/2020/08/25/Mmp4Oz1qeXt3wks.png" alt="image-20200825195501315"></p>
+<p>解锁过程也是通过CAS操作来进行的，如果对象的Mark Word仍然指向着线程的锁记录，那就用CAS操作把对象的当前Mark Word和线程中复制的Displaced Mark Word替换回来，如果替换成功，整个同步过程就完成了。</p>
+<h4 id="5-偏向锁">5. 偏向锁</h4>
+<p>如果说轻量级锁是在无竞争的情况下使用CAS操作去消除同步使用的互斥量，那偏向锁就是在无竞争的情况下把整个同步都消除掉，连CAS操作都不做。</p>
+<p>当锁对象第一次被线程获取的时候，虚拟机会把对象头中的标志位设为“01”，即偏向模式。同时使用CAS操作把获取到这个锁的线程ID记录在对象的Mark Word之中，如果CAS获取成功，持有偏向锁的线程以后每次进入这个锁相关的同步块时，虚拟机都可以不再进行任何同步操作。</p>
+<p>当有另外线程试图获取这个锁时，偏向锁模式就宣告结束。偏向锁、轻量级锁的状态转化及对象Mark Word的关系如图所示。</p>
+<p><img src="https://i.loli.net/2020/08/25/vSGLlka1Meinxs4.png" alt="image-20200825200504125"></p>
 
 
                 
