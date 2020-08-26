@@ -251,7 +251,8 @@
 </span><span style="color:#75715e">*唯一缺点：不管你用不用，都会被加载 Class.forName() 因为INSTANCE是静态变量，所以会被执行
 </span><span style="color:#75715e">**/</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr01</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Mgr01 INSTANCE <span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr01<span style="color:#f92672">();</span>
+    <span style="color:#75715e">// 虚拟机会保证一个类的&lt;clinit&gt;方法在多线程环境中能够被正确的加锁、同步，如果多个线程同时去初始化一个类，那么只会有一个线程执行&lt;clinit&gt;()方法完毕。
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Mgr01 INSTANCE <span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr01<span style="color:#f92672">();</span>
     <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr01</span><span style="color:#f92672">(){};</span>
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr01 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(){</span> <span style="color:#66d9ef">return</span> INSTANCE<span style="color:#f92672">;</span> <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
