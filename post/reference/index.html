@@ -297,8 +297,8 @@ ReferenceQueue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef"
         value <span style="color:#f92672">=</span> v<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
-</code></pre></div><p>可以看到，该类继承了WeakReference，并且在初始化时把一个弱引用指向了一个ThreadLocal对象作为Key值，使用弱引用的原因与上面Vector容器的例子是类似的，是为了防止内存泄漏。如果没有强引用指向ThreadLocal对象时，ThreadLocal对象可以被回收。</p>
-<p><img src="https://s2.ax1x.com/2020/03/11/8kmplj.png" alt="8kmplj.png"></p>
+</code></pre></div><p>该类继承了WeakReference，并且在初始化时把一个弱引用指向了一个ThreadLocal对象作为Key值，也就是说Entry其实是一个k-v对，使用弱引用的原因与上面Vector容器的例子是类似的，是为了防止内存泄漏。如果没有强引用指向ThreadLocal对象时，ThreadLocal对象可以被回收。</p>
+<p><img src="https://i.loli.net/2020/08/25/F3hOIXmriq4fdHe.png" alt="image-20200825191637807"></p>
 <p>但是ThreadLocal中同样会存在一个，当指向ThreadLocal对象的强引用消失后，ThreadLocal对象会被回收，但是ThreadLocalMap这一结构还存在，并且之前的记录还会存在且Value指向了一个对象，因此一个好习惯是不再是要用ThreadLocal对象时，使用tl.remove()将该条记录删除。</p>
 </li>
 <li>
