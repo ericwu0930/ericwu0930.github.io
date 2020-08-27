@@ -222,11 +222,11 @@
     <li><a href="#2-tcp头部和封装">2. TCP头部和封装</a></li>
     <li><a href="#3-tcp连接管理">3. TCP连接管理</a>
       <ul>
-        <li><a href="#31-为什么是三次握手"><strong>3.1 为什么是三次握手</strong>？</a></li>
-        <li><a href="#32-为什么是四次挥手"><strong>3.2 为什么是四次挥手</strong>？</a></li>
-        <li><a href="#33-连接建立超时"><strong>3.3 连接建立超时</strong></a></li>
-        <li><a href="#34-初始序列号"><strong>3.4 初始序列号</strong></a></li>
-        <li><a href="#35-tcp状态转换"><strong>3.5 TCP状态转换</strong></a></li>
+        <li><a href="#31-为什么是三次握手">3.1 为什么是三次握手？</a></li>
+        <li><a href="#32-为什么是四次挥手">3.2 为什么是四次挥手？</a></li>
+        <li><a href="#33-连接建立超时">3.3 连接建立超时</a></li>
+        <li><a href="#34-初始序列号">3.4 初始序列号</a></li>
+        <li><a href="#35-tcp状态转换">3.5 TCP状态转换</a></li>
         <li><a href="#36-重置报文段">3.6 重置报文段</a></li>
         <li><a href="#37-tcp的路径最大传输单元发现">3.7 TCP的路径最大传输单元发现</a></li>
         <li><a href="#38-syn泛洪攻击原理">3.8 syn泛洪攻击原理</a></li>
@@ -234,22 +234,22 @@
     </li>
     <li><a href="#4-tcp超时与重传">4. TCP超时与重传</a>
       <ul>
-        <li><a href="#41-带时间戳选项的rtt测量"><strong>4.1 带时间戳选项的RTT测量</strong></a></li>
-        <li><a href="#42-设置重传超时rto"><strong>4.2 设置重传超时（RTO）</strong></a></li>
-        <li><a href="#43-基于计时器的重传"><strong>4.3 基于计时器的重传</strong></a></li>
-        <li><a href="#44-快速重传"><strong>4.4 快速重传</strong></a></li>
-        <li><a href="#45-带选择确认的重传"><strong>4.5 带选择确认的重传</strong></a></li>
-        <li><a href="#46-伪超时与重传"><strong>4.6 伪超时与重传</strong></a></li>
-        <li><a href="#47-包失序"><strong>4.7 包失序</strong></a></li>
-        <li><a href="#48-重复"><strong>4.8 重复</strong></a></li>
+        <li><a href="#41-带时间戳选项的rtt测量">4.1 带时间戳选项的RTT测量</a></li>
+        <li><a href="#42-设置重传超时rto">4.2 设置重传超时（RTO）</a></li>
+        <li><a href="#43-基于计时器的重传">4.3 基于计时器的重传</a></li>
+        <li><a href="#44-快速重传">4.4 快速重传</a></li>
+        <li><a href="#45-带选择确认的重传">4.5 带选择确认的重传</a></li>
+        <li><a href="#46-伪超时与重传">4.6 伪超时与重传</a></li>
+        <li><a href="#47-包失序">4.7 包失序</a></li>
+        <li><a href="#48-重复">4.8 重复</a></li>
         <li><a href="#49-重新组包">4.9 重新组包</a></li>
       </ul>
     </li>
     <li><a href="#5-tcp数据流与窗口管理">5. TCP数据流与窗口管理</a>
       <ul>
-        <li><a href="#51-交互式通信"><strong>5.1 交互式通信</strong></a></li>
-        <li><a href="#52-延时确认"><strong>5.2 延时确认</strong></a></li>
-        <li><a href="#53-nagle算法"><strong>5.3 Nagle算法</strong></a></li>
+        <li><a href="#51-交互式通信">5.1 交互式通信</a></li>
+        <li><a href="#52-延时确认">5.2 延时确认</a></li>
+        <li><a href="#53-nagle算法">5.3 Nagle算法</a></li>
         <li><a href="#54-流量控制与窗口管理">5.4 流量控制与窗口管理</a></li>
       </ul>
     </li>
@@ -417,7 +417,7 @@
 </ol>
 <h3 id="38-syn泛洪攻击原理">3.8 syn泛洪攻击原理</h3>
 <p>这种攻击中一个或多个客户端通过伪装随机的ip地址，产生一系列TCP连接尝试（SYN报文段），并将它们发送给一台服务器。服务器收到连接请求，将此信息加入到未连接队列，并发送请求包给客户，此时进入SYN_RECV状态。当服务器未收到客户端的确认包时，重发请求包，一直到超时，才将此条目从连接队列中删除。</p>
-<p>防御措施有syn cookie；syn cookie是对TCP服务器端的三次握手协议做了一些修改，在TCP服务器收到TCP syn包并返回syn+ack包时，不分配一个专门的内存，而是根据这个syn包计算出一个cookie值，在收到ack包后，tcp服务器再根据那个cookie值检查这个ack包的合法性，如果合法，再分配内存用来处理这个tcp连接。</p>
+<p>防御措施有syn cookie；syn cookie是对TCP服务器端的三次握手协议做了一些修改，在TCP服务器收到TCP syn包并返回syn+ack包时，不分配一个专门的内存，而是根据这个syn包的必要信息（客户端ip地址、端口号等）计算出一个cookie值，将这个值作为tcp服务器端的初始序列号。当服务器端收到客户端发回来的ACK包时，会重新根据客户端ip地址、端口号等计算cookie值，如果该cookie值+1等于ACK，则证明本次连接合法。</p>
 <h2 id="4-tcp超时与重传">4. TCP超时与重传</h2>
 <p>有两种方式的重传：第一种称为基于计时器的<strong>超时重传</strong>，TCP在发送数据时会设置一个计时器，并设置一个阈值（RTO）若计时器超时时仍未收到数据确认信息，则会引发超时重传。另一种方式称为<strong>快速重传</strong>，若TCP累计确认无法返回新的ACK，或者当ACK包含选择确认信息表明出现失序报文段时，发送端会推断出丢包的范围并且进行重传。</p>
 <h3 id="41-带时间戳选项的rtt测量"><strong>4.1 带时间戳选项的RTT测量</strong></h3>

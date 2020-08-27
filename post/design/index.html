@@ -252,20 +252,20 @@
 </span><span style="color:#75715e">**/</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr01</span><span style="color:#f92672">{</span>
     <span style="color:#75715e">// 虚拟机会保证一个类的&lt;clinit&gt;方法在多线程环境中能够被正确的加锁、同步，如果多个线程同时去初始化一个类，那么只会有一个线程执行&lt;clinit&gt;()方法完毕。
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Mgr01 INSTANCE <span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr01<span style="color:#f92672">();</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr01</span><span style="color:#f92672">(){};</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr01 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(){</span> <span style="color:#66d9ef">return</span> INSTANCE<span style="color:#f92672">;</span> <span style="color:#f92672">}</span>
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Mgr01 INSTANCE <span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr01<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr01</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr01 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span> <span style="color:#66d9ef">return</span> INSTANCE<span style="color:#f92672">;</span> <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 <span style="color:#75715e">/**
 </span><span style="color:#75715e">*懒汉式
 </span><span style="color:#75715e">*克服了饿汉式，但线程不安全
 </span><span style="color:#75715e">**/</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr03</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr03</span><span style="color:#f92672">(){};</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr03</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
     <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Mgr03 INSTANCE<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr03 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(){</span>
-        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">==</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
-            INSTANCE<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr03<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr03 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+            INSTANCE<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr03<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         <span style="color:#66d9ef">return</span> INSTANCE<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
@@ -274,11 +274,11 @@
 </span><span style="color:#75715e">*效率降低
 </span><span style="color:#75715e">**/</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr04</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr04</span><span style="color:#f92672">(){};</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr04</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
     <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Mgr04 INSTANCE<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">synchronized</span> Mgr04 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(){</span>
-        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">==</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
-            INSTANCE<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr03<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">synchronized</span> Mgr04 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+            INSTANCE<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr03<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         <span style="color:#66d9ef">return</span> INSTANCE<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
@@ -287,12 +287,12 @@
 </span><span style="color:#75715e">*较完美的写法
 </span><span style="color:#75715e">**/</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr06</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr04</span><span style="color:#f92672">(){};</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr04</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
     <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Mgr04 INSTANCE<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr04 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(){</span>
-        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">==</span><span style="color:#66d9ef">null</span><span style="color:#f92672">){</span> <span style="color:#75715e">//双锁检查
-</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">synchronized</span><span style="color:#f92672">(</span>Mgr04<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">){</span>
-                <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">==</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr04 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span> <span style="color:#75715e">//双锁检查
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">synchronized</span><span style="color:#f92672">(</span>Mgr04<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>INSTANCE<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
                     INSTANCE<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr06<span style="color:#f92672">;</span>
             <span style="color:#f92672">}</span>
         <span style="color:#f92672">}</span>
@@ -305,11 +305,11 @@
 </span><span style="color:#75715e">*加载Mgr07时，并不会加载其内部类
 </span><span style="color:#75715e">**/</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr07</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr07</span><span style="color:#f92672">(){};</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr07</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
     <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mgr07Holder</span><span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> Mgr07 INSTANCE<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr07<span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> Mgr07 INSTANCE<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Mgr07<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr07 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(){</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Mgr07 <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
         <span style="color:#66d9ef">return</span> Mgr07Holder<span style="color:#f92672">.</span><span style="color:#a6e22e">INSTANCE</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
@@ -319,7 +319,7 @@
 </span><span style="color:#75715e">**/</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> Mgr08<span style="color:#f92672">{</span>
     INSTANCE<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr08</span><span style="color:#f92672">(){};</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Mgr08</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><h2 id="二strategy策略模式">二、Strategy策略模式</h2>
 <p>策略模式有两点主要思想，其一是<strong>将变化部分与不变部分分离</strong>，其二是<strong>面向接口编程而不是面向实现编程</strong>，以《Head First设计模式》中的例子，可以比较清晰的阐述清楚以上两点。</p>
@@ -335,11 +335,11 @@
 <p>所以话说回来，到底什么是<strong>策略模式</strong>呢？以及在何时使用该模式呢？我的理解是当完成一件事情可以有多种策略（或者说成方法更好理解）时，就可以使用策略模式，其主要步骤是将该行为分离抽象为接口，完成该方法的不同策略实现这个接口，然后在拥有该行为的类中声明该接口的变量，指向实际的类。</p>
 <p>举个例子，在学Java基础时，我们一定对Comparator以及Comparable这两个比较器接口不陌生，但是身边很多同学不理解这两个接口到底有什么区别。我个人的理解，Comparable就像是Flyable或者Quackable这类接口，我们需要为每一种需要比较的类写其实现，行为的实现还是和类牢牢的绑定在一起。而Comparator则是真真切切使用了<strong>策略模式</strong>的思想，关于比较这一行为，有不同的策略，拿人来说，可以以高矮进行比较，也可以拿胖瘦进行比较，我们完全可以通过实现Comparator这个接口，实现这些策略，然后传入到Sort类中进行比较，这大大提高了程序的弹性，这也就是<strong>策略模式</strong>的魅力所在</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Comparable</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compareTo</span><span style="color:#f92672">(</span>T o<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compareTo</span><span style="color:#f92672">(</span>T o<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Comparator</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compare</span><span style="color:#f92672">(</span>T o1<span style="color:#f92672">,</span> T o2<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compare</span><span style="color:#f92672">(</span>T o1<span style="color:#f92672">,</span> T o2<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><h2 id="三工厂模式">三、工厂模式</h2>
 <p>任何可以产生对象的方法或类，都可以称之为工厂。单例也是一种工厂，为什么有了new之后，还要有工厂？是为了灵活控制生产过程，权限、修饰、日志等。</p>
@@ -351,16 +351,16 @@
 <p>下图中，Factory 有一个 doSomething() 方法，这个方法需要用到一个产品对象，这个产品对象由 factoryMethod() 方法创建。该方法是抽象的，需要由子类去实现。</p>
 <p><img src="https://s2.ax1x.com/2020/03/04/3o4x3D.png" alt="3o4x3D.png"></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Factory</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> Product <span style="color:#a6e22e">factoryMethod</span><span style="color:#f92672">();</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doSomething</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
-        Product product <span style="color:#f92672">=</span> factoryMethod<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> Product <span style="color:#a6e22e">factoryMethod</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doSomething</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Product product <span style="color:#f92672">=</span> factoryMethod<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         <span style="color:#75715e">// do something with the product (产品的使用)
 </span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ConcreteFactory</span> <span style="color:#66d9ef">extends</span> Factory<span style="color:#f92672">{</span>
     <span style="color:#a6e22e">@Override</span>
-    <span style="color:#66d9ef">public</span> Product <span style="color:#a6e22e">factoryMethod</span><span style="color:#f92672">(){</span>
-        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ConcreteProduct<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">public</span> Product <span style="color:#a6e22e">factoryMethod</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ConcreteProduct<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>可以看到，工厂方法帮助我们将产品的“实现”从“使用”中解耦，如果增加产品或者改变产品的实现，并不会影响到产品的使用。</p>
@@ -372,12 +372,12 @@
 <p>抽象工厂提供一个接口，用于创建一类产品族。</p>
 <p><img src="https://s2.ax1x.com/2020/03/04/3o5mvQ.png" alt="3o5mvQ.png"></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">AbstractFactory</span><span style="color:#f92672">{</span>
-    AbstractProductA <span style="color:#a6e22e">createProductA</span><span style="color:#f92672">();</span>
-    AbstractProductB <span style="color:#a6e22e">createProductB</span><span style="color:#f92672">();</span>
+    AbstractProductA <span style="color:#a6e22e">createProductA</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    AbstractProductB <span style="color:#a6e22e">createProductB</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> ConcreteFactory1 <span style="color:#66d9ef">implements</span> AbstractFactory<span style="color:#f92672">{</span>
-    AbstractProductA <span style="color:#a6e22e">createProductA</span><span style="color:#f92672">(){</span> <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ProductA1<span style="color:#f92672">();</span> <span style="color:#f92672">}</span>
-    AbstractProductB <span style="color:#a6e22e">createProductB</span><span style="color:#f92672">(){</span> <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ProductB1<span style="color:#f92672">();</span> <span style="color:#f92672">}</span>
+    AbstractProductA <span style="color:#a6e22e">createProductA</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span> <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ProductA1<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span> <span style="color:#f92672">}</span>
+    AbstractProductB <span style="color:#a6e22e">createProductB</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span> <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ProductB1<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span> <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>抽象工厂的每个方法实际上看起来都是工厂方法。每个方法都声明为抽象的，而子类的方法覆盖这些方法来创建某些对象。</p>
 <h2 id="四责任链">四、责任链</h2>
@@ -403,25 +403,25 @@
 <p>另外举个例子，我们在设计project时，总是要自己定义一些异常类，这里我们常常会使用装饰者模式，实现代码和类关系如下所示</p>
 <p>定义接口</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CommonError</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">();</span>
-    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">();</span>
-    <span style="color:#66d9ef">public</span> CommonError <span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>String errMsg<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> CommonError <span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>String errMsg<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>定义本体，本体是一个枚举类，对于枚举类的理解可以看这个博客https://www.cnblogs.com/panchanggui/p/10318368.html，其核心是，枚举类中可以定义一些成员对象。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> EmBusinessError <span style="color:#66d9ef">implements</span> CommonError<span style="color:#f92672">{</span>
     <span style="color:#75715e">// 通用错误类型00001
-</span><span style="color:#75715e"></span>    PARAMETER_VALIDATION_ERROR<span style="color:#f92672">(</span>10001<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;参数不合法&#34;</span><span style="color:#f92672">),</span>
+</span><span style="color:#75715e"></span>    PARAMETER_VALIDATION_ERROR<span style="color:#f92672">(</span>10001<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;参数不合法&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
 
-    UNKNOWN_ERROR<span style="color:#f92672">(</span>10002<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;未知错误&#34;</span><span style="color:#f92672">),</span>
+    UNKNOWN_ERROR<span style="color:#f92672">(</span>10002<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;未知错误&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
 
     <span style="color:#75715e">// 10000开头为用户信息相关错误定义
-</span><span style="color:#75715e"></span>    USER_NOT_EXIST<span style="color:#f92672">(</span>20001<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;用户不存在&#34;</span><span style="color:#f92672">),</span>
+</span><span style="color:#75715e"></span>    USER_NOT_EXIST<span style="color:#f92672">(</span>20001<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;用户不存在&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
 
-    STOCK_NOT_ENOUGH<span style="color:#f92672">(</span>30001<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;库存不足&#34;</span><span style="color:#f92672">),</span>
+    STOCK_NOT_ENOUGH<span style="color:#f92672">(</span>30001<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;库存不足&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
 
-    USER_LOGIN_FAIL<span style="color:#f92672">(</span>20002<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;用户手机号或密码不正确&#34;</span><span style="color:#f92672">);</span>
+    USER_LOGIN_FAIL<span style="color:#f92672">(</span>20002<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;用户手机号或密码不正确&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 
-    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">EmBusinessError</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> errCode<span style="color:#f92672">,</span>String errMsg<span style="color:#f92672">){</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">EmBusinessError</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> errCode<span style="color:#f92672">,</span>String errMsg<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
         <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">errCode</span><span style="color:#f92672">=</span>errCode<span style="color:#f92672">;</span>
         <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">errMsg</span><span style="color:#f92672">=</span>errMsg<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
@@ -430,10 +430,10 @@
     <span style="color:#66d9ef">private</span> String errMsg<span style="color:#f92672">;</span>
     
     <span style="color:#a6e22e">@Override</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> errCode<span style="color:#f92672">;}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> errCode<span style="color:#f92672">;</span><span style="color:#f92672">}</span>
 
     <span style="color:#a6e22e">@Override</span>
-    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> errMsg<span style="color:#f92672">;}</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> errMsg<span style="color:#f92672">;</span><span style="color:#f92672">}</span>
 
     <span style="color:#a6e22e">@Override</span>
     <span style="color:#66d9ef">public</span> CommonError <span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>String errMsg<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
@@ -448,27 +448,27 @@
     <span style="color:#66d9ef">private</span> CommonError commonError<span style="color:#f92672">;</span>
 
     <span style="color:#75715e">// 直接接收EmBusinessError的传参用于构造异常异常
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">BusinessException</span><span style="color:#f92672">(</span>CommonError commonError<span style="color:#f92672">){</span>
-        <span style="color:#66d9ef">super</span><span style="color:#f92672">();</span>
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">BusinessException</span><span style="color:#f92672">(</span>CommonError commonError<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">=</span>commonError<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 
     <span style="color:#75715e">// 接收自定义errMsg的方式构造业务异常
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">BusinessException</span><span style="color:#f92672">(</span>CommonError commonError<span style="color:#f92672">,</span>String errMsg<span style="color:#f92672">){</span>
-        <span style="color:#66d9ef">super</span><span style="color:#f92672">();</span>
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">BusinessException</span><span style="color:#f92672">(</span>CommonError commonError<span style="color:#f92672">,</span>String errMsg<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">=</span>commonError<span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>errMsg<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>errMsg<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 
         <span style="color:#a6e22e">@Override</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">();}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getErrorCode</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span><span style="color:#f92672">}</span>
 
     <span style="color:#a6e22e">@Override</span>
-    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">();}</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span><span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getErrorMsg</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span><span style="color:#f92672">}</span>
 
     <span style="color:#a6e22e">@Override</span>
     <span style="color:#66d9ef">public</span> CommonError <span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>String errMsg<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>errMsg<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commonError</span><span style="color:#f92672">.</span><span style="color:#a6e22e">setErrorMsg</span><span style="color:#f92672">(</span>errMsg<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
@@ -493,16 +493,16 @@
 </ul>
 <p>需要了解两个类：Proxy代理，InvocationHandler调用处理程序</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">//InvocationHandler中只有一个方法
-</span><span style="color:#75715e"></span>Object <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Object proxy<span style="color:#f92672">,</span> Method method<span style="color:#f92672">,</span> Object<span style="color:#f92672">[]</span> args<span style="color:#f92672">);</span>
+</span><span style="color:#75715e"></span>Object <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Object proxy<span style="color:#f92672">,</span> Method method<span style="color:#f92672">,</span> Object<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 <span style="color:#75715e">//proxy为调用方法的代理对象
-</span><span style="color:#75715e">//method是调用方法的一个反射
-</span><span style="color:#75715e">//args则是调用方法的参数
-</span><span style="color:#75715e">//InvocationHandler将请求转发给RealSubject,因此实现InvocationHandler的类中应该持有被代理的对象
+</span><span style="color:#75715e"></span><span style="color:#75715e">//method是调用方法的一个反射
+</span><span style="color:#75715e"></span><span style="color:#75715e">//args则是调用方法的参数
+</span><span style="color:#75715e"></span><span style="color:#75715e">//InvocationHandler将请求转发给RealSubject,因此实现InvocationHandler的类中应该持有被代理的对象
 </span></code></pre></div><p>Proxy提供了用于创建动态代理实例的静态方法。该类中使用一个静态方法newProxyInstance返回代理对象。该方法需要传入三个参数。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Object <span style="color:#a6e22e">newProxyInstance</span><span style="color:#f92672">(</span>ClassLoader loader<span style="color:#f92672">,</span> Class<span style="color:#f92672">&lt;?&gt;[]</span> interfaces<span style="color:#f92672">,</span> InvocationHandler h<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IllegalArgumentException
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Object <span style="color:#a6e22e">newProxyInstance</span><span style="color:#f92672">(</span>ClassLoader loader<span style="color:#f92672">,</span> Class<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span> interfaces<span style="color:#f92672">,</span> InvocationHandler h<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IllegalArgumentException
 <span style="color:#75715e">//loader为一个ClassLoader对象，定义了由哪个ClassLoader对象来对生成的代理对象进行加载
-</span><span style="color:#75715e">//interfaces:为一个Interface对象的数组，表示的是我将要给我需要代理的对象提供一组什么接口，如果我提供了一组接口给它，那么这个代理对象就宣称实现了该接口(多态)，这样我就能调用这组接口中的方法了
-</span><span style="color:#75715e">//h为一个InvocationHandler对象，表示的是当我这个动态代理对象在调用方法的时候，会关联到哪一个InvocationHandler对象上
+</span><span style="color:#75715e"></span><span style="color:#75715e">//interfaces:为一个Interface对象的数组，表示的是我将要给我需要代理的对象提供一组什么接口，如果我提供了一组接口给它，那么这个代理对象就宣称实现了该接口(多态)，这样我就能调用这组接口中的方法了
+</span><span style="color:#75715e"></span><span style="color:#75715e">//h为一个InvocationHandler对象，表示的是当我这个动态代理对象在调用方法的时候，会关联到哪一个InvocationHandler对象上
 </span></code></pre></div><p>设计动态代理类</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProxyInvocationHandler</span> <span style="color:#66d9ef">implements</span> InvocationHandler <span style="color:#f92672">{</span>
     
@@ -511,24 +511,24 @@
         <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">rent</span> <span style="color:#f92672">=</span> rent<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 
-    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">getProxy</span><span style="color:#f92672">(){</span>
-        <span style="color:#66d9ef">return</span> Proxy<span style="color:#f92672">.</span><span style="color:#a6e22e">newProxyInstance</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">(),</span>
-                                      rent<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getInterfaces</span><span style="color:#f92672">(),</span><span style="color:#66d9ef">this</span><span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">getProxy</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> Proxy<span style="color:#f92672">.</span><span style="color:#a6e22e">newProxyInstance</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
+                                      rent<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getInterfaces</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span><span style="color:#66d9ef">this</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
     
-    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Object proxy<span style="color:#f92672">,</span> Method method<span style="color:#f92672">,</span> Object<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Throwable <span style="color:#f92672">{</span>
-        seeHouse<span style="color:#f92672">();</span>
-        fare<span style="color:#f92672">();</span>
-        Object invoke <span style="color:#f92672">=</span> method<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>rent<span style="color:#f92672">,</span> args<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Object proxy<span style="color:#f92672">,</span> Method method<span style="color:#f92672">,</span> Object<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Throwable <span style="color:#f92672">{</span>
+        seeHouse<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        fare<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        Object invoke <span style="color:#f92672">=</span> method<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>rent<span style="color:#f92672">,</span> args<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         <span style="color:#66d9ef">return</span> invoke<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">seeHouse</span><span style="color:#f92672">(){</span>
-        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;中介带看&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">seeHouse</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;中介带看&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fare</span><span style="color:#f92672">(){</span>
-        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;收中介费&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fare</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;收中介费&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div>
