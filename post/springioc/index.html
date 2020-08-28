@@ -253,7 +253,7 @@
 <p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf2izzw44sj30k00la0tk.jpg" alt="img"></p>
 <p>这里我们再把轮胎尺寸变成动态的，同样为了让整个系统顺利运行，我们需要做如下修改：</p>
 <p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf2j03ntg0j30k00l70tm.jpg" alt="img"></p>
-<p>看到没？这里**我只需要修改轮胎类就行了，不用修改其他任何上层类。<strong>这显然是更容易维护的代码。不仅如此，在实际的工程中，这种设计模式还有利于</strong>不同组的协同合作和单元测试：**比如开发这四个类的分别是四个不同的组，那么只要定义好了接口，四个不同的组可以同时进行开发而不相互受限制；而对于单元测试，如果我们要写Car类的单元测试，就只需要Mock一下Framework类传入Car就行了，而不用把Framework, Bottom, Tire全部new一遍再来构造Car。</p>
+<p>看到没？这里<strong>我只需要修改轮胎类就行了，不用修改其他任何上层类</strong>。这显然是更容易维护的代码。不仅如此，在实际的工程中，这种设计模式还有利于**不同组的协同合作和单元测试：**比如开发这四个类的分别是四个不同的组，那么只要定义好了接口，四个不同的组可以同时进行开发而不相互受限制；而对于单元测试，如果我们要写Car类的单元测试，就只需要Mock一下Framework类传入Car就行了，而不用把Framework, Bottom, Tire全部new一遍再来构造Car。</p>
 <p>这里我们是采用的<strong>构造函数传入</strong>的方式进行的依赖注入。其实还有另外两种方法：<strong>Setter传递</strong>和<strong>接口传递</strong>。这里就不多讲了，核心思路都是一样的，都是为了实现<strong>控制反转</strong>。</p>
 <p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf2j01t0bsj30k006gaa6.jpg" alt="img"></p>
 <h2 id="控制反转容器">控制反转容器</h2>
