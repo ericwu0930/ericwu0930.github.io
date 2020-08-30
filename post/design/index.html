@@ -521,19 +521,20 @@
         rent<span style="color:#f92672">.</span><span style="color:#a6e22e">rent</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
-</code></pre></div><p>Java.lang.reflect.Proxy类实现了一种代理模式，我们称之为动态代理。</p>
+</code></pre></div><p>聚合的方式更加灵活，因为我们可以灵活的注入被代理类。</p>
+<p>Java.lang.reflect.Proxy类实现了一种代理模式，我们称之为动态代理，那什么是动态代理呢</p>
 <ul>
 <li>动态代理和静态代理角色一样</li>
 <li>动态代理的代理类是动态生成的，不是我们直接写好的</li>
 <li>动态代理分为两大类：基于接口的动态代理，基于类的动态代理</li>
 </ul>
-<p>需要了解两个类：Proxy代理，InvocationHandler调用处理程序</p>
+<p>说的具体一点，我们知道一个类被加载首先需要有一个类的<code>.java</code>文件，然后经过编译写成<code>.class</code>，然后类加载器将其加载。在静态代理中，代理类的<code>.java</code>文件是要手动写的，而在动态代理中，我们不需要手动写代理类，而是调用了Proxy的一个静态方法<code>newProxyInstance</code></p>
 <p>Proxy提供了用于创建动态代理实例的静态方法。该类中使用一个静态方法newProxyInstance返回代理对象。该方法需要传入三个参数。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Object <span style="color:#a6e22e">newProxyInstance</span><span style="color:#f92672">(</span>ClassLoader loader<span style="color:#f92672">,</span> Class<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span> interfaces<span style="color:#f92672">,</span> InvocationHandler h<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IllegalArgumentException
 <span style="color:#75715e">//loader为一个ClassLoader对象，定义了由哪个ClassLoader对象来对生成的代理对象进行加载
 </span><span style="color:#75715e"></span><span style="color:#75715e">//interfaces:为一个Interface对象的数组，表示的是我将要给我需要代理的对象提供一组什么接口，如果我提供了一组接口给它，那么这个代理对象就宣称实现了该接口(多态)，这样我就能调用这组接口中的方法了
 </span><span style="color:#75715e"></span><span style="color:#75715e">//h为一个InvocationHandler对象，表示的是当我这个动态代理对象在调用方法的时候，会关联到哪一个InvocationHandler对象上
-</span></code></pre></div><p>InvocationHandler的工作室响应代理的任何调用，可以把InvocationHandler想象成代理收到方法调用后，请求做实际工作的对象。</p>
+</span></code></pre></div><p>InvocationHandler的工作是响应代理的任何调用，可以把InvocationHandler想象成代理收到方法调用后，请求做实际工作的对象。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">//InvocationHandler中只有一个方法
 </span><span style="color:#75715e"></span>Object <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Object proxy<span style="color:#f92672">,</span> Method method<span style="color:#f92672">,</span> Object<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 <span style="color:#75715e">//proxy为调用方法的代理对象
@@ -568,6 +569,105 @@
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fare</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
         System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;收中介费&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>Proxy是怎么做到动态代理的呢，其实是因为代理类的内容是非常固定，Proxy通过自己生成一个.java文件，然后编译，最后加载到内存，便可以返回一个代理对象，Proxy的实现原理大致如下所示</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LubanProxy</span> <span style="color:#f92672">{</span>
+
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Object <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span>Object target<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> MalformedURLException<span style="color:#f92672">,</span> ClassNotFoundException<span style="color:#f92672">,</span> NoSuchMethodException<span style="color:#f92672">,</span> IllegalAccessException<span style="color:#f92672">,</span> InvocationTargetException<span style="color:#f92672">,</span> InstantiationException <span style="color:#f92672">{</span>
+<span style="color:#75715e">//==========================生成代理类内容===============================
+</span><span style="color:#75715e"></span>		Class clazz <span style="color:#f92672">=</span> target<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getInterfaces</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">[</span>0<span style="color:#f92672">]</span><span style="color:#f92672">;</span>
+		String infName <span style="color:#f92672">=</span> clazz<span style="color:#f92672">.</span><span style="color:#a6e22e">getSimpleName</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		String content <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">;</span>
+		String line <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;\n&#34;</span><span style="color:#f92672">;</span><span style="color:#75715e">//换行
+</span><span style="color:#75715e"></span>		String tab <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;\t&#34;</span><span style="color:#f92672">;</span><span style="color:#75715e">//tab
+</span><span style="color:#75715e"></span>		String packageContent <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;package com.baidu;&#34;</span> <span style="color:#f92672">+</span> line<span style="color:#f92672">;</span>
+		String importContent <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;import &#34;</span> <span style="color:#f92672">+</span> clazz<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;;&#34;</span> <span style="color:#f92672">+</span> line<span style="color:#f92672">;</span>
+		String clazzFirstLineContent <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;public class $ProxyLuban implements &#34;</span> <span style="color:#f92672">+</span> infName <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;{&#34;</span> <span style="color:#f92672">+</span> line<span style="color:#f92672">;</span>
+		String filedContent <span style="color:#f92672">=</span> tab <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;private &#34;</span> <span style="color:#f92672">+</span> infName <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; target;&#34;</span> <span style="color:#f92672">+</span> line<span style="color:#f92672">;</span>
+
+		String constructorContent <span style="color:#f92672">=</span> tab <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;public $ProxyLuban (&#34;</span> <span style="color:#f92672">+</span> infName <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; target){&#34;</span> <span style="color:#f92672">+</span> line
+				<span style="color:#f92672">+</span> tab <span style="color:#f92672">+</span> tab <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;this.target =target;&#34;</span>
+				<span style="color:#f92672">+</span> line <span style="color:#f92672">+</span> tab <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;}&#34;</span> <span style="color:#f92672">+</span> line<span style="color:#f92672">;</span>
+
+
+		String methodContent <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">;</span>
+		Method<span style="color:#f92672">[</span><span style="color:#f92672">]</span> methods <span style="color:#f92672">=</span> clazz<span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredMethods</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+		<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Method method <span style="color:#f92672">:</span> methods<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+			<span style="color:#75715e">//String
+</span><span style="color:#75715e"></span>			String returnTypeName <span style="color:#f92672">=</span> method<span style="color:#f92672">.</span><span style="color:#a6e22e">getReturnType</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getSimpleName</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+			<span style="color:#75715e">//query
+</span><span style="color:#75715e"></span>			String methodName <span style="color:#f92672">=</span> method<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+			<span style="color:#75715e">// [String.class===class]
+</span><span style="color:#75715e"></span>			Class args<span style="color:#f92672">[</span><span style="color:#f92672">]</span> <span style="color:#f92672">=</span> method<span style="color:#f92672">.</span><span style="color:#a6e22e">getParameterTypes</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+			String argsContent <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">;</span>
+			String paramsContent <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">;</span>
+			<span style="color:#66d9ef">int</span> flag <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+			<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Class arg <span style="color:#f92672">:</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+				<span style="color:#75715e">//String
+</span><span style="color:#75715e"></span>				String temp <span style="color:#f92672">=</span> arg<span style="color:#f92672">.</span><span style="color:#a6e22e">getSimpleName</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+				<span style="color:#75715e">//String
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">//String p0
+</span><span style="color:#75715e"></span>				argsContent <span style="color:#f92672">+</span><span style="color:#f92672">=</span> temp <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; p&#34;</span> <span style="color:#f92672">+</span> flag <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;,&#34;</span><span style="color:#f92672">;</span>
+				<span style="color:#75715e">//p0
+</span><span style="color:#75715e"></span>				paramsContent <span style="color:#f92672">+</span><span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;p&#34;</span> <span style="color:#f92672">+</span> flag <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;,&#34;</span><span style="color:#f92672">;</span>
+				flag<span style="color:#f92672">+</span><span style="color:#f92672">+</span><span style="color:#f92672">;</span>
+			<span style="color:#f92672">}</span>
+			<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>argsContent<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">&gt;</span> 0<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+				argsContent <span style="color:#f92672">=</span> argsContent<span style="color:#f92672">.</span><span style="color:#a6e22e">substring</span><span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> argsContent<span style="color:#f92672">.</span><span style="color:#a6e22e">lastIndexOf</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;,&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">-</span> 1<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+				paramsContent <span style="color:#f92672">=</span> paramsContent<span style="color:#f92672">.</span><span style="color:#a6e22e">substring</span><span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> paramsContent<span style="color:#f92672">.</span><span style="color:#a6e22e">lastIndexOf</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;,&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">-</span> 1<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+			<span style="color:#f92672">}</span>
+			<span style="color:#75715e">//public String query(String p0){
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//		System.out.println(&#34;log&#34;);
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//		target.query(p0);
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//	}
+</span><span style="color:#75715e"></span>
+			methodContent <span style="color:#f92672">+</span><span style="color:#f92672">=</span> tab <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;public &#34;</span> <span style="color:#f92672">+</span> returnTypeName <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#f92672">+</span> methodName <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;(&#34;</span> <span style="color:#f92672">+</span> argsContent <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;) {&#34;</span> <span style="color:#f92672">+</span> line
+					<span style="color:#f92672">+</span> tab <span style="color:#f92672">+</span> tab <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;System.out.println(\&#34;log\&#34;);&#34;</span> <span style="color:#f92672">+</span> line
+					<span style="color:#f92672">+</span> tab <span style="color:#f92672">+</span> tab <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;target.&#34;</span> <span style="color:#f92672">+</span> methodName <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;(&#34;</span> <span style="color:#f92672">+</span> paramsContent <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;);&#34;</span> <span style="color:#f92672">+</span> line
+					<span style="color:#f92672">+</span> tab <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;}&#34;</span> <span style="color:#f92672">+</span> line<span style="color:#f92672">;</span>
+
+		<span style="color:#f92672">}</span>
+
+		content <span style="color:#f92672">+</span><span style="color:#f92672">=</span> packageContent <span style="color:#f92672">+</span> importContent <span style="color:#f92672">+</span> clazzFirstLineContent <span style="color:#f92672">+</span> filedContent <span style="color:#f92672">+</span> constructorContent <span style="color:#f92672">+</span> methodContent <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;}&#34;</span><span style="color:#f92672">;</span>
+
+<span style="color:#75715e">//=========================写入到.java文件中===============================
+</span><span style="color:#75715e"></span>		File file <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;d:\\com\\baidu\\$ProxyLuban.java&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+		<span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+			<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span><span style="color:#f92672">!</span>file<span style="color:#f92672">.</span><span style="color:#a6e22e">exists</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+				file<span style="color:#f92672">.</span><span style="color:#a6e22e">createNewFile</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+			<span style="color:#f92672">}</span>
+
+			FileWriter fw <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileWriter<span style="color:#f92672">(</span>file<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+			fw<span style="color:#f92672">.</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>content<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+			fw<span style="color:#f92672">.</span><span style="color:#a6e22e">flush</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+			fw<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+
+		<span style="color:#f92672">}</span>
+
+<span style="color:#75715e">//=========================动态编译===============================
+</span><span style="color:#75715e"></span>		JavaCompiler compiler <span style="color:#f92672">=</span> ToolProvider<span style="color:#f92672">.</span><span style="color:#a6e22e">getSystemJavaCompiler</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+		StandardJavaFileManager fileMgr <span style="color:#f92672">=</span> compiler<span style="color:#f92672">.</span><span style="color:#a6e22e">getStandardFileManager</span><span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		Iterable units <span style="color:#f92672">=</span> fileMgr<span style="color:#f92672">.</span><span style="color:#a6e22e">getJavaFileObjects</span><span style="color:#f92672">(</span>file<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+		JavaCompiler<span style="color:#f92672">.</span><span style="color:#a6e22e">CompilationTask</span> t <span style="color:#f92672">=</span> compiler<span style="color:#f92672">.</span><span style="color:#a6e22e">getTask</span><span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">,</span> fileMgr<span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">,</span> units<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		t<span style="color:#f92672">.</span><span style="color:#a6e22e">call</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+		<span style="color:#75715e">//Class.forName()
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//fileMgr.close();
+</span><span style="color:#75715e"></span><span style="color:#75715e">//=========================使用类加载器加载到内存===============================
+</span><span style="color:#75715e"></span>		URL<span style="color:#f92672">[</span><span style="color:#f92672">]</span> urls <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> URL<span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">{</span><span style="color:#66d9ef">new</span> URL<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;file:D:\\\\&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
+		URLClassLoader urlClassLoader <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> URLClassLoader<span style="color:#f92672">(</span>urls<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		Class cls <span style="color:#f92672">=</span> urlClassLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.baidu.$ProxyLuban&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		Constructor constructor <span style="color:#f92672">=</span> cls<span style="color:#f92672">.</span><span style="color:#a6e22e">getConstructor</span><span style="color:#f92672">(</span>clazz<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		Object o  <span style="color:#f92672">=</span> constructor<span style="color:#f92672">.</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">(</span>target<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+		<span style="color:#66d9ef">return</span>  o<span style="color:#f92672">;</span>
+
+	<span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div>
 
