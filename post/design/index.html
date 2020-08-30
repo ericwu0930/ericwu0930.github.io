@@ -485,7 +485,43 @@
 <li>客户：访问代理对象的人</li>
 </ul>
 <p>代理角色代表了真实角色，这两者拥有共同的动作——租房，而客户直接接触到的是代理对象中介，而不是房东；另外中介帮被代理者——房东做了许多事情，比如签合同、装修等等，相当于扩展了租房这个动作。</p>
-<p>Java.lang.reflect.Proxy类实现了一种代理模式，我们称之为动态代理。</p>
+<p>代理模式根据有无代理类分为静态代理和动态代理。所谓静态代理，就是自己写代理类，而动态代理的代理类则是在程序运行过程总动态生成的，动态代理的主流方法有jdk动态代理和cglib动态代理；而根据实现方式代理又可以分为继承和聚合。</p>
+<p>方法1：继承</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Host</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">rent</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#f92672">.</span><span style="color:#f92672">.</span><span style="color:#f92672">.</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Proxy</span> <span style="color:#66d9ef">extends</span> Host<span style="color:#f92672">{</span>
+    
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">rent</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#75715e">//增强操作
+</span><span style="color:#75715e"></span>        xxx<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">.</span><span style="color:#a6e22e">rent</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>方法2：聚合</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Rent</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">rent</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Host</span> <span style="color:#66d9ef">implements</span> Rent<span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">rent</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#f92672">.</span><span style="color:#f92672">.</span><span style="color:#f92672">.</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Proxy</span> <span style="color:#66d9ef">implements</span> Rent<span style="color:#f92672">{</span>
+    Rent rent<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">rent</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#75715e">//增强操作
+</span><span style="color:#75715e"></span>        xxx<span style="color:#f92672">;</span>
+        rent<span style="color:#f92672">.</span><span style="color:#a6e22e">rent</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>Java.lang.reflect.Proxy类实现了一种代理模式，我们称之为动态代理。</p>
 <ul>
 <li>动态代理和静态代理角色一样</li>
 <li>动态代理的代理类是动态生成的，不是我们直接写好的</li>
