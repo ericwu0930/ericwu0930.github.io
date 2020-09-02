@@ -290,11 +290,11 @@
 </ol>
 <p>如果flush loop中也没有什么事情可以做了，InnoDB存储引擎会切换到suspend_loop，将Master Thread挂起。</p>
 <p>整个Master Thread的伪代码如下所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">master_thread</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">master_thread</span><span style="color:#f92672">(){</span>
     <span style="color:#66d9ef">goto</span> loop<span style="color:#f92672">;</span>
 loop:      <span style="color:#75715e">//主循环
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>i<span style="color:#f92672">&lt;</span>10<span style="color:#f92672">;</span><span style="color:#f92672">+</span><span style="color:#f92672">+</span>i<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-        thread_sleep<span style="color:#f92672">(</span>1<span style="color:#f92672">)</span><span style="color:#f92672">;</span>             <span style="color:#75715e">//每1s执行
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>i<span style="color:#f92672">&lt;</span>10<span style="color:#f92672">;++</span>i<span style="color:#f92672">){</span>
+        thread_sleep<span style="color:#f92672">(</span>1<span style="color:#f92672">);</span>             <span style="color:#75715e">//每1s执行
 </span><span style="color:#75715e"></span>        <span style="color:#66d9ef">do</span> log buffer flush to disk<span style="color:#f92672">;</span> <span style="color:#75715e">//将重做日志缓冲写进重做日志文件
 </span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>last_one_second_ios<span style="color:#f92672">&lt;</span>5<span style="color:#f92672">)</span>
             <span style="color:#66d9ef">do</span> merge at most 5 insert buffer<span style="color:#f92672">;</span> <span style="color:#75715e">//合并插入缓冲
@@ -308,7 +308,7 @@ loop:      <span style="color:#75715e">//主循环
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> merge at most 5 insert buffer<span style="color:#f92672">;</span>  <span style="color:#75715e">//合并插入缓冲
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> log buffer flush to disk<span style="color:#f92672">;</span>       <span style="color:#75715e">//将重做日志缓冲写进重做日志文件
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> full purge<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>buf_get_modifed_ratio_pct<span style="color:#f92672">&gt;</span>70<span style="color:#f92672">%</span><span style="color:#f92672">)</span>
+    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>buf_get_modifed_ratio_pct<span style="color:#f92672">&gt;</span>70<span style="color:#f92672">%)</span>
         <span style="color:#66d9ef">do</span> buffer pool flush 100 dirty page<span style="color:#f92672">;</span> <span style="color:#75715e">//刷新脏页
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">else</span>
         buffer pool flush 10 dirty page<span style="color:#f92672">;</span>    <span style="color:#75715e">//刷新脏页
