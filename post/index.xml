@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 11 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 04 Sep 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>琐碎知识点记录</title>
+      <link>https://ericwu0930.github.io/post/trival/</link>
+      <pubDate>Fri, 04 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/trival/</guid>
+      <description>学习过程中一些优秀学习资源，因知识点琐碎很难分类，单独开一篇记录 序列化：https://blog.csdn.net/qq_35890572/</description>
+    </item>
     
     <item>
       <title>MVCC版本控制</title>
