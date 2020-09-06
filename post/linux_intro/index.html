@@ -308,7 +308,7 @@ chgrp 组名   文件名
 </code></pre></div><h3 id="23-yum在线安装">2.3 yum在线安装</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 配置yum的源文件</span>
 vi /etc/yum.repos.d/CentOS-Base.repo
-<span style="color:#f92672">[</span>base<span style="color:#f92672">]</span> 容器名称，一定要写在<span style="color:#f92672">[</span><span style="color:#f92672">]</span>中
+<span style="color:#f92672">[</span>base<span style="color:#f92672">]</span> 容器名称，一定要写在<span style="color:#f92672">[]</span>中
 name   容器说明，可以自己随便写
 mirrorlist  镜像站点
 baseurl     yum源头服务器的地址
@@ -429,10 +429,10 @@ q：退出top
 	信号名称：HUP <span style="color:#ae81ff">1</span> 平滑重启，重新读取配置文件之后重启
 			KILL <span style="color:#ae81ff">9</span> 强制终止
 kill -HUP pid号 <span style="color:#75715e"># 杀死pid进程</span>
-killall <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span><span style="color:#f92672">[</span>信号<span style="color:#f92672">]</span> 进程名
+killall <span style="color:#f92672">[</span>选项<span style="color:#f92672">][</span>信号<span style="color:#f92672">]</span> 进程名
 	-i 交互
 	-I 忽略大小写
-pkill <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span><span style="color:#f92672">[</span>信号<span style="color:#f92672">]</span> 进程名
+pkill <span style="color:#f92672">[</span>选项<span style="color:#f92672">][</span>信号<span style="color:#f92672">]</span> 进程名
 	-t 终端号：按照终端号踢出用户，终端号可以通过w命令查看
 </code></pre></div><h3 id="32-工作管理">3.2 工作管理</h3>
 <p>工作管理指的是在单个登录终端中同时管理多个工作的行为（也就是windows中最小化之后开启别的任务），在LInux中使用<em>jobs</em>命令查看工作</p>
@@ -508,7 +508,7 @@ source 配置文件
 	
 telnet ip地址 端口号 <span style="color:#75715e"># 探测端口号</span>
 
-find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672">]</span><span style="color:#f92672">[</span>搜索条件<span style="color:#f92672">]</span>  <span style="color:#75715e"># 在linux中通配符 *匹配任意内容 ？匹配任意一个字符 []匹配任意一个中括号内的字符</span>
+find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672">][</span>搜索条件<span style="color:#f92672">]</span>  <span style="color:#75715e"># 在linux中通配符 *匹配任意内容 ？匹配任意一个字符 []匹配任意一个中括号内的字符</span>
 	搜索条件：
 		-iname 不区分大小写
 		-user 按照所有者
