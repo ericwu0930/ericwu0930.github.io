@@ -281,7 +281,7 @@
 <ol>
 <li>epoll_create系统调用</li>
 <li>epoll_ctl系统调用</li>
-<li>Epoll_wait系统调用</li>
+<li>epoll_wait系统调用</li>
 </ol>
 <p>当调用epoll_create时，会在内核空间中开辟一个eventpoll结构体，这个结构体中有两个成员与epoll的使用密切相关</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> eventpoll{
