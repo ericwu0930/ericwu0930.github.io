@@ -6,10 +6,19 @@
     <description>Recent content on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 04 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 06 Sep 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>select与epoll比较</title>
+      <link>https://ericwu0930.github.io/post/epoll/</link>
+      <pubDate>Sun, 06 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/epoll/</guid>
+      <description>1. 前言 假设要写一个echo服务器，用于对用户从标准输入键入的交互命令做出相应，在这种情况下，服务器必须相应两个独立的I/O事件：1）网络客户</description>
+    </item>
     
     <item>
       <title>琐碎知识点记录</title>
@@ -368,7 +377,9 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/top/about/</guid>
-      <description>个人介绍 博主名叫吴昊，山东淄博人，高中就读于淄博市实验中学，本科就读于四川大学吴玉章学院，后保研至上海交通大学机械工程与动力学院机器人研究所</description>
+      <description>个人介绍 博主名叫吴昊，山东淄博人，高中就读于淄博市实验中学，本科就读于四川大学吴玉章学院，后保研至上海交通大学机械工程与动力学院机器人研究所，天资愚笨，在科研领域无所建树，后在代码世界中找到慰藉与乐趣，学习Java转码中，平时看书喜欢把笔记写成MD文档，在朋友建议下开设个人网站，平时会把笔记以及学习心得上传到本站。
+受高中Homie影响，喜欢摄影，风光偏多，我会不定期的在本站中分享自己的摄影作品。电子产品爱好者，伪果粉，华为支持者，逐渐退烧。闲暇时间会打王者荣耀，徘徊于王者两星，不会打野。有颗向高雅艺术靠拢的心，但无奈身体很诚实的选择听流行音乐，最近常听Post Malone。
+平日寡言，但喜与志同道合者畅谈，崇拜性感的大脑，欢迎通过各种方式与博主进行交流。</description>
     </item>
     
     <item>
@@ -377,7 +388,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/top/books/</guid>
-      <description>Machine learning学习笔记 Coursera 在线课程 Machine learning 笔记讲师: 吴恩达(Andrew Ng) 课程地址：https://www.coursera.org/lear</description>
+      <description>Machine learning学习笔记 Coursera 在线课程 Machine learning 笔记讲师: 吴恩达(Andrew Ng) 课程地址：https://www.</description>
     </item>
     
   </channel>

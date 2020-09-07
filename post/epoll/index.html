@@ -15,15 +15,15 @@
     
 
     
-    <meta name="title" content="琐碎知识点记录" />
-    <meta property="og:title" content="琐碎知识点记录" />
-    <meta property="twitter:title" content="琐碎知识点记录" />
+    <meta name="title" content="select与epoll比较" />
+    <meta property="og:title" content="select与epoll比较" />
+    <meta property="twitter:title" content="select与epoll比较" />
     
 
     
-    <meta name="description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。">
-    <meta property="og:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
-    <meta property="twitter:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    <meta name="description" content="最近在学习redis相关知识，了解到redis也是基于多路复用设计的，因此专门了解了下select与epoll这两种常见的多路复用器，本文总结自《深入理解计算机系统》与《深入理解Nginx》">
+    <meta property="og:description" content="最近在学习redis相关知识，了解到redis也是基于多路复用设计的，因此专门了解了下select与epoll这两种常见的多路复用器，本文总结自《深入理解计算机系统》与《深入理解Nginx》" />
+    <meta property="twitter:description" content="最近在学习redis相关知识，了解到redis也是基于多路复用设计的，因此专门了解了下select与epoll这两种常见的多路复用器，本文总结自《深入理解计算机系统》与《深入理解Nginx》" />
     
 
     
@@ -34,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>琐碎知识点记录-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>select与epoll比较-吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/post/trival/">
+    <link rel="canonical" href="/post/epoll/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -175,12 +175,16 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/tags/%E7%90%90%E7%A2%8E%E7%9F%A5%E8%AF%86%E7%82%B9" title="琐碎知识点">
-                            琐碎知识点
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/linux" title="Linux">
+                            Linux
                         </a>
                         
                     </div>
-                    <h1>琐碎知识点记录</h1>
+                    <h1>select与epoll比较</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by 
@@ -188,7 +192,7 @@
                                  &#34;Eric&#34;
                          
                         on 
-                        Friday, September 4, 2020
+                        Sunday, September 6, 2020
                         
                         
                         
@@ -216,23 +220,85 @@
                 <header>
                     <h2>TOC</h2>
                 </header>
-                <nav id="TableOfContents"></nav>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-前言">1. 前言</a></li>
+    <li><a href="#2-基于进程的并发编程">2. 基于进程的并发编程</a></li>
+    <li><a href="#3-select多路复用">3. select多路复用</a></li>
+    <li><a href="#4-epoll多路复用">4. epoll多路复用</a></li>
+  </ul>
+</nav>
                 
-                <p>学习过程中一些优秀学习资源，因知识点琐碎很难分类，单独开一篇记录</p>
+                <h2 id="1-前言">1. 前言</h2>
+<p>假设要写一个echo服务器，用于对用户从标准输入键入的交互命令做出相应，在这种情况下，服务器必须相应两个独立的I/O事件：1）网络客户端发起连接请求，2）用户在键盘上键入命令行。我们先等待哪个事件呢？没有哪个选择是理想的，如果使用accept等待一个连接请求，就不能相应输入命令，如果read等待一个输入命令，就不能相应任何连接请求。</p>
+<h2 id="2-基于进程的并发编程">2. 基于进程的并发编程</h2>
+<p>我们可以为每个连接开启一个新的线程，也就是accpet到新的连接后，开启一个新的线程完成对用户指令的回显。但是当连接数过多的时候，线程之间的上下文切换将极大的消耗cpu资源。</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gihuw9n78ej30xk0jytax.jpg" alt="image-20200907090821189"></p>
+<h2 id="3-select多路复用">3. select多路复用</h2>
+<p>当然我们也可以基于I/O多路复用进行编程，其基本思路就是使用select函数，要求内核挂起进程，只有当一个或多个I/O事件发生后，才将控制权返回给应用程序。简单的讲，select函数有两个输入：一个称为读集合的描述符集合(fdset)和该读集合的基数(n)。select会一直阻塞，直到读集合中至少有一个描述符准备好了可以读。select有个副作用，当其返回时，会修改参数fdset指向读集合的一个子集，我们称为准备好集合，因此我们每次调用select时都要更新读集合。示例代码如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">echo</span>(<span style="color:#66d9ef">int</span> connfd);
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">command</span>(<span style="color:#66d9ef">void</span>);
+
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span><span style="color:#f92672">*</span>argv){
+    <span style="color:#66d9ef">int</span> listenfd, connfd;
+    socklen_t clientlen;
+    <span style="color:#66d9ef">struct</span> sockaddr_storange clientaddr;
+    fd_set read_st,ready_set;
+    
+    <span style="color:#66d9ef">if</span>(argc <span style="color:#f92672">!</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>){
+        fprintf(stderr, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">usage: %s &lt;port&gt;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, argv[<span style="color:#ae81ff">0</span>]);
+        exit(<span style="color:#ae81ff">0</span>);
+    }
+    listenfd <span style="color:#f92672">=</span> Open_listenfd(argv[<span style="color:#ae81ff">1</span>]);
+    
+    FD_ZERO(<span style="color:#f92672">&amp;</span>read_set);              <span style="color:#75715e">// 清空
+</span><span style="color:#75715e"></span>    FD_SET(STDIN_FILNO, <span style="color:#f92672">&amp;</span>read_set);  <span style="color:#75715e">// 将标准输入添加到读集合
+</span><span style="color:#75715e"></span>    FD_SET(listenfd , <span style="color:#f92672">&amp;</span>read_set);	 <span style="color:#75715e">// 将监听描述符添加到读集合
+</span><span style="color:#75715e"></span>    
+    <span style="color:#66d9ef">while</span>(<span style="color:#ae81ff">1</span>){
+        ready_set <span style="color:#f92672">=</span> read_set;
+        select(listenfd<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>,<span style="color:#f92672">&amp;</span>ready_set,NULL,NULL,NULL);
+        <span style="color:#66d9ef">if</span>(FD_ISSET(SETDIN_FILENO, <span style="color:#f92672">&amp;</span>ready_set))
+            command();
+        <span style="color:#66d9ef">if</span>(FD_ISSET(listenfd , <span style="color:#f92672">&amp;</span>ready_set)){
+            clientlen <span style="color:#f92672">=</span> <span style="color:#66d9ef">sizeof</span>(stuct sockaddr_storage);
+            connfd <span style="color:#f92672">=</span> accept(listenfd , (SA <span style="color:#f92672">*</span>)<span style="color:#f92672">&amp;</span>clientaddr, <span style="color:#f92672">&amp;</span>clientlen);
+            echo(connfd);
+            close(connfd);
+        }
+    }
+    
+    <span style="color:#66d9ef">void</span> command(<span style="color:#66d9ef">void</span>){
+        <span style="color:#66d9ef">char</span> buf[MAXLINE];
+        <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>fgets(buf, MAXLINE , stdin))
+            exit(<span style="color:#ae81ff">0</span>);
+        printf(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#34;</span>,buf);
+    }
+}
+</code></pre></div><h2 id="4-epoll多路复用">4. epoll多路复用</h2>
+<p>我们可以看到select多路复用是有一些弊端的，比如它需要将fdset从用户态内存空间贝到内核内存空间，返回时有需要将fdset从内核用户空间拷贝回用户内存空间；另外当select返回后，我们仍需要遍历一遍fdset判断哪些监听符准备好了，然后开启连接。为了解决以上两个弊端，诞生了epoll多路复用器。</p>
+<p>epoll多路复用通过3个系统调用为用户提供服务。</p>
 <ol>
-<li>序列化：https://blog.csdn.net/qq_35890572/article/details/81630052</li>
-<li>docker：<img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gihbctuupfj31iq0qgdhs.jpg" alt="image-20200428233247117"></li>
-<li>tcpdump:https://blog.csdn.net/csdnnews/article/details/107096589</li>
-<li>leetcode dp分类：https://leetcode-cn.com/circle/article/NfHhXD/</li>
-<li>MySQL优质公众号：我们都是小青蛙</li>
-<li>MySQL索引的最左原则：https://mp.weixin.qq.com/s/iVDIlhM94loH0b632fhJxw</li>
-<li>git图解：https://zhuanlan.zhihu.com/p/147356242</li>
-<li>git submodule <a href="https://zhuanlan.zhihu.com/p/100214931">https://zhuanlan.zhihu.com/p/100214931</a> <a href="https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97">https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97</a></li>
-<li>AQS源码：https://www.cnblogs.com/waterystone/p/4920797.html</li>
-<li>KMP：主要思想https://www.zhihu.com/question/21923021 next数组的求法https://leetcode-cn.com/problems/shortest-palindrome/solution/tu-jie-kmpsuan-fa-by-yangbingjie/ 前一篇主要讲解了KMP中next数组的含义，第二篇是leetcode的一篇题解，很生动形象的讲解了next数组如何求解</li>
-<li>HashMap与ConcurrentHashMap源码：https://my.oschina.net/pingpangkuangmo/blog/817973</li>
-<li>windows terminal完美配置 <a href="https://zhuanlan.zhihu.com/p/137595941">https://zhuanlan.zhihu.com/p/137595941</a></li>
+<li>epoll_create系统调用</li>
+<li>epoll_ctl系统调用</li>
+<li>Epoll_wait系统调用</li>
 </ol>
+<p>当调用epoll_create时，会在内核空间中开辟一个eventpoll结构体，这个结构体中有两个成员与epoll的使用密切相关</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> eventpoll{
+    <span style="color:#75715e">/*红黑树的根节点，存储着添加到epoll中的事件，即监听事件*/</span>
+    <span style="color:#66d9ef">struct</span> rb_root rbr;
+    <span style="color:#75715e">/*双向链表保存着ready的监听事件，即epoll_wait返回给用户的，满足条件的事件*/</span>
+    <span style="color:#66d9ef">struct</span> list_head rellist;
+}
+</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gihuwb7a6hj30n80k2jt7.jpg" alt="image-20200907094854837"></p>
+<p>当我们使用epoll_ctl添加监听事件的时候，会向红黑树中添加新的节点，并且会与设备驱动建立回调关系，当相应的事件发生时，会把该事件放到rdllist双向链表中，当调用epoll_wait时，只需要将rdllist复制到用户内存空间即可，因此epoll_wait的效率非常高。</p>
+<p>总结一下epoll高效的本质在于：</p>
+<ul>
+<li>减少了用户态和内核态的文件句柄拷贝</li>
+<li>使用红黑树存储fd，插入、查找、删除性能不错</li>
+<li>不需要遍历fdset得到ready fd</li>
+</ul>
+<p>当然，也并不是epoll在所有情况下由于select，例如在如果有少于1024个文件描述符监听，且大多数socket都是出于活跃繁忙的状态，这种情况下，select要比epoll更为高效，因为epoll会有更多次的系统调用，用户态和内核态会有更加频繁的切换。</p>
 
 
                 
@@ -241,15 +307,10 @@
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/post/mvcc/" data-toggle="tooltip" data-placement="top" title="MVCC版本控制">&larr;
+                        <a href="/post/trival/" data-toggle="tooltip" data-placement="top" title="琐碎知识点记录">&larr;
                             Previous Post</a>
                     </li>
                     
-                    
-                    <li class="next">
-                        <a href="/post/epoll/" data-toggle="tooltip" data-placement="top" title="select与epoll比较">Next
-                            Post &rarr;</a>
-                    </li>
                     
                 </ul>
 
