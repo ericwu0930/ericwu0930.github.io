@@ -365,7 +365,7 @@ typedef struct dict{
 <p>然后，需要注意的是，Redis的rehash过程是一个渐进式的rehash过程。</p>
 <ol>
 <li>为ht[1]分配空间，让字典同时持有ht[0]和ht[1]两个哈希表</li>
-<li>在字典上维持一个索引计数器变量rehashidx，并将它的值设为0，表示rehash工作正式开始</li>
+<li>在字典上维持一个索引计数器变量rehashidx（这个rehashidx的含义就是正在进行rehash的ht[0]上的索引），并将它的值设为0，表示rehash工作正式开始</li>
 <li>在rehash进行期间，每次对字典执行增删改查时，程序除了执行指定的操作以外，还会顺带将ht[0]哈希表在rehashidx索引所有键值对rehash到ht[1]，当rehash工作完成之后，将rehashidx属性的值增1</li>
 <li>当ht[0]的所有键值对都被rehash到ht[1]上猴，这时程序将rehashidx属性的值设为-1，表示rehash操作已完成。</li>
 </ol>
