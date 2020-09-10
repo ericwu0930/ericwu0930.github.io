@@ -267,9 +267,9 @@
     </li>
     <li><a href="#6-http首部略">6. HTTP首部（略）</a>
       <ul>
-        <li><a href="#通用首部字段">通用首部字段</a></li>
-        <li><a href="#请求首部字段">请求首部字段</a></li>
-        <li><a href="#响应首部字段">响应首部字段</a></li>
+        <li><a href="#61-通用首部字段">6.1 通用首部字段</a></li>
+        <li><a href="#62-请求首部字段">6.2 请求首部字段</a></li>
+        <li><a href="#63-响应首部字段">6.3 响应首部字段</a></li>
         <li><a href="#实体首部字段">实体首部字段</a></li>
         <li><a href="#为cookie服务的首部字段">为Cookie服务的首部字段</a></li>
         <li><a href="#通用首部字段中connection的作用">通用首部字段中Connection的作用</a></li>
@@ -519,11 +519,19 @@
 <h4 id="552-客户端的缓存">5.5.2 客户端的缓存</h4>
 <p>缓存不仅可以存在缓存服务器内，也可以存在客户端浏览器中。与缓存服务器相同，当判定缓存过期后，会向源服务器确认资源的有效性。 若判断浏览器缓存失效， 浏览器会再次请求新资源。</p>
 <h2 id="6-http首部略">6. HTTP首部（略）</h2>
-<h3 id="通用首部字段">通用首部字段</h3>
+<h3 id="61-通用首部字段">6.1 通用首部字段</h3>
 <p><img src="https://s2.ax1x.com/2020/02/16/3po2Of.png" alt="3po2Of.png"></p>
-<h3 id="请求首部字段">请求首部字段</h3>
+<p><strong>Cache-Control</strong>：</p>
+<p>通过制定首部字段Cache-Control的指令，就能操作缓存的工作机制，该指令的参数是多选的，多个指令之间通过“,”分割。相同的参数在请求和响应两种状态下有不同的含义。如下图所示</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gikpqlgw44j30u00ve4am.jpg" alt="image-20200909211915182"></p>
+<h3 id="62-请求首部字段">6.2 请求首部字段</h3>
 <p><img src="https://s2.ax1x.com/2020/02/16/3pohTg.png" alt="3pohTg.png"></p>
-<h3 id="响应首部字段">响应首部字段</h3>
+<p><strong>Host</strong>：</p>
+<p>虚拟主机运行在同一个IP上，使用首部字段Host加以区分</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gikqiqwpr3j310s0ig7iu.jpg" alt="image-20200909214620699"></p>
+<p><strong>If-Match</strong>：</p>
+<p>后面跟实体标记（ETag），实体标记是与特定的资源相关联的，它是资源以字符串形式的唯一标识，只有If-Match后面所跟的实体标记与所请求的资源相一致时，服务器才会返回结果。</p>
+<h3 id="63-响应首部字段">6.3 响应首部字段</h3>
 <p><img src="https://s2.ax1x.com/2020/02/16/3pxvWT.png" alt="3pxvWT.png"></p>
 <h3 id="实体首部字段">实体首部字段</h3>
 <p><img src="https://s2.ax1x.com/2020/02/16/3pzPm9.png" alt="3pzPm9.png"></p>
