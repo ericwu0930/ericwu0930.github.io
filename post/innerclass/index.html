@@ -236,48 +236,48 @@
 <p>以下面这个类为例，进行说明</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Outter</span><span style="color:#f92672">{</span>
     <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> a<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setA</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setA</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">){</span>
         <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">=</span>a<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
     <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Inner</span><span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getPrivate</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getPrivate</span><span style="color:#f92672">(){</span>
             <span style="color:#66d9ef">return</span> Outter<span style="color:#f92672">.</span><span style="color:#a6e22e">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">;</span> <span style="color:#75715e">//访问了外部类的私有变量，这是合法的
 </span><span style="color:#75715e"></span>        <span style="color:#f92672">}</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 
-<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-    Outter outter<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Outter<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    outter<span style="color:#f92672">.</span><span style="color:#a6e22e">setA</span><span style="color:#f92672">(</span>2<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    Outter<span style="color:#f92672">.</span><span style="color:#a6e22e">Inner</span> inner<span style="color:#f92672">=</span>outter<span style="color:#f92672">.</span><span style="color:#a6e22e">new</span> <span style="color:#a6e22e">Inner</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span> <span style="color:#75715e">//在外围类外部定义内部类，需要向内部类传入外围了对象这一参数
-</span><span style="color:#75715e"></span>    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>inner<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrivate</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span><span style="color:#75715e">//合法，output=2；
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    Outter outter<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Outter<span style="color:#f92672">();</span>
+    outter<span style="color:#f92672">.</span><span style="color:#a6e22e">setA</span><span style="color:#f92672">(</span>2<span style="color:#f92672">);</span>
+    Outter<span style="color:#f92672">.</span><span style="color:#a6e22e">Inner</span> inner<span style="color:#f92672">=</span>outter<span style="color:#f92672">.</span><span style="color:#a6e22e">new</span> <span style="color:#a6e22e">Inner</span><span style="color:#f92672">();</span> <span style="color:#75715e">//在外围类外部定义内部类，需要向内部类传入外围了对象这一参数
+</span><span style="color:#75715e"></span>    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>inner<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrivate</span><span style="color:#f92672">());</span><span style="color:#75715e">//合法，output=2；
 </span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
 <span style="color:#75715e">//上面这种定义经过编译后，在JVM看来是等同于下面的类定义的
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Outter</span><span style="color:#f92672">{</span>
     <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> a<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setA</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setA</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> a<span style="color:#f92672">){</span>
         <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">=</span>a<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
-    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getA</span><span style="color:#f92672">(</span>Outter outter<span style="color:#f92672">)</span><span style="color:#f92672">{</span>  <span style="color:#75715e">//为了使内部类能够访问外围类的私有变量
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getA</span><span style="color:#f92672">(</span>Outter outter<span style="color:#f92672">){</span>  <span style="color:#75715e">//为了使内部类能够访问外围类的私有变量
 </span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> outter<span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">;</span>             <span style="color:#75715e">//相当于在外围类中定义了一个静态方法
 </span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>							  <span style="color:#75715e">//另外，这里还用到了一个知识点
 </span><span style="color:#75715e"></span><span style="color:#f92672">}</span>                     		    <span style="color:#75715e">//一个方法可以访问所属类的所有对象的私有数据
 </span><span style="color:#75715e"></span>
 <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Inner</span><span style="color:#f92672">{</span>
     <span style="color:#66d9ef">final</span> Outter outter<span style="color:#f92672">;</span>		<span style="color:#75715e">//成员变量持有外围类一个对象的引用
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Inner</span><span style="color:#f92672">(</span>Outter outter<span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#75715e">//内部类的构造方法需要传入外围类对象的引用
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Inner</span><span style="color:#f92672">(</span>Outter outter<span style="color:#f92672">){</span><span style="color:#75715e">//内部类的构造方法需要传入外围类对象的引用
 </span><span style="color:#75715e"></span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">outter</span><span style="color:#f92672">=</span>outter<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getPrivate</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">return</span> Outter<span style="color:#f92672">.</span><span style="color:#a6e22e">getA</span><span style="color:#f92672">(</span>outter<span style="color:#f92672">)</span><span style="color:#f92672">;</span>	<span style="color:#75715e">//调用外围类的静态方法
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getPrivate</span><span style="color:#f92672">(){</span>
+        <span style="color:#66d9ef">return</span> Outter<span style="color:#f92672">.</span><span style="color:#a6e22e">getA</span><span style="color:#f92672">(</span>outter<span style="color:#f92672">);</span>	<span style="color:#75715e">//调用外围类的静态方法
 </span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 
-<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-    Outter outter<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Outter<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    outter<span style="color:#f92672">.</span><span style="color:#a6e22e">setA</span><span style="color:#f92672">(</span>2<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    Inner inner<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Inner<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>inner<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrivate</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    Outter outter<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Outter<span style="color:#f92672">();</span>
+    outter<span style="color:#f92672">.</span><span style="color:#a6e22e">setA</span><span style="color:#f92672">(</span>2<span style="color:#f92672">);</span>
+    Inner inner<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Inner<span style="color:#f92672">();</span>
+    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>inner<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrivate</span><span style="color:#f92672">());</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>总结起来，内部类享有特权有两个原因：</p>
 <ol>
@@ -286,16 +286,16 @@
 </ol>
 <h2 id="2-局部内部类">2. 局部内部类</h2>
 <p>局部内部类被定义被定义在方法中，不能用<code>public</code>和<code>private</code>访问说明符进行声明，它的作用域被限定在声明这个局部类的块中，外部世界完全不知道它的存在，即使是外围类中其他的代码，也不能访问他。他不仅具有普通内部类的特权——访问外围类的所有成员变量，还由另一个特权能够访问局部变量。如下面这个例程</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">start</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> interval<span style="color:#f92672">,</span> <span style="color:#66d9ef">boolean</span> beep<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">start</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> interval<span style="color:#f92672">,</span> <span style="color:#66d9ef">boolean</span> beep<span style="color:#f92672">){</span>
     <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TimePrinter</span> <span style="color:#66d9ef">implements</span> ActionListener<span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">actionPerformed</span><span style="color:#f92672">(</span>ActionEvent event<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;At the tone, the time is&#34;</span><span style="color:#f92672">+</span><span style="color:#66d9ef">new</span> Date<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-            	<span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>beep<span style="color:#f92672">)</span> Toolkit<span style="color:#f92672">.</span><span style="color:#a6e22e">getDefaultToolkit</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">beep</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">actionPerformed</span><span style="color:#f92672">(</span>ActionEvent event<span style="color:#f92672">){</span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;At the tone, the time is&#34;</span><span style="color:#f92672">+</span><span style="color:#66d9ef">new</span> Date<span style="color:#f92672">());</span>
+            	<span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>beep<span style="color:#f92672">)</span> Toolkit<span style="color:#f92672">.</span><span style="color:#a6e22e">getDefaultToolkit</span><span style="color:#f92672">().</span><span style="color:#a6e22e">beep</span><span style="color:#f92672">;</span>
         <span style="color:#f92672">}</span>
     <span style="color:#f92672">}</span>
-    ActionListener listener <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> TimePrinter<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    Timer t <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Timer<span style="color:#f92672">(</span>interval<span style="color:#f92672">,</span> listener<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    t<span style="color:#f92672">.</span><span style="color:#a6e22e">start</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    ActionListener listener <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> TimePrinter<span style="color:#f92672">();</span>
+    Timer t <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Timer<span style="color:#f92672">(</span>interval<span style="color:#f92672">,</span> listener<span style="color:#f92672">);</span>
+    t<span style="color:#f92672">.</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>在内部类TimePrinter中使用了外围方法中的局部变量<code>beep</code>，这看起来没有什么大惊小怪的，但是我们仔细考虑下程序控制流程</p>
 <ol>
@@ -306,26 +306,26 @@
 </ol>
 <p>为了能够让内部类中actionPerfomed方法正常工作，TimePrinter类在beep域释放之前对其在内部类中进行了备份，而且被声明为了final类型的，如下</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TalkingClock$TimePrinter</span><span style="color:#f92672">{</span>
-    TalkingClock$TimePrinter<span style="color:#f92672">(</span>TalkingClokck<span style="color:#f92672">,</span><span style="color:#66d9ef">boolean</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    TalkingClock$TimePrinter<span style="color:#f92672">(</span>TalkingClokck<span style="color:#f92672">,</span><span style="color:#66d9ef">boolean</span><span style="color:#f92672">);</span>
     <span style="color:#75715e">//构造方法中传入局部变量和外围类对象
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">actionPerformed</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">awt</span><span style="color:#f92672">.</span><span style="color:#a6e22e">event</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ActionEvent</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">actionPerformed</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">awt</span><span style="color:#f92672">.</span><span style="color:#a6e22e">event</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ActionEvent</span><span style="color:#f92672">);</span>
     
     <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> val$beep<span style="color:#f92672">;</span> <span style="color:#75715e">//为局部变量 创建了一个成员变量
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">final</span> TalkingClock <span style="color:#66d9ef">this</span>$0<span style="color:#f92672">;</span><span style="color:#75715e">//成员变量用来接收外围类对象
 </span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
 </code></pre></div><h2 id="3-匿名内部类">3. 匿名内部类</h2>
 <p>可以将局部内部类再推进一步，如果只创建这个类的对象一次，我们就不需要对这个类进行命名，这种类被称为匿名内部类，其语法格式为</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">new</span> SuperType<span style="color:#f92672">(</span>construction parameters<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">new</span> SuperType<span style="color:#f92672">(</span>construction parameters<span style="color:#f92672">){</span>
     inner <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">methods</span> and data<span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>由于构造器的名字必须与类名相同，而匿名类没有名字，因此匿名类不能有构造器。取而代之的，将构造器参数传递给超类的构造器，尤其是在<code>内部类实现接口的时候，不能有任何参数</code>。因此定义匿名内部类的前提是，内部类必须继承一个类或者实现接口，而且所创建的也是<code>匿名子类对象</code>。</p>
 <p>如果构造参数的闭小括号后面跟一个开大括号，正在定义的就是匿名内部类，由此可以继续延伸，有一种技巧是双括号初始化，例如</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">ArrayList<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> friedns <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-friends<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Harry&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-friends<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Tony&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-invite<span style="color:#f92672">(</span>friends<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">ArrayList<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> friedns <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;();</span>
+friends<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Harry&#34;</span><span style="color:#f92672">);</span>
+friends<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Tony&#34;</span><span style="color:#f92672">);</span>
+invite<span style="color:#f92672">(</span>friends<span style="color:#f92672">);</span>
 <span style="color:#75715e">//以上步骤可以简写为
-</span><span style="color:#75715e"></span>invite<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">{</span>add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Harry&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Tony&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span><span style="color:#f92672">}</span><span style="color:#f92672">}</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+</span><span style="color:#75715e"></span>invite<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;(){{</span>add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Harry&#34;</span><span style="color:#f92672">);</span>add<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Tony&#34;</span><span style="color:#f92672">);}});</span>
 <span style="color:#75715e">//外括号建立了ArrayList的一个匿名子类。内括号则是一个对象的构造块。
 </span></code></pre></div><h2 id="4-静态内部类">4. 静态内部类</h2>
 <p>有时候，使用内部类只是为了把一个类隐藏在另外一个类的内部，并不需要内部类引用外围类对象。为此，可以将内部类声明为static，以便取消产生的引用。另外，如果该类如果需要在外围类的静态方法中使用，必须被定义为静态内部类，因为外围类中没有产生对象，而内部类的创建需要传入外围类的对象。</p>

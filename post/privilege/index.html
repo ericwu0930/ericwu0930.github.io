@@ -15,9 +15,9 @@
     
 
     
-    <meta name="title" content="学习笔记" />
-    <meta property="og:title" content="学习笔记" />
-    <meta property="twitter:title" content="学习笔记" />
+    <meta name="title" content="内核态和用户态" />
+    <meta property="og:title" content="内核态和用户态" />
+    <meta property="twitter:title" content="内核态和用户态" />
     
 
     
@@ -34,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>学习笔记-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>内核态和用户态-吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+    <link rel="canonical" href="/post/privilege/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -162,14 +162,37 @@
 
 
 
-<header class="intro-header" style="background-image: url('/img/roof.jpg')">
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+<header class="intro-header">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>Eric&#39;s Blog </h1>
-                    
-		    <span class="subheading">路在脚下，心向远方</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                    </div>
+                    <h1>内核态和用户态</h1>
+                    <h2 class="subheading">整理自《深入Linux内核架构》</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                 &#34;Eric&#34;
+                         
+                        on 
+                        Friday, September 11, 2020
+                        
+                        
+                        
+                    </span>
                 </div>
             </div>
         </div>
@@ -178,178 +201,84 @@
 
 
 
-  
-<div class="container">
-    <div class="row">
-        
-        
-   	    <div class="
-            col-lg-8 col-lg-offset-1
-            col-md-8 col-md-offset-1
-            col-sm-12
-            col-xs-12
-            post-container
-        ">
-            
 
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/memorymanage/">
-        <h2 class="post-title">
-            内存管理
-        </h2>
-	
-        <h3 class="post-subtitle">
-            操作系统学习笔记
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            整理自《深入理解计算机系统》与《现代操作系统》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Monday, September 30, 2019
-    
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/process/">
-        <h2 class="post-title">
-            进程和线程
-        </h2>
-	
-        <h3 class="post-subtitle">
-            操作系统学习笔记
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            整理自《深入理解计算机系统》与《现代操作系统》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by      &#34;Eric&#34; Tuesday, September 10, 2019
-    
-    
-    </p>
-
-</div>
-<hr>
-
+<article>
+    <div class="container">
+        <div class="row">
 
             
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-地址空间">1. 地址空间</a></li>
+    <li><a href="#2-特权级别">2. 特权级别</a></li>
+    <li><a href="#3-总结">3. 总结</a></li>
+  </ul>
+</nav>
+                
+                <p>之前看操作系统相关的书籍，都会提到用户态和内核态，由于没有针对特定的操作系统，所以讲解的比较笼统，理解起来也没有很深刻，今天偶然在铜哥桌子上看到了《深入Linux内核框架》这本书，翻起来看了看第一章，感觉还是收获良多，这里对用户态和内核态进行一个简单的总结。</p>
+<h2 id="1-地址空间">1. 地址空间</h2>
+<p>学习过操作系统可以知道，在计算机历史上有两个非常成功的抽象，一个是进程，一个是虚拟内存。后者为每个进程提供了一致的地址空间，每一个进程好像独占内存，从而简化了内存的管理。</p>
+<p>Linux将虚拟地址空间划分为两个部分，分别是内核空间和用户空间，TASK_SIZE是一个特定于计算机体系结构的常数，把地址空间按给定比例划分为两部分。每个系统进程的用户空间是完全彼此分离的，而虚拟地址空间顶部的内核空间总是同样的，无论当前执行的哪个进程。</p>
+<p><img src="https://i.loli.net/2020/09/11/hXYfUFTNRKdQm8E.png" alt="image-20200911203426138"></p>
+<h2 id="2-特权级别">2. 特权级别</h2>
+<p>内核把虚拟地址空间划分为两个部分，因此能够保护各个系统进程，使之彼此隔离。现代cpu都提供了几种特权级别，进程可以驻留在某一特权级别，每个特权级别都有各种限制。</p>
+<p><img src="https://i.loli.net/2020/09/11/FgQtr4NB2soI6Rc.png" alt="image-20200911204321977"></p>
+<p>在Linux中有两种不同的状态：核心态和用户态。两种状态的关键差别在于对高于TASK_SIZE的内存区域的访问。简而言之，在用户状态禁止访问内核空间。用户进程不能操作或读取内核空间中的数据，也无法执行内核空间的代码。这是内核的专用领域，这种机制可防止进程无意间修改彼此的数据而造成项目干扰。</p>
+<p>从用户态到和内核态的切换通过<strong>系统调用</strong>的特定转换手段完成，除此之外，还可以由<strong>异步硬件中断</strong>激活，然后在中断上下文中进行。但是在中断上下文中运行不能访问虚拟地址空间中的用户空间部分。因为中断可能随时发生，中断发生时可能是任一用户进程处于活动状态。由于该进程基本上与中断的原因无关，因此内核无权访问当前用户空间的内容。</p>
+<p><img src="https://i.loli.net/2020/09/11/fUsBCy2Y5egGqo9.png" alt="image-20200911205153855"></p>
+<h2 id="3-总结">3. 总结</h2>
+<p>总结一下，在虚拟地址空间中会存在内核空间和用户空间，内核空间只有处于内核态的进程才可以访问，可以使用系统调用或者异步硬件中断来实现内核态和用户态之前的切换。</p>
+<blockquote>
+<p>这里补充一点面试中会被问到的知识点，微内核和宏内核。</p>
+<p>什么是内核？内核就是硬件与软件之间的中间层，个人理解就是操作系统中的核心部分，而所谓微内核和宏内核指的是操作系统内核设计的两种模式。</p>
+<p>微内核：在这种范型中，只有最基本的功能直接由中央内核（微内核）实现，所有其他的功能都委托给一些独立的进程，这些进程通过明确定义的通信接口与中心内核通信。</p>
+<p>宏内核：与微内核相反，内核的全部代码都打包在一个文件中，内核中的每一个函数都可以访问内核中所有其他部分。Linux是使用了这种范型。</p>
+</blockquote>
 
 
-<ul class="pager">
-    
-    <li class="previous">
-        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/page/6/">&larr; 上一页</a>
-    </li>
-    
-    
-</ul>
+                
 
-
-       	</div>
-        
-
-<div class="
-    col-lg-3 col-lg-offset-0
-    col-md-3 col-md-offset-0
-    col-sm-12
-    col-xs-12
-    sidebar-container
-">
-    
-    
-
-    
-	
-    <section class="visible-md visible-lg">
-	<hr><h5><a href="/top/about">ABOUT ME</a></h5>
-        <div class="short-about">
-            
-            <a href="/top/about">
-               <img src="/img/portrait.jpeg" alt="avatar" style="cursor: pointer" />
-            </a>
-            
-            
-                <p>Software Developer, Photographer and Life Adventurer</p>
-            
-           
-           <ul class="list-inline"> 
-               
-               
-               
-               
-               <li>
-                   <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-               <li>
-                   <a target="_blank" href="/img/we_chat.JPG">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               <li>
-                   <a target="_blank" href="https://github.com/ericwu0930/">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-               
-               <li>
-                   <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
-                       <span class="fa-stack fa-lg">
-                           <i class="fa fa-circle fa-stack-2x"></i>
-                           <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-            
-            
-               
-               
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/epoll/" data-toggle="tooltip" data-placement="top" title="select与epoll比较">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
                 </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
             </div>
-    </section>
-	
-    
-    
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
 
-    
-    
-</div>
+                
+                
 
-	</div>
-</div>
-
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
 
 
 
