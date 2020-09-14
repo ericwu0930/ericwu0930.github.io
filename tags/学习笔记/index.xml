@@ -12,12 +12,12 @@
     
     
     <item>
-      <title>内核态和用户态</title>
-      <link>https://ericwu0930.github.io/post/privilege/</link>
+      <title>键的过期策略</title>
+      <link>https://ericwu0930.github.io/post/expire/</link>
       <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://ericwu0930.github.io/post/privilege/</guid>
-      <description>之前看操作系统相关的书籍，都会提到用户态和内核态，由于没有针对特定的操作系统，所以讲解的比较笼统，理解起来也没有很深刻，今天偶然在铜哥桌子上</description>
+      <guid>https://ericwu0930.github.io/post/expire/</guid>
+      <description>1. 设置键的生存时间或过期时间 在Redis中，可以对任意键设置一个生存时间，有以下四个命令，他们之间的关系如下，其中以P开头的表明时间单位为毫</description>
     </item>
     
     <item>

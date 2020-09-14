@@ -28,12 +28,12 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/post/privilege/</loc>
+    <loc>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
+    <loc>https://ericwu0930.github.io/post/expire/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url>
   
@@ -334,14 +334,17 @@
   
   <url>
     <loc>https://ericwu0930.github.io/search/placeholder/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/top/about/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/top/books/</loc>
+    <priority>0</priority>
   </url>
   
   <url>

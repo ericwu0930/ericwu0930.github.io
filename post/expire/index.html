@@ -15,15 +15,15 @@
     
 
     
-    <meta name="title" content="JVM内存分配策略与GC时机" />
-    <meta property="og:title" content="JVM内存分配策略与GC时机" />
-    <meta property="twitter:title" content="JVM内存分配策略与GC时机" />
+    <meta name="title" content="键的过期策略" />
+    <meta property="og:title" content="键的过期策略" />
+    <meta property="twitter:title" content="键的过期策略" />
     
 
     
-    <meta name="description" content="总结自《深入理解java虚拟机》">
-    <meta property="og:description" content="总结自《深入理解java虚拟机》" />
-    <meta property="twitter:description" content="总结自《深入理解java虚拟机》" />
+    <meta name="description" content="本文重点讲解Redis中如何设置键的生存时间以及删除策略">
+    <meta property="og:description" content="本文重点讲解Redis中如何设置键的生存时间以及删除策略" />
+    <meta property="twitter:description" content="本文重点讲解Redis中如何设置键的生存时间以及删除策略" />
     
 
     
@@ -34,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>JVM内存分配策略与GC时机-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>键的过期策略-吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/post/gc_3/">
+    <link rel="canonical" href="/post/expire/">
 
     <link rel="stylesheet" href="/css/iDisqus.min.css"/>
 	
@@ -165,7 +165,7 @@
 
 <style type="text/css">
     header.intro-header {
-        background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80')
+        background-image: url('/img/roof.jpg')
     }
 </style>
 <header class="intro-header">
@@ -179,20 +179,16 @@
                             学习笔记
                         </a>
                         
-                        <a class="tag" href="/tags/jvm" title="JVM">
-                            JVM
-                        </a>
-                        
                     </div>
-                    <h1>JVM内存分配策略与GC时机</h1>
-                    <h2 class="subheading">GC学习笔记之三</h2>
+                    <h1>键的过期策略</h1>
+                    <h2 class="subheading">整理自《Redis设计与实现》</h2>
                     <span class="meta">
                         Posted by 
                         
                                  &#34;Eric&#34;
                          
                         on 
-                        Sunday, December 1, 2019
+                        Friday, September 11, 2020
                         
                         
                         
@@ -222,56 +218,25 @@
                 </header>
                 <nav id="TableOfContents">
   <ul>
-    <li><a href="#对象优先在eden分配">对象优先在Eden分配</a></li>
-    <li><a href="#大对象直接进入老年代">大对象直接进入老年代</a></li>
-    <li><a href="#长期存活的对象将进入老年代">长期存活的对象将进入老年代</a></li>
-    <li><a href="#动态对象年龄判断">动态对象年龄判断</a></li>
-    <li><a href="#空间分配担保">空间分配担保</a></li>
-    <li><a href="#java中的内存泄漏问题">Java中的内存泄漏问题</a></li>
+    <li><a href="#1-设置键的生存时间或过期时间">1. 设置键的生存时间或过期时间</a></li>
+    <li><a href="#2-过期键的删除策略">2. 过期键的删除策略</a></li>
   </ul>
 </nav>
                 
-                <blockquote>
-<p>Java技术体系中所提倡的自动内存管理最终可以归结为自动化地解决两个问题：给对象分配内存以及回收分配给对象的内存。</p>
-</blockquote>
-<p>在GC的第一篇总结笔记中提出了GC要解决三个问题：哪些内存需要回收，该问题使用引用计数法或者可达性分析法可以解决；如何回收，使用标记-清除、标记-整理、复制算法或者几种垃圾回收器也可以解决该问题。剩下最后一个问题，即何时发生GC将在该文章中解决。</p>
-<p>对象的内存分配，就是在堆上分配，对象主要分配在新生代的Eden区上，分配的规则并不是百分之百固定的，其细节取决于当前使用的是哪一种垃圾收集器组合，还有虚拟机中内存的参数的设置。</p>
-<p>下面介绍几条最普遍的内存分配规则。
-<img src="https://s2.ax1x.com/2020/03/05/37rMEF.png" alt="22482BBC-88DF-494E-A613-0DAFE2137A42"></p>
-<h2 id="对象优先在eden分配">对象优先在Eden分配</h2>
-<p>大多数情况下，对象在新生代Eden区中分配，当Eden区没有足够空间进行分配时，虚拟机会发起一次Minor GC。发生Minor GC时，将Eden区以及幸存区From中存活的对象复制到幸存区To中，将Eden和幸存区From中的对象全部清空，然后将幸存区From和幸存区To调换</p>
-<pre><code>概念解释：
-新生代GC（Minor GC）：发生在新生代的垃圾收集动作，Minor GC非常频繁，一般回收速度也比较快 
-老年代GC (Major GC/Full GC)：发生在老年代的GC，Full GC速度一般会比Minor GC慢10倍以上。
-</code></pre><h2 id="大对象直接进入老年代">大对象直接进入老年代</h2>
-<p>所谓大对象，需要大量连续内存空间的Java对象，最典型的大对象就是很长的字符串以及数组，经常出现大对象容易导致内存还有不少空间时就提前触发垃圾收集（Minor GC）以获取足够的连续空间来“安置”它们。为了避免在Eden区以及两个Survivor区之间发生大量的内存复制，通过-XX:PretenureSizeThreshold参数，令大于这个设置值的对象直接在老年代分配。</p>
-<h2 id="长期存活的对象将进入老年代">长期存活的对象将进入老年代</h2>
-<p>虚拟机给每个对象定义了一个对象年龄（Age）计数器，对象在新生代每熬过一次Minor GC年龄就+1，当年龄增加到一定程度，就会晋升到老年代。这个阈值可以通过-XX：MaxTenringThreshold</p>
-<h2 id="动态对象年龄判断">动态对象年龄判断</h2>
-<p>虚拟机并不是永远要求对象的年龄必须达到了MaxTenuringThreshold才能晋升老年代，如果在Survivor空间中相同年龄所有对象大小的总和大于Survivor空间的一半，年龄大于或等于该年龄的对象可以直接进入老年代，无须等到MaxTenuringThreshold中要求的年龄。</p>
-<h2 id="空间分配担保">空间分配担保</h2>
-<p>所谓空间担保就是新生代使用复制收集算法，当出现大量对象在Minor GC后仍然存活的情况，就需要老年代进行分配担保，把Survivor无法容纳的对象直接进入老年代。</p>
-<p>在发生Minor GC之前，虚拟机会先检查老年代最大可用的连续空间是否大于新生代所有对象总空间，如果这个条件成立，那么Minor GC可以确保是安全的。如果不成立，虚拟机会查看HandlePromotionFailue设置值是否允许担保失败，如果允许，那么会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小，如果大于，尝试进行一次Minor GC；如果小于，或者HandlePromotionFailure设置不允许冒险，那这时也要改成进行一次Full GC。</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ght2yvdiyqj30u20t6gp3.jpg" alt="image-20200816234127789"></p>
-<h2 id="java中的内存泄漏问题">Java中的内存泄漏问题</h2>
-<p>虽然Java拥有垃圾回收机制，但同样也会出现内存泄漏的问题，比如下面几种情况：</p>
+                <h2 id="1-设置键的生存时间或过期时间">1. 设置键的生存时间或过期时间</h2>
+<p>在Redis中，可以对任意键设置一个生存时间，有以下四个命令，他们之间的关系如下，其中以P开头的表明时间单位为毫秒；以AT结尾的表名在timestamp时刻过期。不管是执行这四个之中的何种命令，最终都会转化成PEXPIREAT这条命令执行，然后在redistDb结构中，会用一个expires字典保存数据库中所有键的过期时间。</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gimpb8yufuj30g40amt9a.jpg" alt="image-20200911143539544"></p>
+<p>通过过期字典，程序可以用以下步骤检查一个给定键是否过期：</p>
 <ol>
-<li>诸如HashMap，Vector等集合类的静态使用最容易出现内存泄漏，因为这些静态变量的声明周期与应用程序一致，集合类所持有的的Object也不能被释放</li>
+<li>检查给定键是否存在于过期字典：如果存在，那么取得过期键的过期时间</li>
+<li>检查当前UNIX时间戳是否大于键的过期时间：如果是的话，那么键已经过期；否则的话，键未过期。</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Vector v <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Vector<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-
-<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(</span>Vector v<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>i<span style="color:#f92672">&lt;</span>100<span style="color:#f92672">;</span><span style="color:#f92672">+</span><span style="color:#f92672">+</span>i<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-        Object o <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Object<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-        v<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>o<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-        o<span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>在这个例子中，即使将o的引用置空，也不会回收Object对象，因为该对象仍然被Vector对象所持有的。</p>
-<ol start="2">
-<li>各种资源连接，包括数据库连接、网络连接、IO连接等没有显示的调用close关闭，不被GC回收导致内存泄漏</li>
-<li>监听器的使用，在释放对象的同时没有相应的删除监听器的时候也可能导致内存泄漏</li>
-</ol>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gimpo5g0iej30y60mmjwk.jpg" alt="image-20200911143938124"></p>
+<h2 id="2-过期键的删除策略">2. 过期键的删除策略</h2>
+<p>Redis服务器使用了惰性删除和定期删除两种策略；所谓的惰性删除就是在访问该键时才检查键是否过期。定期删除每隔一段时间执行一次删除过期键的操作。</p>
+<p>过期键的惰性删除策略由db.c/expireIfNeeded函数实现，所有读写数据库的Redis命令在执行之前都会调用expireIfNeeded函数对输入键进行检查</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlly1ginv8kfefdj30fi0eegn6.jpg" alt="image-20200912144612800"></p>
+<p>过期键的定期删除策略由redis.c/activeExpireCycle函数实现，每当Redis的服务器周期性操作redis.c/serverCron函数执行时，activeExpireCycle函数就会被调用，它在规定的时间内，分多次遍历服务器中的各个数据库。</p>
 
 
                 
@@ -280,15 +245,10 @@
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/post/gc_2/" data-toggle="tooltip" data-placement="top" title="JVM垃圾收集器">&larr;
+                        <a href="/post/epoll/" data-toggle="tooltip" data-placement="top" title="select与epoll比较">&larr;
                             Previous Post</a>
                     </li>
                     
-                    
-                    <li class="next">
-                        <a href="/post/classload/" data-toggle="tooltip" data-placement="top" title="JVM类加载机制">Next
-                            Post &rarr;</a>
-                    </li>
                     
                 </ul>
 
