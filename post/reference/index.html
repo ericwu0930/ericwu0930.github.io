@@ -271,19 +271,19 @@
 <p>软引用</p>
 <p>当内存不足时，GC会把软引用指向的对象回收。软引用被经常用在缓存上，如下面这个例子</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// list --&gt; SoftReference —-&gt; byte[]
-</span><span style="color:#75715e">// list对SoftReference是强引用，但对SoftReference对byte[]是软引用
-</span><span style="color:#75715e"></span>List<span style="color:#f92672">&lt;</span>SoftReference<span style="color:#f92672">&lt;</span>Byte<span style="color:#f92672">[]&gt;&gt;</span> list<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;();</span>
-ReferenceQueue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">byte</span><span style="color:#f92672">[]&gt;</span> queue<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> ReferenceQueue<span style="color:#f92672">&lt;&gt;();</span><span style="color:#75715e">//引用队列
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>i<span style="color:#f92672">&lt;</span>5<span style="color:#f92672">;++</span>i<span style="color:#f92672">){</span>
+</span><span style="color:#75715e"></span><span style="color:#75715e">// list对SoftReference是强引用，但对SoftReference对byte[]是软引用
+</span><span style="color:#75715e"></span>List<span style="color:#f92672">&lt;</span>SoftReference<span style="color:#f92672">&lt;</span>Byte<span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span> list<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+ReferenceQueue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">&gt;</span> queue<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> ReferenceQueue<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span><span style="color:#75715e">//引用队列
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>i<span style="color:#f92672">&lt;</span>5<span style="color:#f92672">;</span><span style="color:#f92672">+</span><span style="color:#f92672">+</span>i<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
  <span style="color:#75715e">//关联了引用队列，当软引用所关联的byte[]回收时，软引用自己也会加入到queue中去
-</span><span style="color:#75715e"></span>     SoftReference<span style="color:#f92672">&lt;</span>Byte<span style="color:#f92672">[]&gt;</span> ref<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> SoftReference<span style="color:#f92672">&lt;&gt;(</span><span style="color:#66d9ef">new</span> Byte<span style="color:#f92672">[</span>_4MB<span style="color:#f92672">]);</span>
-     list<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>ref<span style="color:#f92672">);</span>
+</span><span style="color:#75715e"></span>     SoftReference<span style="color:#f92672">&lt;</span>Byte<span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">&gt;</span> ref<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> SoftReference<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> Byte<span style="color:#f92672">[</span>_4MB<span style="color:#f92672">]</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+     list<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>ref<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 <span style="color:#75715e">//从list中删除掉无效的引用
-</span><span style="color:#75715e"></span>Reference<span style="color:#f92672">&lt;?</span> Extends <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]&gt;</span> poll<span style="color:#f92672">=</span>queue<span style="color:#f92672">.</span><span style="color:#a6e22e">poll</span><span style="color:#f92672">();</span>
-<span style="color:#66d9ef">while</span><span style="color:#f92672">(</span>poll<span style="color:#f92672">!=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">){</span>
-     list<span style="color:#f92672">.</span><span style="color:#a6e22e">remove</span><span style="color:#f92672">(</span>poll<span style="color:#f92672">);</span>
-     poll<span style="color:#f92672">=</span>queue<span style="color:#f92672">.</span><span style="color:#a6e22e">poll</span><span style="color:#f92672">();</span>
+</span><span style="color:#75715e"></span>Reference<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span> Extends <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">&gt;</span> poll<span style="color:#f92672">=</span>queue<span style="color:#f92672">.</span><span style="color:#a6e22e">poll</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#66d9ef">while</span><span style="color:#f92672">(</span>poll<span style="color:#f92672">!</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+     list<span style="color:#f92672">.</span><span style="color:#a6e22e">remove</span><span style="color:#f92672">(</span>poll<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+     poll<span style="color:#f92672">=</span>queue<span style="color:#f92672">.</span><span style="color:#a6e22e">poll</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 </code></pre></div></li>
 <li>
@@ -291,21 +291,21 @@ ReferenceQueue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef"
 <p>遇到GC就会被回收，如果一个强引用和弱引用同时指向对象。当强引用消失时，该对象也会被回收，一般会用在容器中。</p>
 <p>通过弱引用可以解决，如该篇文章中提到的内存泄漏问题中的<a href="https://ericwu0930.github.io/post/gc_3/">第一种情况</a>，我们可以在Vector容器中添加一个对象的弱引用而不是强引用。这样当该对象没有被强引用指向时，就会被回收。如下所示</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">solution</span><span style="color:#f92672">{</span>
- <span style="color:#66d9ef">static</span> Vector<span style="color:#f92672">&lt;</span>WeakReference<span style="color:#f92672">&lt;?&gt;&gt;</span> v<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Vector<span style="color:#f92672">&lt;&gt;();</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-     Test t<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Test<span style="color:#f92672">();</span>
-        TestReference tp<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> TestReference<span style="color:#f92672">(</span>t<span style="color:#f92672">);</span>
-        v<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>tp<span style="color:#f92672">);</span>				<span style="color:#75715e">//在Vector中放入的是Test对象的软引用对象
+ <span style="color:#66d9ef">static</span> Vector<span style="color:#f92672">&lt;</span>WeakReference<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span> v<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Vector<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+     Test t<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Test<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        TestReference tp<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> TestReference<span style="color:#f92672">(</span>t<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        v<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>tp<span style="color:#f92672">)</span><span style="color:#f92672">;</span>				<span style="color:#75715e">//在Vector中放入的是Test对象的软引用对象
 </span><span style="color:#75715e"></span>        t<span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>					<span style="color:#75715e">//当强引用不再指向Test对象时候，即使有弱引用指向了该对象，gc时会回收
-</span><span style="color:#75715e"></span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">gc</span><span style="color:#f92672">();</span>            <span style="color:#75715e">//Output:我被回收了
+</span><span style="color:#75715e"></span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">gc</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>            <span style="color:#75715e">//Output:我被回收了
 </span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
     
 <span style="color:#f92672">}</span>
    
 <span style="color:#75715e">//定义一个指向Test的弱引用类型
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestReference</span> <span style="color:#66d9ef">extends</span> WeakReference<span style="color:#f92672">&lt;</span>Test<span style="color:#f92672">&gt;{</span>
-    TestReference<span style="color:#f92672">(</span>Test t<span style="color:#f92672">){</span>
-        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span>t<span style="color:#f92672">);</span>         <span style="color:#75715e">//将弱引用指向一个Test对象
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestReference</span> <span style="color:#66d9ef">extends</span> WeakReference<span style="color:#f92672">&lt;</span>Test<span style="color:#f92672">&gt;</span><span style="color:#f92672">{</span>
+    TestReference<span style="color:#f92672">(</span>Test t<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span>t<span style="color:#f92672">)</span><span style="color:#f92672">;</span>         <span style="color:#75715e">//将弱引用指向一个Test对象
 </span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
        
 <span style="color:#f92672">}</span>
@@ -313,35 +313,35 @@ ReferenceQueue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef"
 <span style="color:#75715e">//定义一个Test类型，重写finalize方法，该方法在对象被回收时会被调用
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span><span style="color:#f92672">{</span>
     <span style="color:#a6e22e">@Override</span>
-    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">finalize</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Throwable <span style="color:#f92672">{</span>
-        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;我被回收了&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">finalize</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Throwable <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;我被回收了&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>上面这一原理也被用在了ThreadLocal中</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">//可以在类的成员变量中声明一个ThreadLocal对象，该对象在每个线程中都独占一份
-</span><span style="color:#75715e"></span>ThreadLocal<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> tl <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ThreadLocal<span style="color:#f92672">&lt;&gt;();</span>
+</span><span style="color:#75715e"></span>ThreadLocal<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> tl <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ThreadLocal<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 </code></pre></div><p>通过使用ThreadLocal的set方法，可以进行赋值操作，其源码为</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>T value<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-    Thread t <span style="color:#f92672">=</span> Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">();</span> <span style="color:#75715e">//拿到当前线程
+    Thread t <span style="color:#f92672">=</span> Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span> <span style="color:#75715e">//拿到当前线程
 </span><span style="color:#75715e"></span>    <span style="color:#75715e">/*
 </span><span style="color:#75715e">    *  ThreadLocalMap是定义在ThreadLocal中的一个内部类，是一个Map结构
 </span><span style="color:#75715e">    *  在Thread类中会持有一个ThreadLocalMap的成员变量，因此该Map是每个
 </span><span style="color:#75715e">    *  Thread所独有的
 </span><span style="color:#75715e">    */</span>
-    ThreadLocalMap map <span style="color:#f92672">=</span> getMap<span style="color:#f92672">(</span>t<span style="color:#f92672">);</span>  
-    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>map <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        map<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">,</span> value<span style="color:#f92672">);</span>
+    ThreadLocalMap map <span style="color:#f92672">=</span> getMap<span style="color:#f92672">(</span>t<span style="color:#f92672">)</span><span style="color:#f92672">;</span>  
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>map <span style="color:#f92672">!</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        map<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">,</span> value<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
-        createMap<span style="color:#f92672">(</span>t<span style="color:#f92672">,</span> value<span style="color:#f92672">);</span>
+        createMap<span style="color:#f92672">(</span>t<span style="color:#f92672">,</span> value<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>ThreadLocalMap和HashMap的结构类似，通过查看源码可以理解为一个简化版的HashMap。ThreadLocalMap由一个Entry[]构成，而Entry是ThreadLocalMap的内部类，源码如下所示</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Entry</span> <span style="color:#66d9ef">extends</span> WeakReference<span style="color:#f92672">&lt;</span>ThreadLocal<span style="color:#f92672">&lt;?&gt;&gt;</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Entry</span> <span style="color:#66d9ef">extends</span> WeakReference<span style="color:#f92672">&lt;</span>ThreadLocal<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
     <span style="color:#75715e">/** The value associated with this ThreadLocal. */</span>
     Object value<span style="color:#f92672">;</span>
    
-    Entry<span style="color:#f92672">(</span>ThreadLocal<span style="color:#f92672">&lt;?&gt;</span> k<span style="color:#f92672">,</span> Object v<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span>k<span style="color:#f92672">);</span>
+    Entry<span style="color:#f92672">(</span>ThreadLocal<span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span><span style="color:#f92672">&gt;</span> k<span style="color:#f92672">,</span> Object v<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span>k<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
         value <span style="color:#f92672">=</span> v<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
@@ -351,7 +351,7 @@ ReferenceQueue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef"
 </li>
 <li>
 <p>虚引用</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">PhantomReference<span style="color:#f92672">&lt;</span>M<span style="color:#f92672">&gt;</span> phantomReference <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> PhantomReference<span style="color:#f92672">&lt;&gt;(</span><span style="color:#66d9ef">new</span> M<span style="color:#f92672">(),</span> Queue<span style="color:#f92672">);</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">PhantomReference<span style="color:#f92672">&lt;</span>M<span style="color:#f92672">&gt;</span> phantomReference <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> PhantomReference<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> M<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span> Queue<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
 </code></pre></div><p>注意，PhantomReference必须与一个引用队列相关联，并且无法通过phantomReference取值。当虚引用指向的对象被回收时，虚引用自己会被加入到引用队列中，可以通过再开一个线程不断地查看这个队列中是否有值做出相应的操作。其常用在对直接内存的回收场景下。</p>
 <p>例如NIO包中的ByteBuffer类</p>
 <p><img src="https://s2.ax1x.com/2020/03/11/8kmCXn.png" alt="8kmCXn.png"></p>

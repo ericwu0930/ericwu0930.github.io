@@ -21,6 +21,27 @@
     </item>
     
     <item>
+<<<<<<< HEAD
+=======
+      <title>键的过期策略</title>
+      <link>https://ericwu0930.github.io/post/expire/</link>
+      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/expire/</guid>
+      <description>1. 设置键的生存时间或过期时间 在Redis中，可以对任意键设置一个生存时间，有以下四个命令，他们之间的关系如下，其中以P开头的表明时间单位为毫</description>
+    </item>
+    
+    <item>
+      <title>select与epoll比较</title>
+      <link>https://ericwu0930.github.io/post/epoll/</link>
+      <pubDate>Sun, 06 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/epoll/</guid>
+      <description>1. 前言 假设要写一个echo服务器，用于对用户从标准输入键入的交互命令做出相应，在这种情况下，服务器必须相应两个独立的I/O事件：1）网络客户</description>
+    </item>
+    
+    <item>
+>>>>>>> a40befc26d5b37dc1e43951722c8fe5b6aea47c0
       <title>MVCC版本控制</title>
       <link>https://ericwu0930.github.io/post/mvcc/</link>
       <pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate>

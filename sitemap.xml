@@ -394,14 +394,17 @@
   
   <url>
     <loc>https://ericwu0930.github.io/search/placeholder/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/top/about/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/top/books/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
