@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JVM on Eric&#39;s Blog</title>
+    <link>https://ericwu0930.github.io/categories/jvm/</link>
+    <description>Recent content in JVM on Eric&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 06 Mar 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://ericwu0930.github.io/categories/jvm/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>异常处理背后的JVM原理</title>
+      <link>https://ericwu0930.github.io/post/exception/</link>
+      <pubDate>Fri, 06 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/exception/</guid>
+      <description>异常处理背后的JVM原理 1. 异常分类 Java体系中异常的组织分类如下图所示，所有异常类型的根类为 Throwable，具体包括两大类：Error</description>
+    </item>
+    
+    <item>
+      <title>Java类中数据域初始化顺序</title>
+      <link>https://ericwu0930.github.io/post/classinit/</link>
+      <pubDate>Wed, 25 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/classinit/</guid>
+      <description>今天在做马士兵的坦克项目时，有个问题让我困惑了很久，翻阅了《深入理解Java虚拟机》以及《Java核心技术》之后，稍微找到了一些眉目，在这里</description>
+    </item>
+    
+    <item>
+      <title>类加载器与双亲委派模型</title>
+      <link>https://ericwu0930.github.io/post/classloader/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/classloader/</guid>
+      <description>在类加载过程的加载阶段，“通过一个类的全限定名来获取描述此类的二进制字节流”是通过“类加载器”来实现的。类加载器虽然只用于实现类的加载动作，</description>
+    </item>
+    
+    <item>
+      <title>JVM类加载机制</title>
+      <link>https://ericwu0930.github.io/post/classload/</link>
+      <pubDate>Tue, 03 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/classload/</guid>
+      <description>虚拟机把描述类的数据从Class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机</description>
+    </item>
+    
+    <item>
+      <title>JVM内存分配策略与GC时机</title>
+      <link>https://ericwu0930.github.io/post/gc_3/</link>
+      <pubDate>Sun, 01 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/gc_3/</guid>
+      <description>Java技术体系中所提倡的自动内存管理最终可以归结为自动化地解决两个问题：给对象分配内存以及回收分配给对象的内存。 在GC的第一篇总结笔记中提</description>
+    </item>
+    
+    <item>
+      <title>JVM垃圾收集器</title>
+      <link>https://ericwu0930.github.io/post/gc_2/</link>
+      <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/gc_2/</guid>
+      <description>如果说收集算法是内存回收的方法论，那么垃圾收集器就是内存回收的具体实现。 一、串行 单线程 堆内存较小，适合个人电脑 -XX: +UseSerialGC=Serial+SerialOld 新生代使用复制算法，老年代</description>
+    </item>
+    
+    <item>
+      <title>JVM垃圾收集策略</title>
+      <link>https://ericwu0930.github.io/post/gc_1/</link>
+      <pubDate>Fri, 29 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/gc_1/</guid>
+      <description>Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的“高墙”，墙外面的人想进去，墙里面的人却想出来 GC要解决的问题无非是以下三个：</description>
+    </item>
+    
+  </channel>
+</rss>

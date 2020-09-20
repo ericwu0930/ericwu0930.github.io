@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>键的过期策略</title>
+      <link>https://ericwu0930.github.io/post/expire/</link>
+      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/expire/</guid>
+      <description>1. 设置键的生存时间或过期时间 在Redis中，可以对任意键设置一个生存时间，有以下四个命令，他们之间的关系如下，其中以P开头的表明时间单位为毫</description>
+    </item>
+    
+    <item>
       <title>select与epoll比较</title>
       <link>https://ericwu0930.github.io/post/epoll/</link>
       <pubDate>Sun, 06 Sep 2020 00:00:00 +0000</pubDate>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>trivial on Eric&#39;s Blog</title>
+    <link>https://ericwu0930.github.io/categories/trivial/</link>
+    <description>Recent content in trivial on Eric&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 13 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://ericwu0930.github.io/categories/trivial/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>关于IDEA中classpath的定义</title>
+      <link>https://ericwu0930.github.io/post/classpath/</link>
+      <pubDate>Wed, 13 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/classpath/</guid>
+      <description>1. ClassPath到底在哪儿？ 之前一直有个误解，认为classpath是编译前概念，所以看到src文件夹下有main，有test，有res</description>
+    </item>
+    
+  </channel>
+</rss>

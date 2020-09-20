@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>计算机网络 on Eric&#39;s Blog</title>
+    <link>https://ericwu0930.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</link>
+    <description>Recent content in 计算机网络 on Eric&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 31 Mar 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://ericwu0930.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>计算机网络零散知识点总结</title>
+      <link>https://ericwu0930.github.io/post/cnet/</link>
+      <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/cnet/</guid>
+      <description>1. DNS域名解析系统 DNS服务器分为三种，根域名服务器、顶级域名服务器以及权限域名服务器。在因特网上有13个根DNS服务器，他们的命名从A-</description>
+    </item>
+    
+    <item>
+      <title>HTTP协议</title>
+      <link>https://ericwu0930.github.io/post/http/</link>
+      <pubDate>Sun, 16 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/http/</guid>
+      <description>1. Http的初步认识 1.1 Http的诞生 CERN的蒂姆·伯纳斯-李博士提出一种让全球研究者共享知识的设想：借助多文档之间互相关联形成的超文本，连</description>
+    </item>
+    
+  </channel>
+</rss>
