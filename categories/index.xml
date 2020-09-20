@@ -12,20 +12,20 @@
     
     
     <item>
+      <title>OS</title>
+      <link>https://ericwu0930.github.io/categories/os/</link>
+      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/categories/os/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Redis</title>
       <link>https://ericwu0930.github.io/categories/redis/</link>
       <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/categories/redis/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tech</title>
-      <link>https://ericwu0930.github.io/categories/tech/</link>
-      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/categories/tech/</guid>
       <description></description>
     </item>
     
@@ -39,29 +39,47 @@
     </item>
     
     <item>
-      <title>学习笔记</title>
-      <link>https://ericwu0930.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+      <title>trivial</title>
+      <link>https://ericwu0930.github.io/categories/trivial/</link>
       <pubDate>Fri, 04 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://ericwu0930.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+      <guid>https://ericwu0930.github.io/categories/trivial/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>MySQL</title>
+      <link>https://ericwu0930.github.io/categories/mysql/</link>
+      <pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/categories/mysql/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java基础</title>
+      <link>https://ericwu0930.github.io/categories/java%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/categories/java%E5%9F%BA%E7%A1%80/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Spring</title>
       <link>https://ericwu0930.github.io/categories/spring/</link>
-      <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 23 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/categories/spring/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>trivial</title>
-      <link>https://ericwu0930.github.io/categories/trivial/</link>
-      <pubDate>Wed, 13 May 2020 00:00:00 +0000</pubDate>
+      <title>随笔</title>
+      <link>https://ericwu0930.github.io/categories/%E9%9A%8F%E7%AC%94/</link>
+      <pubDate>Thu, 09 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://ericwu0930.github.io/categories/trivial/</guid>
+      <guid>https://ericwu0930.github.io/categories/%E9%9A%8F%E7%AC%94/</guid>
       <description></description>
     </item>
     
@@ -75,11 +93,11 @@
     </item>
     
     <item>
-      <title>MySQL</title>
-      <link>https://ericwu0930.github.io/categories/mysql/</link>
-      <pubDate>Sun, 22 Mar 2020 00:00:00 +0000</pubDate>
+      <title>JVM</title>
+      <link>https://ericwu0930.github.io/categories/jvm/</link>
+      <pubDate>Wed, 11 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://ericwu0930.github.io/categories/mysql/</guid>
+      <guid>https://ericwu0930.github.io/categories/jvm/</guid>
       <description></description>
     </item>
     
@@ -93,20 +111,11 @@
     </item>
     
     <item>
-      <title>Java基础</title>
-      <link>https://ericwu0930.github.io/categories/java%E5%9F%BA%E7%A1%80/</link>
-      <pubDate>Sat, 07 Mar 2020 00:00:00 +0000</pubDate>
+      <title>算法</title>
+      <link>https://ericwu0930.github.io/categories/%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Tue, 03 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://ericwu0930.github.io/categories/java%E5%9F%BA%E7%A1%80/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>JVM</title>
-      <link>https://ericwu0930.github.io/categories/jvm/</link>
-      <pubDate>Fri, 06 Mar 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/categories/jvm/</guid>
+      <guid>https://ericwu0930.github.io/categories/%E7%AE%97%E6%B3%95/</guid>
       <description></description>
     </item>
     
@@ -120,11 +129,11 @@
     </item>
     
     <item>
-      <title>随笔</title>
-      <link>https://ericwu0930.github.io/categories/%E9%9A%8F%E7%AC%94/</link>
-      <pubDate>Tue, 30 Jul 2019 00:00:00 +0000</pubDate>
+      <title>Tech</title>
+      <link>https://ericwu0930.github.io/categories/tech/</link>
+      <pubDate>Mon, 09 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://ericwu0930.github.io/categories/%E9%9A%8F%E7%AC%94/</guid>
+      <guid>https://ericwu0930.github.io/categories/tech/</guid>
       <description></description>
     </item>
     

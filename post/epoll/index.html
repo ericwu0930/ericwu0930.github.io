@@ -122,6 +122,10 @@
                         </li>
                         
                         <li>
+                            <a href="/categories/os">os</a>
+                        </li>
+                        
+                        <li>
                             <a href="/categories/redis">redis</a>
                         </li>
                         
@@ -138,11 +142,11 @@
                         </li>
                         
                         <li>
-                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                            <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析</a>
                         </li>
                         
                         <li>
-                            <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析</a>
+                            <a href="/categories/%E7%AE%97%E6%B3%95">算法</a>
                         </li>
                         
                         <li>
@@ -283,14 +287,14 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">echo</span>(<span style="color:#66d9ef">int</span> connfd);
 <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">command</span>(<span style="color:#66d9ef">void</span>);
 
-<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span><span style="color:#f92672">*</span>argv){
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">**</span>argv){
     <span style="color:#66d9ef">int</span> listenfd, connfd;
     socklen_t clientlen;
     <span style="color:#66d9ef">struct</span> sockaddr_storange clientaddr;
     fd_set read_st,ready_set;
     
-    <span style="color:#66d9ef">if</span>(argc <span style="color:#f92672">!</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>){
-        fprintf(stderr, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">usage: %s &lt;port&gt;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, argv[<span style="color:#ae81ff">0</span>]);
+    <span style="color:#66d9ef">if</span>(argc <span style="color:#f92672">!=</span> <span style="color:#ae81ff">2</span>){
+        fprintf(stderr, <span style="color:#e6db74">&#34;usage: %s &lt;port&gt;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, argv[<span style="color:#ae81ff">0</span>]);
         exit(<span style="color:#ae81ff">0</span>);
     }
     listenfd <span style="color:#f92672">=</span> Open_listenfd(argv[<span style="color:#ae81ff">1</span>]);
@@ -316,7 +320,7 @@
         <span style="color:#66d9ef">char</span> buf[MAXLINE];
         <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>fgets(buf, MAXLINE , stdin))
             exit(<span style="color:#ae81ff">0</span>);
-        printf(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#34;</span>,buf);
+        printf(<span style="color:#e6db74">&#34;%s&#34;</span>,buf);
     }
 }
 </code></pre></div><h2 id="4-epoll多路复用">4. epoll多路复用</h2>

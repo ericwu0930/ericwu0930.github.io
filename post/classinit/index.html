@@ -122,6 +122,10 @@
                         </li>
                         
                         <li>
+                            <a href="/categories/os">os</a>
+                        </li>
+                        
+                        <li>
                             <a href="/categories/redis">redis</a>
                         </li>
                         
@@ -138,11 +142,11 @@
                         </li>
                         
                         <li>
-                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                            <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析</a>
                         </li>
                         
                         <li>
-                            <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析</a>
+                            <a href="/categories/%E7%AE%97%E6%B3%95">算法</a>
                         </li>
                         
                         <li>
@@ -281,8 +285,8 @@
 <p><img src="https://s2.ax1x.com/2020/03/05/3T5nOJ.png" alt="3T5nOJ.png"></p>
 <p>此时，我瞬间反应过来，应该是在Tank的构造方法中调用GameModel.getINSTANCE()时，还没有完成对GameModel的实例化。所以，Java类中数据初始化的顺序到底是怎样进行的呢？</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TankFrame</span> <span style="color:#66d9ef">extends</span> Frame<span style="color:#f92672">{</span>
-    GameModel gm <span style="color:#f92672">=</span> GameModel<span style="color:#f92672">.</span><span style="color:#a6e22e">getINSTANCE</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    <span style="color:#f92672">.</span><span style="color:#f92672">.</span><span style="color:#f92672">.</span>
+    GameModel gm <span style="color:#f92672">=</span> GameModel<span style="color:#f92672">.</span><span style="color:#a6e22e">getINSTANCE</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">...</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p><img src="https://s2.ax1x.com/2020/03/05/3T5YlD.png" alt="3T5YlD.png"></p>
 <p><img src="https://s2.ax1x.com/2020/03/05/3T5DtP.png" alt="3T5DtP.png"></p>
@@ -303,7 +307,7 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span><span style="color:#f92672">{</span>
     <span style="color:#66d9ef">static</span> <span style="color:#f92672">{</span>
         i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>						<span style="color:#75715e">//正确
-</span><span style="color:#75715e"></span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>i<span style="color:#f92672">)</span><span style="color:#f92672">;</span>		<span style="color:#75715e">//非法前向引用
+</span><span style="color:#75715e"></span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">print</span><span style="color:#f92672">(</span>i<span style="color:#f92672">);</span>		<span style="color:#75715e">//非法前向引用
 </span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
     <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>1<span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
@@ -325,8 +329,8 @@
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>我们将上面代码的字节码反编译后得到以下结果，会发现编译器会按上至下，收集所有static静态代码和静态成员赋值的代码，合并成一个特殊的方法<!-- raw HTML omitted -->()V</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#66d9ef">static</span> <span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
-    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#f92672">)</span>V
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#66d9ef">static</span> <span style="color:#f92672">{};</span>
+    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">()</span>V
     flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0008<span style="color:#f92672">)</span> ACC_STATIC
     Code<span style="color:#f92672">:</span>
       stack<span style="color:#f92672">=</span>1<span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span>0<span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span>0
@@ -353,18 +357,18 @@
     <span style="color:#f92672">{</span>
         a<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">“</span>s2<span style="color:#960050;background-color:#1e0010">”</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Demo</span><span style="color:#f92672">(</span>String a<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> b<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Demo</span><span style="color:#f92672">(</span>String a<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> b<span style="color:#f92672">){</span>
         <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">=</span>a<span style="color:#f92672">;</span>
         <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">b</span><span style="color:#f92672">=</span>b<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        Demo d<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Demo<span style="color:#f92672">(</span><span style="color:#960050;background-color:#1e0010">“</span>s3<span style="color:#960050;background-color:#1e0010">”</span><span style="color:#f92672">,</span> 30<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>d<span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>d<span style="color:#f92672">.</span><span style="color:#a6e22e">b</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Demo d<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Demo<span style="color:#f92672">(</span><span style="color:#960050;background-color:#1e0010">“</span>s3<span style="color:#960050;background-color:#1e0010">”</span><span style="color:#f92672">,</span> 30<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>d<span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>d<span style="color:#f92672">.</span><span style="color:#a6e22e">b</span><span style="color:#f92672">);</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>上面代码的字节码经过反编译后，得到以下结果，我们会发现编译器按从上到下的顺序，收集所有代码和成员变量复制的代码，形成新的构造方法，但原始构造方法会被放在最后,如下图28-35的内容</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Demo</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Demo</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">);</span>
     descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span>I<span style="color:#f92672">)</span>V
     flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0001<span style="color:#f92672">)</span> ACC_PUBLIC
     Code<span style="color:#f92672">:</span>
@@ -396,9 +400,9 @@
 <h2 id="解决办法">解决办法：</h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">static</span><span style="color:#f92672">{</span>
     <span style="color:#66d9ef">try</span><span style="color:#f92672">{</span>
-        INSTANCE <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> GameModel<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-        INSTANCE<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    <span style="color:#f92672">}</span><span style="color:#66d9ef">catch</span> <span style="color:#f92672">.</span><span style="color:#f92672">.</span><span style="color:#f92672">.</span>
+        INSTANCE <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> GameModel<span style="color:#f92672">();</span>
+        INSTANCE<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span><span style="color:#66d9ef">catch</span> <span style="color:#f92672">...</span>
 <span style="color:#f92672">}</span>
 
 Tank myTank<span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
@@ -407,11 +411,11 @@ Tank myTank<span style="color:#f92672">=</span><span style="color:#66d9ef">null<
 <p>总结起来，不要把创建对象和类加载混为一谈，创建对象时会首先检查类是否被加载，如果没有则触发类加载的一系列行动。类加载时会涉及静态变量的初始化操作，而创建对象会涉及成员变量的初始化。</p>
 <p>稍微拓展一下，成员变量中能否持有自身类的对象，比如</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">private</span> A a<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> A<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> A a<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> A<span style="color:#f92672">();</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>又比如，静态变量能否持有自身类对象</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> A a<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> A<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> A a<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> A<span style="color:#f92672">();</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>答案是第一种情况会发生StackOverFlow，因为会陷入创建A对象的死循环；第二种情况是正常的，因为在类加载的初始化阶段，会创建一个A对象，此时虽然类加载并没有完成，但是也不会再次触发类加载，而是进入创建类对象的阶段。其实，第二种情况正是单例模式中所运用的。</p>
 

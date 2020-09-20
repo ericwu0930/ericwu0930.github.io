@@ -20,5 +20,14 @@
       <description>1. 设置键的生存时间或过期时间 在Redis中，可以对任意键设置一个生存时间，有以下四个命令，他们之间的关系如下，其中以P开头的表明时间单位为毫</description>
     </item>
     
+    <item>
+      <title>Redis数据结构与对象</title>
+      <link>https://ericwu0930.github.io/post/redis_struct/</link>
+      <pubDate>Mon, 06 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/redis_struct/</guid>
+      <description>Redis是用c语言开发的一个开源的高性能键值对（key-value）数据库，Redis数据库里面的每个键值对都是由对象（object）组成</description>
+    </item>
+    
   </channel>
 </rss>

@@ -6,10 +6,46 @@
     <description>Recent content in Java基础 on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 07 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 03 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/categories/java%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>线程池浅谈</title>
+      <link>https://ericwu0930.github.io/post/threadpool/</link>
+      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/threadpool/</guid>
+      <description>一、回顾： 线程运行的两种方式： 方法一： 创建自定义类extends Thread （或者使用匿名类进行定义） 重写run()方法 调用该类start方法启动 new Thread(){</description>
+    </item>
+    
+    <item>
+      <title>反射与注解</title>
+      <link>https://ericwu0930.github.io/post/reflection/</link>
+      <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/reflection/</guid>
+      <description>最近在学习Spring框架，分析源码时经常会用到反射和注解机制，这里对注解和反射做一个总结 1. 注解 首先，注解！=注释，注释是用文字描述程序，是</description>
+    </item>
+    
+    <item>
+      <title>JDK1.8新特性——Stream流</title>
+      <link>https://ericwu0930.github.io/post/stream/</link>
+      <pubDate>Mon, 11 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/stream/</guid>
+      <description>转自原文https://blog.csdn.net/qq_37757008/article/details/84845556，稍作修改 1. St</description>
+    </item>
+    
+    <item>
+      <title>Java的四种引用以及ThreadLocal源码分析</title>
+      <link>https://ericwu0930.github.io/post/reference/</link>
+      <pubDate>Wed, 11 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/reference/</guid>
+      <description>强引用： 只有所有的GC Roots对象都不通过强引用引用对象时，该对象才能被回收 软引用 当内存不足时，GC会把软引用指向的对象回收。软引用被经常</description>
+    </item>
     
     <item>
       <title>内部类</title>

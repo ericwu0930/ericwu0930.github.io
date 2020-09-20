@@ -122,6 +122,10 @@
                         </li>
                         
                         <li>
+                            <a href="/categories/os">os</a>
+                        </li>
+                        
+                        <li>
                             <a href="/categories/redis">redis</a>
                         </li>
                         
@@ -138,11 +142,11 @@
                         </li>
                         
                         <li>
-                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                            <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析</a>
                         </li>
                         
                         <li>
-                            <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析</a>
+                            <a href="/categories/%E7%AE%97%E6%B3%95">算法</a>
                         </li>
                         
                         <li>
@@ -350,12 +354,12 @@
 <p>在DLC中，我们使用了一个volatile来修饰instance变量，原因为何？</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">{</span>
     <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">volatile</span> <span style="color:#66d9ef">static</span> Singleton instance<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Singleton <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-            <span style="color:#66d9ef">synchronized</span><span style="color:#f92672">(</span>Singleton<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-                <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
-                    instance<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Singleton<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">(){};</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Singleton <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(){</span>
+        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">){</span>
+            <span style="color:#66d9ef">synchronized</span><span style="color:#f92672">(</span>Singleton<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">){</span>
+                <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance<span style="color:#f92672">==</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+                    instance<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Singleton<span style="color:#f92672">();</span>
             <span style="color:#f92672">}</span>
         <span style="color:#f92672">}</span>
         <span style="color:#66d9ef">return</span> instance<span style="color:#f92672">;</span>
@@ -408,11 +412,11 @@
 <p>CAS需要3个操作数，分别是内存位置、旧的预期值和新的预期值。CAS指令操作中，当且仅当V符合旧预期值的时，处理器用新值更新旧值。JDK1.5后支持了CAS，该操作由sun.misc.Unsafe类中的compareAndSwapInt()和compareAndSwapLong()等几个方法包装提供。</p>
 <p>Unsafe类不是提供给用户程序调用的类，但我们可以通过JUC包里的compareAndSet()和getAndIncrement()等方法使用Unsafe类的CAS操作。</p>
 <p>incrementAndGet()的jdk源码如下，可以看到incrementAndGet通过忙等，实现自增的操作。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">incrementAndGet</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style="color:#f92672">;</span><span style="color:#f92672">;</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">int</span> current <span style="color:#f92672">=</span> get<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">incrementAndGet</span><span style="color:#f92672">(){</span>
+    <span style="color:#66d9ef">for</span><span style="color:#f92672">(;;){</span>
+        <span style="color:#66d9ef">int</span> current <span style="color:#f92672">=</span> get<span style="color:#f92672">();</span>
         <span style="color:#66d9ef">int</span> next <span style="color:#f92672">=</span> current <span style="color:#f92672">+</span> 1<span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>compareAndSet<span style="color:#f92672">(</span>current<span style="color:#f92672">,</span>next<span style="color:#f92672">)</span><span style="color:#f92672">)</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>compareAndSet<span style="color:#f92672">(</span>current<span style="color:#f92672">,</span>next<span style="color:#f92672">))</span>
             <span style="color:#66d9ef">return</span> next<span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
@@ -426,15 +430,15 @@
 <p>如果锁被占用的时间很短，自选等待的效果会很好，反之，如果锁被占用的时间很长，则自选的线程会白白浪费消耗处理器的资源，因此会有一个自旋上限。</p>
 <h4 id="2-锁消除">2. 锁消除</h4>
 <p>锁消除主要基于逃逸分析的数据支持，如果判断在一段代码中，堆上的所有数据都不会逃逸出去从而被其他线程访问到，就可以把它当做栈上数据对待，同步加锁操作自然就无需进行。比如下面这个例子</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">concatString</span><span style="color:#f92672">(</span>String s1<span style="color:#f92672">,</span> String s2<span style="color:#f92672">,</span> String s3<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">concatString</span><span style="color:#f92672">(</span>String s1<span style="color:#f92672">,</span> String s2<span style="color:#f92672">,</span> String s3<span style="color:#f92672">){</span>
     <span style="color:#66d9ef">return</span> s1<span style="color:#f92672">+</span>s2<span style="color:#f92672">+</span>s3<span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>在jdk1.5之前，该语句会转换成如下，StringBuffer是一个线程安全的类，也就意味着以下三个append语句都是加锁的。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">StringBuffer sb <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> StringBuffer<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s1<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s2<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s3<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-<span style="color:#66d9ef">return</span> sb<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">StringBuffer sb <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> StringBuffer<span style="color:#f92672">();</span>
+sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s1<span style="color:#f92672">);</span>
+sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s2<span style="color:#f92672">);</span>
+sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s3<span style="color:#f92672">);</span>
+<span style="color:#66d9ef">return</span> sb<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">();</span>
 </code></pre></div><p>然而sb对象是不会逃逸到concatString方法之外的，其他线程无法访问它，因此就会把此处的加锁去除。</p>
 <h4 id="3-锁粗化">3. 锁粗化</h4>
 <p>频繁地加锁解锁（特别是对循环块内加锁）很耗费性能，JVM会将锁范围扩大</p>

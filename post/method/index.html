@@ -122,6 +122,10 @@
                         </li>
                         
                         <li>
+                            <a href="/categories/os">os</a>
+                        </li>
+                        
+                        <li>
                             <a href="/categories/redis">redis</a>
                         </li>
                         
@@ -138,11 +142,11 @@
                         </li>
                         
                         <li>
-                            <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+                            <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析</a>
                         </li>
                         
                         <li>
-                            <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析</a>
+                            <a href="/categories/%E7%AE%97%E6%B3%95">算法</a>
                         </li>
                         
                         <li>
@@ -268,15 +272,15 @@
                 
                 <p>以Demo类中的main方法为例，讲解字节码在虚拟机运行的过程</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
         <span style="color:#66d9ef">int</span> a<span style="color:#f92672">=</span>10<span style="color:#f92672">;</span>
         <span style="color:#66d9ef">int</span> b<span style="color:#f92672">=</span>Short<span style="color:#f92672">.</span><span style="color:#a6e22e">MAX_VALUE</span><span style="color:#f92672">+</span>1<span style="color:#f92672">;</span>
         <span style="color:#66d9ef">int</span> c<span style="color:#f92672">=</span>a<span style="color:#f92672">+</span>b<span style="color:#f92672">;</span>
-        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>c<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>c<span style="color:#f92672">);</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>通过javap反编译后的代码</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">eric<span style="color:#a6e22e">@wuhaodeMacBook</span><span style="color:#f92672">-</span>Pro <span style="color:#960050;background-color:#1e0010"></span> <span style="color:#f92672">~</span><span style="color:#f92672">/</span>Desktop<span style="color:#f92672">/</span>jvM <span style="color:#960050;background-color:#1e0010"></span> javap <span style="color:#f92672">-</span>v Demo
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">eric<span style="color:#a6e22e">@wuhaodeMacBook</span><span style="color:#f92672">-</span>Pro <span style="color:#960050;background-color:#1e0010"></span> <span style="color:#f92672">~/</span>Desktop<span style="color:#f92672">/</span>jvM <span style="color:#960050;background-color:#1e0010"></span> javap <span style="color:#f92672">-</span>v Demo
 Classfile <span style="color:#f92672">/</span>Users<span style="color:#f92672">/</span>eric<span style="color:#f92672">/</span>Desktop<span style="color:#f92672">/</span>JVM<span style="color:#f92672">/</span>Demo<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span>
   Last modified Nov 11<span style="color:#f92672">,</span> 2019<span style="color:#f92672">;</span> size 426 bytes
   MD5 checksum 958b915048427f4b5d8ae3c770331963
@@ -297,11 +301,11 @@ Constant pool<span style="color:#f92672">:</span>
 </span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span>6 <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span>22            <span style="color:#75715e">// Demo
 </span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span>7 <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span>23            <span style="color:#75715e">// java/lang/Object
 </span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span>8 <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">&lt;</span>init<span style="color:#f92672">&gt;</span>
-   <span style="color:#960050;background-color:#1e0010">#</span>9 <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">(</span><span style="color:#f92672">)</span>V
+   <span style="color:#960050;background-color:#1e0010">#</span>9 <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">()</span>V
   <span style="color:#960050;background-color:#1e0010">#</span>10 <span style="color:#f92672">=</span> Utf8               Code
   <span style="color:#960050;background-color:#1e0010">#</span>11 <span style="color:#f92672">=</span> Utf8               LineNumberTable
   <span style="color:#960050;background-color:#1e0010">#</span>12 <span style="color:#f92672">=</span> Utf8               main
-  <span style="color:#960050;background-color:#1e0010">#</span>13 <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">(</span><span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#f92672">)</span>V
+  <span style="color:#960050;background-color:#1e0010">#</span>13 <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">([</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;)</span>V
   <span style="color:#960050;background-color:#1e0010">#</span>14 <span style="color:#f92672">=</span> Utf8               SourceFile
   <span style="color:#960050;background-color:#1e0010">#</span>15 <span style="color:#f92672">=</span> Utf8               Demo<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span>
   <span style="color:#960050;background-color:#1e0010">#</span>16 <span style="color:#f92672">=</span> NameAndType        <span style="color:#960050;background-color:#1e0010">#</span>8<span style="color:#f92672">:</span><span style="color:#960050;background-color:#1e0010">#</span>9          <span style="color:#75715e">// &#34;&lt;init&gt;&#34;:()V
@@ -319,8 +323,8 @@ Constant pool<span style="color:#f92672">:</span>
   <span style="color:#960050;background-color:#1e0010">#</span>28 <span style="color:#f92672">=</span> Utf8               println
   <span style="color:#960050;background-color:#1e0010">#</span>29 <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">(</span>I<span style="color:#f92672">)</span>V
 <span style="color:#f92672">{</span>
-  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Demo</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#f92672">)</span>V
+  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Demo</span><span style="color:#f92672">();</span>
+    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">()</span>V
     flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0001<span style="color:#f92672">)</span> ACC_PUBLIC
     Code<span style="color:#f92672">:</span>
       stack<span style="color:#f92672">=</span>1<span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span>1<span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span>1
@@ -330,8 +334,8 @@ Constant pool<span style="color:#f92672">:</span>
       LineNumberTable<span style="color:#f92672">:</span>
         line 1<span style="color:#f92672">:</span> 0
 
-  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#f92672">)</span>V
+  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[]);</span>
+    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">([</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;)</span>V
     flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0009<span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_STATIC
     Code<span style="color:#f92672">:</span>
       stack<span style="color:#f92672">=</span>2<span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span>4<span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span>1

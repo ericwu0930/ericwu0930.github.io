@@ -20,5 +20,14 @@
       <description>1. 前言 假设要写一个echo服务器，用于对用户从标准输入键入的交互命令做出相应，在这种情况下，服务器必须相应两个独立的I/O事件：1）网络客户</description>
     </item>
     
+    <item>
+      <title>Linux基础入门</title>
+      <link>https://ericwu0930.github.io/post/linux_intro/</link>
+      <pubDate>Sun, 10 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/linux_intro/</guid>
+      <description>1. Linux权限管理 -rw-r--r-- - 文件类型(-文件 d目录 l软链接) rw- u所有者权限 r-- g所属组权限 r-- o其他人 改变文件权限： chmod [选项] 模式 文件名 - 常用选项 -R</description>
+    </item>
+    
   </channel>
 </rss>

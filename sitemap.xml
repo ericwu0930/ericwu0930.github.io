@@ -13,6 +13,11 @@
   </url>
   
   <url>
+    <loc>https://ericwu0930.github.io/categories/os/</loc>
+    <lastmod>2020-09-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://ericwu0930.github.io/post/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url>
@@ -24,11 +29,6 @@
   
   <url>
     <loc>https://ericwu0930.github.io/tags/</loc>
-    <lastmod>2020-09-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ericwu0930.github.io/categories/tech/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url>
   
@@ -63,7 +63,7 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
+    <loc>https://ericwu0930.github.io/categories/trivial/</loc>
     <lastmod>2020-09-04T00:00:00+00:00</lastmod>
   </url>
   
@@ -88,6 +88,11 @@
   </url>
   
   <url>
+    <loc>https://ericwu0930.github.io/categories/mysql/</loc>
+    <lastmod>2020-08-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://ericwu0930.github.io/tags/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2020-08-11T00:00:00+00:00</lastmod>
   </url>
@@ -95,6 +100,11 @@
   <url>
     <loc>https://ericwu0930.github.io/post/innodb_index/</loc>
     <lastmod>2020-08-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/categories/java%E5%9F%BA%E7%A1%80/</loc>
+    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -123,6 +133,11 @@
   </url>
   
   <url>
+    <loc>https://ericwu0930.github.io/categories/spring/</loc>
+    <lastmod>2020-05-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://ericwu0930.github.io/tags/java%E5%9F%BA%E7%A1%80/</loc>
     <lastmod>2020-05-21T00:00:00+00:00</lastmod>
   </url>
@@ -133,11 +148,6 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/categories/spring/</loc>
-    <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ericwu0930.github.io/post/aop/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
   </url>
@@ -145,11 +155,6 @@
   <url>
     <loc>https://ericwu0930.github.io/tags/%E5%AE%9E%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ericwu0930.github.io/categories/trivial/</loc>
-    <lastmod>2020-05-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -174,6 +179,11 @@
   
   <url>
     <loc>https://ericwu0930.github.io/post/summary/</loc>
+    <lastmod>2020-04-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/categories/%E9%9A%8F%E7%AC%94/</loc>
     <lastmod>2020-04-09T00:00:00+00:00</lastmod>
   </url>
   
@@ -213,17 +223,17 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/categories/mysql/</loc>
-    <lastmod>2020-03-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ericwu0930.github.io/post/lock/</loc>
     <lastmod>2020-03-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/post/reference/</loc>
+    <lastmod>2020-03-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/categories/jvm/</loc>
     <lastmod>2020-03-11T00:00:00+00:00</lastmod>
   </url>
   
@@ -243,11 +253,6 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/categories/java%E5%9F%BA%E7%A1%80/</loc>
-    <lastmod>2020-03-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ericwu0930.github.io/tags/java%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/</loc>
     <lastmod>2020-03-07T00:00:00+00:00</lastmod>
   </url>
@@ -263,17 +268,17 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/categories/jvm/</loc>
-    <lastmod>2020-03-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ericwu0930.github.io/post/exception/</loc>
     <lastmod>2020-03-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/tags/%E7%AE%97%E6%B3%95/</loc>
+    <lastmod>2020-03-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ericwu0930.github.io/categories/%E7%AE%97%E6%B3%95/</loc>
     <lastmod>2020-03-03T00:00:00+00:00</lastmod>
   </url>
   
@@ -343,6 +348,11 @@
   </url>
   
   <url>
+    <loc>https://ericwu0930.github.io/categories/tech/</loc>
+    <lastmod>2019-12-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://ericwu0930.github.io/post/mysql/</loc>
     <lastmod>2019-12-09T00:00:00+00:00</lastmod>
   </url>
@@ -388,23 +398,15 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/categories/%E9%9A%8F%E7%AC%94/</loc>
-    <lastmod>2019-07-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://ericwu0930.github.io/search/placeholder/</loc>
-    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/top/about/</loc>
-    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/top/books/</loc>
-    <priority>0</priority>
   </url>
   
   <url>
