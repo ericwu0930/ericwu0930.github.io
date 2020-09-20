@@ -47,5 +47,14 @@
       <description>由于Mysql数据库中的存储引擎是插件式的，而存储引擎又是基于表的，因此可以根据不同的需要使用不同的存储引擎创建表。 InnoDB是Mysql</description>
     </item>
     
+    <item>
+      <title>数据库入门</title>
+      <link>https://ericwu0930.github.io/post/mysql/</link>
+      <pubDate>Mon, 09 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/mysql/</guid>
+      <description>一、MySQL数据库软件 MySQL的结构 MySQL是一个客户端/服务器的架构，它的服务器程序直接和我们存储的数据打交道，然后可以有好多客户端</description>
+    </item>
+    
   </channel>
 </rss>
