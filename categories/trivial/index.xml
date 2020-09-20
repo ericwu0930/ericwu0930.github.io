@@ -29,5 +29,14 @@
       <description>1. ClassPath到底在哪儿？ 之前一直有个误解，认为classpath是编译前概念，所以看到src文件夹下有main，有test，有res</description>
     </item>
     
+    <item>
+      <title>设计模式学习笔记</title>
+      <link>https://ericwu0930.github.io/post/design/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/design/</guid>
+      <description>设计模式归根到底都是多态的变种 一、Singleton单例模式 只需要一个实例存在，比如PropertyMgr，即阻止别人随意new该对象 Key: 把构</description>
+    </item>
+    
   </channel>
 </rss>
