@@ -48,12 +48,12 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/tags/linux/</loc>
+    <loc>https://ericwu0930.github.io/categories/linux/</loc>
     <lastmod>2020-09-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/categories/linux/</loc>
+    <loc>https://ericwu0930.github.io/tags/linux/</loc>
     <lastmod>2020-09-06T00:00:00+00:00</lastmod>
   </url>
   
@@ -83,12 +83,12 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/tags/mysql/</loc>
+    <loc>https://ericwu0930.github.io/categories/mysql/</loc>
     <lastmod>2020-08-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/categories/mysql/</loc>
+    <loc>https://ericwu0930.github.io/tags/mysql/</loc>
     <lastmod>2020-08-11T00:00:00+00:00</lastmod>
   </url>
   
@@ -198,12 +198,12 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <loc>https://ericwu0930.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <loc>https://ericwu0930.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
     <lastmod>2020-03-31T00:00:00+00:00</lastmod>
   </url>
   
@@ -268,12 +268,12 @@
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/tags/%E7%AE%97%E6%B3%95/</loc>
+    <loc>https://ericwu0930.github.io/categories/%E7%AE%97%E6%B3%95/</loc>
     <lastmod>2020-03-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://ericwu0930.github.io/categories/%E7%AE%97%E6%B3%95/</loc>
+    <loc>https://ericwu0930.github.io/tags/%E7%AE%97%E6%B3%95/</loc>
     <lastmod>2020-03-03T00:00:00+00:00</lastmod>
   </url>
   
@@ -384,14 +384,17 @@
   
   <url>
     <loc>https://ericwu0930.github.io/search/placeholder/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/top/about/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://ericwu0930.github.io/top/books/</loc>
+    <priority>0</priority>
   </url>
   
   <url>

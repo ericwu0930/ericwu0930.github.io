@@ -270,22 +270,22 @@
 第四步是虚拟机行为，虚拟机知道x的真实类，例如这里x的真实类是D，如果D有f(String)函数，那就直接调用它。</p>
 <p>以上是从Java语言层面解释方法调用以及多态的过程，那么其在编译或者运行过程中，具体是怎么样的呢？看下面</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test1</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span> <span style="color:#f92672">}</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test2</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span> <span style="color:#f92672">}</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test3</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span> <span style="color:#f92672">}</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test4</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span> <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test1</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span> <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test2</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span> <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test3</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span> <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test4</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span> <span style="color:#f92672">}</span>
 
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        Demo d <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Demo<span style="color:#f92672">();</span>
-        d<span style="color:#f92672">.</span><span style="color:#a6e22e">test1</span><span style="color:#f92672">();</span>
-        d<span style="color:#f92672">.</span><span style="color:#a6e22e">test2</span><span style="color:#f92672">();</span>
-        d<span style="color:#f92672">.</span><span style="color:#a6e22e">test3</span><span style="color:#f92672">();</span>
-        d<span style="color:#f92672">.</span><span style="color:#a6e22e">test4</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Demo d <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Demo<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        d<span style="color:#f92672">.</span><span style="color:#a6e22e">test1</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        d<span style="color:#f92672">.</span><span style="color:#a6e22e">test2</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        d<span style="color:#f92672">.</span><span style="color:#a6e22e">test3</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        d<span style="color:#f92672">.</span><span style="color:#a6e22e">test4</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>上面代码字节码反编译后的结果：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[]);</span>
-    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">([</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;)</span>V
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#f92672">)</span>V
     flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0009<span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_STATIC
     Code<span style="color:#f92672">:</span>
       stack<span style="color:#f92672">=</span>2<span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span>2<span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span>1
@@ -305,9 +305,13 @@
 </span><span style="color:#75715e"></span>        25<span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
 </code></pre></div><p>根据《Java核心技术》中的概念，在编译成字节码之后，已经完成了前三步，那么静态绑定和动态绑定是如何体现出来的呢？
 new是创建对象，然后将对象的引用放入操作栈，同时复制栈顶元素并且入栈，然后调用了Demo类的初始化方法，并把对象引用弹栈，此时操作数栈中还剩下一个对象引用，然后将其复制到局部变量表1的位置，至此，Demo对象创建完毕。
-在java字节码中，用invokevirtual调用普通成员方法，用invokespecial调用构造方法、私有方法和最终(final)方法，用invokestatic调用类方法。因此，所谓的动态绑定就是用invokevirtual标明的。
-比较有趣的点是，在Java语言中，我们可以使用一个对象调用其类方法，也就是d.test4(), 我们观察字节码中发生了什么。字节码的第20行-22行对应着该过程，我们发现，虚拟机会先把局部变量表1位置的元素加载到栈中，然后又退栈，接着调用了test4()，说明调用test4()是不需要类对象的。
-我们还会好奇，invokevirtual到底是如何实现多态的呢？当执行invokevirtual指令时，</p>
+在java字节码中，用invokevirtual调用普通成员方法，用invokespecial调用构造方法、私有方法和最终(final)方法，用invokestatic调用类方法。因此，所谓的动态绑定就是用invokevirtual标明的。</p>
+<p>比较有趣的点是，在Java语言中，我们可以使用一个对象调用其类方法，也就是d.test4(), 我们观察字节码中发生了什么。字节码的第20行-22行对应着该过程，我们发现，虚拟机会先把局部变量表1位置的元素加载到栈中，然后又退栈，接着调用了test4()，说明调用test4()是不需要类对象的。</p>
+<p>我们还会好奇，invokevirtual到底是如何实现多态的呢？</p>
+<blockquote>
+<p>补充学习：常量池各表的关系https://blog.csdn.net/huangrunqing/article/details/51996424</p>
+</blockquote>
+<p>当执行invokevirtual指令时，</p>
 <ol>
 <li>先通过操作数栈中的对象引用找到对象</li>
 <li>分析对象头（[[Java内存区域]]中的对象创建过程），找到对象的实际Class</li>
