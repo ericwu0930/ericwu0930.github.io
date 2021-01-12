@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>trivial on Eric&#39;s Blog</title>
+    <link>https://ericwu0930.github.io/tags/trivial/</link>
+    <description>Recent content in trivial on Eric&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 12 Jan 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://ericwu0930.github.io/tags/trivial/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>我的大学（转）</title>
+      <link>https://ericwu0930.github.io/post/myuniversity/</link>
+      <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/myuniversity/</guid>
+      <description>徐宥目前是计算机专业的 Ph.D.，导师Yixin Chen，本科毕业于南大数学系。这篇文章是其应出版商之邀而写的一篇回忆录，详细介绍了其大学之</description>
+    </item>
+    
+  </channel>
+</rss>

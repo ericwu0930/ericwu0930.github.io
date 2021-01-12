@@ -6,10 +6,19 @@
     <description>Recent content in Categories on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 11 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 12 Jan 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ericwu0930.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>trivial</title>
+      <link>https://ericwu0930.github.io/categories/trivial/</link>
+      <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/categories/trivial/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>OS</title>
@@ -35,15 +44,6 @@
       <pubDate>Sun, 06 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/categories/linux/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>trivial</title>
-      <link>https://ericwu0930.github.io/categories/trivial/</link>
-      <pubDate>Fri, 04 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/categories/trivial/</guid>
       <description></description>
     </item>
     
