@@ -390,7 +390,7 @@
 <p>当fork函数被当前进程调用时，内核为新进程创建各种数据结构，并分配给它一个唯一的pid。为了给新的进程创建虚拟内存，它创建了当前进程的mm_struct、区域结构和页表的原样副本。它将两个进程中的每个页面都标记为只读，并将两个进程中的每个区域结构都标记为私有的写时复制。</p>
 <h3 id="54-再看execve函数">5.4 再看execve函数</h3>
 <p>在当前进程中的程序执行了如下execve调用：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">execve(<span style="color:#e6db74">&#34;a.out&#34;</span>,NULL,NULL);
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">execve(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">a.out</span><span style="color:#e6db74">&#34;</span>,NULL,NULL);
 </code></pre></div><p>会有以下几个步骤：</p>
 <ol>
 <li>删除已存在的用户区域：删除当前进程虚拟地址的用户部分中的已存在的区域结构（个人理解mm结构？）</li>
