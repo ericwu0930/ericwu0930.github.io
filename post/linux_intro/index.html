@@ -34,46 +34,38 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>Linux基础入门-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>Linux基础入门 | 吴昊的博客 | Eric&#39;s Blog</title>
 
     <link rel="canonical" href="/post/linux_intro/">
 
-    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
-	
+    
+    
     
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
     
-    <link rel="stylesheet" href="/css/hux-blog.min.css">
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
 
-    
-    <link rel="stylesheet" href="/css/syntax.css">
-    
     
     <link rel="stylesheet" href="/css/zanshang.css">
+
     
-    
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
 
     
     
 
-    
     
     <script src="/js/jquery.min.js"></script>
-    
+
     
     <script src="/js/bootstrap.min.js"></script>
-    
+
     
     <script src="/js/hux-blog.min.js"></script>
 
     
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/lazysizes.min.js"></script>
 
     
     
@@ -82,7 +74,25 @@
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
     <div class="container-fluid">
         
         <div class="navbar-header page-scroll">
@@ -101,7 +111,7 @@
             <div class="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="/">Home</a>
+                        <a href="/">All Posts</a>
                     </li>
                     
                         
@@ -154,12 +164,9 @@
 		    
                         <li><a href="/top/about/">ABOUT</a></li>
                     
-
-                    
-		    <li>
-                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
-		    </li>
-                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
                 </ul>
             </div>
         </div>
@@ -204,7 +211,9 @@
         background-image: url('/img/roof.jpg')
     }
 </style>
-<header class="intro-header">
+
+<header class="intro-header" >
+
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -223,15 +232,17 @@
                     <h1>Linux基础入门</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
-                        Posted by 
                         
-                                 &#34;Eric&#34;
-                         
-                        on 
-                        Sunday, May 10, 2020
-                        
-                        
-                        
+                            Posted by 
+                            
+                                     &#34;Eric&#34;
+                             
+                            on 
+                            Sunday, May 10, 2020
+                            
+                            
+                            
+                            
                     </span>
                 </div>
             </div>
@@ -253,65 +264,24 @@
                 post-container">
 
                 
-                <header>
-                    <h2>TOC</h2>
-                </header>
-                <nav id="TableOfContents">
-  <ul>
-    <li><a href="#1-linux权限管理">1. Linux权限管理</a></li>
-    <li><a href="#2-linux软件安装管理">2. Linux软件安装管理</a>
-      <ul>
-        <li><a href="#21--软件包分类">2.1  软件包分类</a></li>
-        <li><a href="#22-rpm包的安装">2.2 RPM包的安装</a></li>
-        <li><a href="#23-yum在线安装">2.3 yum在线安装</a></li>
-        <li><a href="#24-源码包的安装">2.4 源码包的安装</a></li>
-      </ul>
-    </li>
-    <li><a href="#3-linux系统管理">3. Linux系统管理</a>
-      <ul>
-        <li><a href="#31-进程管理">3.1 进程管理</a></li>
-        <li><a href="#32-工作管理">3.2 工作管理</a></li>
-      </ul>
-    </li>
-    <li><a href="#4-linux服务管理">4. Linux服务管理</a>
-      <ul>
-        <li><a href="#41-linux运行级别">4.1 Linux运行级别</a></li>
-        <li><a href="#42-服务的分类">4.2 服务的分类</a></li>
-        <li><a href="#43-查询已安装的服务">4.3 查询已安装的服务</a></li>
-        <li><a href="#44-rpm包服务管理">4.4 RPM包服务管理</a></li>
-        <li><a href="#45-源码包服务管理">4.5 源码包服务管理</a></li>
-      </ul>
-    </li>
-    <li><a href="#5-linux下环境变量的配置">5. Linux下环境变量的配置</a>
-      <ul>
-        <li><a href="#51-创建与查看环境变量">5.1 创建与查看环境变量</a></li>
-        <li><a href="#52-path变量系统查找命令的路径">5.2 PATH变量：系统查找命令的路径</a></li>
-        <li><a href="#53-环境变量配置文件的修改">5.3 环境变量配置文件的修改</a></li>
-      </ul>
-    </li>
-    <li><a href="#6-常用命令汇总">6. 常用命令汇总</a></li>
-    <li><a href="#7-小tips">7. 小tips</a></li>
-  </ul>
-</nav>
-                
                 <h2 id="1-linux权限管理">1. Linux权限管理</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">-rw-r--r--
-- 文件类型<span style="color:#f92672">(</span>-文件 d目录 l软链接<span style="color:#f92672">)</span>
-rw- u所有者权限
-r-- g所属组权限
-r-- o其他人
-</code></pre></div><p>改变文件权限：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">chmod <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span> 模式 文件名
-- 常用选项 -R 递归
-
-chmod u+x cangls.av <span style="color:#75715e"># 所有者赋予x权限</span>
-chmod g+w,o+w furong.av  
-chmod u<span style="color:#f92672">=</span>wrx,g<span style="color:#f92672">=</span>wrx furong.av
-chmod a<span style="color:#f92672">=</span>wrx furong.av <span style="color:#75715e"># 给所有人都赋予权限</span>
-
-<span style="color:#75715e"># 以上都不方便 使用数字4 2 1 对应以上权限</span>
-chmod <span style="color:#ae81ff">644</span> cangls.av
-</code></pre></div><p>权限的作用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-rw-r--r--
+</span></span><span style="display:flex;"><span>- 文件类型<span style="color:#f92672">(</span>-文件 d目录 l软链接<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>rw- u所有者权限
+</span></span><span style="display:flex;"><span>r-- g所属组权限
+</span></span><span style="display:flex;"><span>r-- o其他人
+</span></span></code></pre></div><p>改变文件权限：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>chmod <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span> 模式 文件名
+</span></span><span style="display:flex;"><span>- 常用选项 -R 递归
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>chmod u+x cangls.av <span style="color:#75715e"># 所有者赋予x权限</span>
+</span></span><span style="display:flex;"><span>chmod g+w,o+w furong.av  
+</span></span><span style="display:flex;"><span>chmod u<span style="color:#f92672">=</span>wrx,g<span style="color:#f92672">=</span>wrx furong.av
+</span></span><span style="display:flex;"><span>chmod a<span style="color:#f92672">=</span>wrx furong.av <span style="color:#75715e"># 给所有人都赋予权限</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 以上都不方便 使用数字4 2 1 对应以上权限</span>
+</span></span><span style="display:flex;"><span>chmod <span style="color:#ae81ff">644</span> cangls.av
+</span></span></code></pre></div><p>权限的作用：</p>
 <ul>
 <li>对文件的作用
 <ol>
@@ -330,9 +300,9 @@ chmod <span style="color:#ae81ff">644</span> cangls.av
 <li>对文件来讲，最高权限是执行，对目录来讲，最高权限是写</li>
 </ul>
 <p>其他权限命令：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">chown 用户名 文件名
-chgrp 组名   文件名
-</code></pre></div><h2 id="2-linux软件安装管理">2. Linux软件安装管理</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>chown 用户名 文件名
+</span></span><span style="display:flex;"><span>chgrp 组名   文件名
+</span></span></code></pre></div><h2 id="2-linux软件安装管理">2. Linux软件安装管理</h2>
 <h3 id="21--软件包分类">2.1  软件包分类</h3>
 <ul>
 <li>源码包</li>
@@ -340,23 +310,23 @@ chgrp 组名   文件名
 </ul>
 <h3 id="22-rpm包的安装">2.2 RPM包的安装</h3>
 <p>RMP包比较头疼的问题是依赖问题，因此一般不用rpm命令进行软件的安装， 而是使用该命令查看安装了哪些rpm包</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">rpm -qa | grep xxx<span style="color:#f92672">(</span>要查询的文件名<span style="color:#f92672">)</span>
-</code></pre></div><h3 id="23-yum在线安装">2.3 yum在线安装</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 配置yum的源文件</span>
-vi /etc/yum.repos.d/CentOS-Base.repo
-<span style="color:#f92672">[</span>base<span style="color:#f92672">]</span> 容器名称，一定要写在<span style="color:#f92672">[</span><span style="color:#f92672">]</span>中
-name   容器说明，可以自己随便写
-mirrorlist  镜像站点
-baseurl     yum源头服务器的地址
-enabled     此容器是否生效，如果不写默认生效
-<span style="color:#75715e"># linux中可以在文件名后加.bak使其失效</span>
-</code></pre></div><p>常用yum命令</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">yum list
-yum search
-yum -y install 包名安装  <span style="color:#75715e"># -y 就是默认输入y</span>
-yum -y remove 包名 <span style="color:#75715e"># 卸载命令，尽量不要卸载</span>
-yum -y update 包名 <span style="color:#75715e"># 升级 如果不加报名则自动全部升级</span>
-</code></pre></div><h3 id="24-源码包的安装">2.4 源码包的安装</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>rpm -qa | grep xxx<span style="color:#f92672">(</span>要查询的文件名<span style="color:#f92672">)</span>
+</span></span></code></pre></div><h3 id="23-yum在线安装">2.3 yum在线安装</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 配置yum的源文件</span>
+</span></span><span style="display:flex;"><span>vi /etc/yum.repos.d/CentOS-Base.repo
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>base<span style="color:#f92672">]</span> 容器名称，一定要写在<span style="color:#f92672">[]</span>中
+</span></span><span style="display:flex;"><span>name   容器说明，可以自己随便写
+</span></span><span style="display:flex;"><span>mirrorlist  镜像站点
+</span></span><span style="display:flex;"><span>baseurl     yum源头服务器的地址
+</span></span><span style="display:flex;"><span>enabled     此容器是否生效，如果不写默认生效
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># linux中可以在文件名后加.bak使其失效</span>
+</span></span></code></pre></div><p>常用yum命令</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum list
+</span></span><span style="display:flex;"><span>yum search
+</span></span><span style="display:flex;"><span>yum -y install 包名安装  <span style="color:#75715e"># -y 就是默认输入y</span>
+</span></span><span style="display:flex;"><span>yum -y remove 包名 <span style="color:#75715e"># 卸载命令，尽量不要卸载</span>
+</span></span><span style="display:flex;"><span>yum -y update 包名 <span style="color:#75715e"># 升级 如果不加报名则自动全部升级</span>
+</span></span></code></pre></div><h3 id="24-源码包的安装">2.4 源码包的安装</h3>
 <h4 id="241-区别">2.4.1 区别</h4>
 <ul>
 <li>安装之前的区别：概念上的区别</li>
@@ -393,8 +363,8 @@ yum -y update 包名 <span style="color:#75715e"># 升级 如果不加报名则�
 </tr>
 </tbody>
 </table>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">rpm -ql 包名 <span style="color:#75715e">#查看安装位置</span>
-</code></pre></div><p>源码包安装位置需要自己指定，建议安装在/usr/local/软件名（源码包保存位置：/usr/local/src），源码没有一键卸载命令，如果不指定安装目录，将装的到处都是很难处理。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rpm -ql 包名 <span style="color:#75715e">#查看安装位置</span>
+</span></span></code></pre></div><p>源码包安装位置需要自己指定，建议安装在/usr/local/软件名（源码包保存位置：/usr/local/src），源码没有一键卸载命令，如果不指定安装目录，将装的到处都是很难处理。</p>
 <h4 id="242-安装过程">2.4.2 安装过程</h4>
 <ul>
 <li>
@@ -405,8 +375,8 @@ yum -y update 包名 <span style="color:#75715e"># 升级 如果不加报名则�
 </li>
 <li>
 <p>进入解压缩目录，执行./configure操作</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">./configure --prefix<span style="color:#f92672">=</span>/usr/local/软件包名
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>./configure --prefix<span style="color:#f92672">=</span>/usr/local/软件包名
+</span></span></code></pre></div></li>
 <li>
 <p>make(可以使用make clean清除)</p>
 </li>
@@ -423,13 +393,16 @@ yum -y update 包名 <span style="color:#75715e"># 升级 如果不加报名则�
 <li>杀死进程</li>
 </ol>
 <h4 id="进程的查看命令">进程的查看命令</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">ps aux
-<span style="color:#75715e">#查看系统中所有进程，使用BSD操作系统格式</span>
-ps -le
-<span style="color:#75715e">#查看系统中所有进程，使用Linux标准命令格式，会显示进程的优先级</span>
-pstree
-<span style="color:#75715e">#显示进程树</span>
-</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genhr7utyfj31i2030750.jpg" alt="image-20200510173930705"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ps aux
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#查看系统中所有进程，使用BSD操作系统格式</span>
+</span></span><span style="display:flex;"><span>ps -le
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#查看系统中所有进程，使用Linux标准命令格式，会显示进程的优先级</span>
+</span></span><span style="display:flex;"><span>pstree
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#显示进程树</span>
+</span></span></code></pre></div><p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genhr7utyfj31i2030750.jpg" alt="image-20200510173930705">
+
+</p>
 <ul>
 <li>VSZ：占用虚拟内存</li>
 <li>RSS：占用实际内存</li>
@@ -438,18 +411,21 @@ pstree
 <li>STARTED：进程启动时间</li>
 <li>TIME：进程耗费cpu时间</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">top <span style="color:#75715e">#类似于windows的任务管理器</span>
--d秒数：指定top命令每隔几秒更新。默认是3秒
--b：使用批处理模式输出，一般和<span style="color:#e6db74">&#39;-n&#39;</span>选项合用
--n次数：指定top命令执行的次数。
-top -b -n <span style="color:#ae81ff">1</span> &gt;&gt; top.txt <span style="color:#75715e"># 重定向输出</span>
-<span style="color:#75715e"># 在top命令的交互模式中可以执行的命令：</span>
-?或h：显示交互模式的帮助
-P：以cpu使用率排序
-M：以内存的使用率排序
-N：以PID排序
-q：退出top
-</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geni7hgrusj31ko06y7dm.jpg" alt="image-20200510175510808"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>top <span style="color:#75715e">#类似于windows的任务管理器</span>
+</span></span><span style="display:flex;"><span>-d秒数：指定top命令每隔几秒更新。默认是3秒
+</span></span><span style="display:flex;"><span>-b：使用批处理模式输出，一般和<span style="color:#e6db74">&#39;-n&#39;</span>选项合用
+</span></span><span style="display:flex;"><span>-n次数：指定top命令执行的次数。
+</span></span><span style="display:flex;"><span>top -b -n <span style="color:#ae81ff">1</span> &gt;&gt; top.txt <span style="color:#75715e"># 重定向输出</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 在top命令的交互模式中可以执行的命令：</span>
+</span></span><span style="display:flex;"><span>?或h：显示交互模式的帮助
+</span></span><span style="display:flex;"><span>P：以cpu使用率排序
+</span></span><span style="display:flex;"><span>M：以内存的使用率排序
+</span></span><span style="display:flex;"><span>N：以PID排序
+</span></span><span style="display:flex;"><span>q：退出top
+</span></span></code></pre></div><p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geni7hgrusj31ko06y7dm.jpg" alt="image-20200510175510808">
+
+</p>
 <p>系统当前时间   系统运行时间    用户数    系统在之前1分钟，5分钟，15分钟的平均负载</p>
 <blockquote>
 <p>所谓平均负载就是值，在指定时间内，系统处于<strong>可运行状态</strong>和<strong>不可中断状态</strong>的平均进程数，可运行状态是指正在使用或者等待使用cpu的进程，而不可中断状态是指进程正处于内核态关键流程中的进程，比如，当一个进程向磁盘写数据时，为了保证数据的一致性，在得到磁盘回复前，它是不能被其他进程或者中断打断的，这个时候的进程就处于不可中断状态，如果此时的进程被打断了，就容易出现磁盘数据与进程数据不一致的问题。</p>
@@ -461,16 +437,16 @@ q：退出top
 <p>内存状态：buffers缓冲是加速写操作</p>
 <p>交换分区：cached缓存加速读操作</p>
 <h4 id="杀死进程">杀死进程</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kill -l <span style="color:#75715e">#查看可用的进程信号</span>
-	信号名称：HUP <span style="color:#ae81ff">1</span> 平滑重启，重新读取配置文件之后重启
-			KILL <span style="color:#ae81ff">9</span> 强制终止
-kill -HUP pid号 <span style="color:#75715e"># 杀死pid进程</span>
-killall <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span><span style="color:#f92672">[</span>信号<span style="color:#f92672">]</span> 进程名
-	-i 交互
-	-I 忽略大小写
-pkill <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span><span style="color:#f92672">[</span>信号<span style="color:#f92672">]</span> 进程名
-	-t 终端号：按照终端号踢出用户，终端号可以通过w命令查看
-</code></pre></div><h3 id="32-工作管理">3.2 工作管理</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kill -l <span style="color:#75715e">#查看可用的进程信号</span>
+</span></span><span style="display:flex;"><span>	信号名称：HUP <span style="color:#ae81ff">1</span> 平滑重启，重新读取配置文件之后重启
+</span></span><span style="display:flex;"><span>			KILL <span style="color:#ae81ff">9</span> 强制终止
+</span></span><span style="display:flex;"><span>kill -HUP pid号 <span style="color:#75715e"># 杀死pid进程</span>
+</span></span><span style="display:flex;"><span>killall <span style="color:#f92672">[</span>选项<span style="color:#f92672">][</span>信号<span style="color:#f92672">]</span> 进程名
+</span></span><span style="display:flex;"><span>	-i 交互
+</span></span><span style="display:flex;"><span>	-I 忽略大小写
+</span></span><span style="display:flex;"><span>pkill <span style="color:#f92672">[</span>选项<span style="color:#f92672">][</span>信号<span style="color:#f92672">]</span> 进程名
+</span></span><span style="display:flex;"><span>	-t 终端号：按照终端号踢出用户，终端号可以通过w命令查看
+</span></span></code></pre></div><h3 id="32-工作管理">3.2 工作管理</h3>
 <p>工作管理指的是在单个登录终端中同时管理多个工作的行为（也就是windows中最小化之后开启别的任务），在LInux中使用<em>jobs</em>命令查看工作</p>
 <h4 id="注意事项">注意事项：</h4>
 <ul>
@@ -484,73 +460,85 @@ pkill <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</s
 <li>按ctrl+z，放入后台后出于暂停状态</li>
 </ol>
 <h4 id="将后台工作恢复">将后台工作恢复：</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">jobs -l <span style="color:#75715e"># 显示工作的pid</span> 
-fg %工作号 <span style="color:#75715e">#将后台暂停的工作恢复到前台执行 工作号！=pid 百分号可以省略</span>
-bg %工作号 <span style="color:#75715e">#将后台暂停的工作恢复到后台执行</span> 
-</code></pre></div><h2 id="4-linux服务管理">4. Linux服务管理</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>jobs -l <span style="color:#75715e"># 显示工作的pid </span>
+</span></span><span style="display:flex;"><span>fg %工作号 <span style="color:#75715e">#将后台暂停的工作恢复到前台执行 工作号！=pid 百分号可以省略</span>
+</span></span><span style="display:flex;"><span>bg %工作号 <span style="color:#75715e">#将后台暂停的工作恢复到后台执行 </span>
+</span></span></code></pre></div><h2 id="4-linux服务管理">4. Linux服务管理</h2>
 <h3 id="41-linux运行级别">4.1 Linux运行级别</h3>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genmhgl4gvj31o20oen8g.jpg" alt="image-20200510202309126"></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 可以使用init命令进入Linux某个运行级别</span>
-init x
-</code></pre></div><h3 id="42-服务的分类">4.2 服务的分类</h3>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genlsf7gkfj317i0l8q9x.jpg" alt="image-20200510195904602"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genmhgl4gvj31o20oen8g.jpg" alt="image-20200510202309126">
+
+</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 可以使用init命令进入Linux某个运行级别</span>
+</span></span><span style="display:flex;"><span>init x
+</span></span></code></pre></div><h3 id="42-服务的分类">4.2 服务的分类</h3>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genlsf7gkfj317i0l8q9x.jpg" alt="image-20200510195904602">
+
+</p>
 <h3 id="43-查询已安装的服务">4.3 查询已安装的服务</h3>
 <h4 id="rpm包安装的服务">RPM包安装的服务</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">chkconfig --list
-</code></pre></div><p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genmmdaqa0j31bm0bu40u.jpg" alt="image-20200510202752654"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>chkconfig --list
+</span></span></code></pre></div><p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1genmmdaqa0j31bm0bu40u.jpg" alt="image-20200510202752654">
+
+</p>
 <p>上图中的0-6对应Linux的runlevel</p>
 <h4 id="源码包安装的服务">源码包安装的服务：</h4>
 <p>一般是在/usr/local/下查看</p>
 <h3 id="44-rpm包服务管理">4.4 RPM包服务管理</h3>
 <h4 id="服务的启动">服务的启动</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">/etc/init.d/独立服务名 start|stop|status|restart
-service 独立服务名 start|stop|status|restart    
-</code></pre></div><p>本质上启动某服务，即运行该程序的启动脚本</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>/etc/init.d/独立服务名 start|stop|status|restart
+</span></span><span style="display:flex;"><span>service 独立服务名 start|stop|status|restart    
+</span></span></code></pre></div><p>本质上启动某服务，即运行该程序的启动脚本</p>
 <h4 id="服务的自启动">服务的自启动</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">chkconfig --level 服务级别 服务名 on|off 
-</code></pre></div><h3 id="45-源码包服务管理">4.5 源码包服务管理</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>chkconfig --level 服务级别 服务名 on|off 
+</span></span></code></pre></div><h3 id="45-源码包服务管理">4.5 源码包服务管理</h3>
 <p>使用绝对路径，调用启动脚本来启动</p>
 <h2 id="5-linux下环境变量的配置">5. Linux下环境变量的配置</h2>
 <h3 id="51-创建与查看环境变量">5.1 创建与查看环境变量</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 创建环境变量</span>
-export 变量名<span style="color:#f92672">=</span>变量值
-<span style="color:#75715e"># 或</span>
-变量名<span style="color:#f92672">=</span>变量值
-export 变量名
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 创建环境变量</span>
+</span></span><span style="display:flex;"><span>export 变量名<span style="color:#f92672">=</span>变量值
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 或</span>
+</span></span><span style="display:flex;"><span>变量名<span style="color:#f92672">=</span>变量值
+</span></span><span style="display:flex;"><span>export 变量名
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>env <span style="color:#75715e">#查看环境变量</span>
+</span></span><span style="display:flex;"><span>set <span style="color:#75715e">#查看所有变量</span>
+</span></span></code></pre></div><h3 id="52-path变量系统查找命令的路径">5.2 PATH变量：系统查找命令的路径</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo $PATH <span style="color:#75715e">#可以查看环境变量</span>
+</span></span><span style="display:flex;"><span>PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$PATH<span style="color:#e6db74">&#34;</span>:/root/sh  <span style="color:#75715e">#增加PATH变量的值，该方法只能临时生效，想要永久生效只能修改配置文件</span>
+</span></span></code></pre></div><h3 id="53-环境变量配置文件的修改">5.3 环境变量配置文件的修改</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 修改配置文件后，使用source命令使其生效</span>
+</span></span><span style="display:flex;"><span>source 配置文件
+</span></span><span style="display:flex;"><span>. 配置文件
+</span></span></code></pre></div><p>一个正常的启动过程加载配置文件的过程，后一个配置文件可以覆盖前一个配置文件中定义的环境变量</p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geoa5v06tej31pw0qgq9y.jpg" alt="image-20200511100200544">
 
-env <span style="color:#75715e">#查看环境变量</span>
-set <span style="color:#75715e">#查看所有变量</span>
-</code></pre></div><h3 id="52-path变量系统查找命令的路径">5.2 PATH变量：系统查找命令的路径</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">echo $PATH <span style="color:#75715e">#可以查看环境变量</span>
-PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$PATH<span style="color:#e6db74">&#34;</span>:/root/sh  <span style="color:#75715e">#增加PATH变量的值，该方法只能临时生效，想要永久生效只能修改配置文件</span>
-</code></pre></div><h3 id="53-环境变量配置文件的修改">5.3 环境变量配置文件的修改</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># 修改配置文件后，使用source命令使其生效</span>
-source 配置文件
-. 配置文件
-</code></pre></div><p>一个正常的启动过程加载配置文件的过程，后一个配置文件可以覆盖前一个配置文件中定义的环境变量</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1geoa5v06tej31pw0qgq9y.jpg" alt="image-20200511100200544"></p>
+</p>
 <p>在/etc/profile 中修改历史命令条数 HISTSIZE</p>
 <p>在~/.bashrc 中修改别名 alias</p>
 <p>在/etc/bashrc 修改登录提示符PS1</p>
 <p>在/etc/sysconfig/i18n 修改系统默认语系</p>
 <h2 id="6-常用命令汇总">6. 常用命令汇总</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">netstat
-	-t：列出TCP协议端口
-	-u：列出UDP协议端口
-	-n：不使用域名与服务名，而使用ip地址和端口号
-	-l：仅列出在监听状态网络服务
-	-a：列出所有的网络连接
-	<span style="color:#75715e"># 常用组合 netstat -tuln    netstat -an</span>
-	
-telnet ip地址 端口号 <span style="color:#75715e"># 探测端口号</span>
-
-find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672">]</span><span style="color:#f92672">[</span>搜索条件<span style="color:#f92672">]</span>  <span style="color:#75715e"># 在linux中通配符 *匹配任意内容 ？匹配任意一个字符 []匹配任意一个中括号内的字符</span>
-	搜索条件：
-		-iname 不区分大小写
-		-user 按照所有者
-		-name 按照文件名搜索
-		-size +xx k -xx k <span style="color:#75715e">#搜索大于xx k的文件 搜索小于xx k的文件（M 单位则为兆）</span>
-</code></pre></div><h2 id="7-小tips">7. 小tips</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>netstat
+</span></span><span style="display:flex;"><span>	-t：列出TCP协议端口
+</span></span><span style="display:flex;"><span>	-u：列出UDP协议端口
+</span></span><span style="display:flex;"><span>	-n：不使用域名与服务名，而使用ip地址和端口号
+</span></span><span style="display:flex;"><span>	-l：仅列出在监听状态网络服务
+</span></span><span style="display:flex;"><span>	-a：列出所有的网络连接
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e"># 常用组合 netstat -tuln    netstat -an</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span>telnet ip地址 端口号 <span style="color:#75715e"># 探测端口号</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672">][</span>搜索条件<span style="color:#f92672">]</span>  <span style="color:#75715e"># 在linux中通配符 *匹配任意内容 ？匹配任意一个字符 []匹配任意一个中括号内的字符</span>
+</span></span><span style="display:flex;"><span>	搜索条件：
+</span></span><span style="display:flex;"><span>		-iname 不区分大小写
+</span></span><span style="display:flex;"><span>		-user 按照所有者
+</span></span><span style="display:flex;"><span>		-name 按照文件名搜索
+</span></span><span style="display:flex;"><span>		-size +xx k -xx k <span style="color:#75715e">#搜索大于xx k的文件 搜索小于xx k的文件（M 单位则为兆）</span>
+</span></span></code></pre></div><h2 id="7-小tips">7. 小tips</h2>
 <ul>
 <li>usr是指的Unix System Resource的缩写，即Unix系统资源的缩写</li>
 <li>etc一般放置配置文件</li>
@@ -559,6 +547,7 @@ find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672"
 
                 
 
+                
                 <hr>
                 <ul class="pager">
                     
@@ -574,13 +563,31 @@ find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672"
                     </li>
                     
                 </ul>
+                
 
                 
-<div id="disqus-comment"></div>
 
 
 
             </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
             
             <div class="
                 col-lg-8 col-lg-offset-2
@@ -604,76 +611,77 @@ find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672"
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <ul class="list-inline text-center">
-                   
+                <ul class="list-inline text-center">                  
                     
                     <li>
                         <a href="mailto:is.eric.wu@gmail.com">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-                    
+		           
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-
+		           
                     
 
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="/img/we_chat.JPG">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="https://github.com/ericwu0930/">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		           
+                    
                     
                     
                     
                     
                     
             
-                </ul>
+            
+            
+           
+             </ul>
 		<p class="copyright text-muted">
-                    Copyright &copy; Eric&#39;s Blog 2021
+                    Copyright &copy; Eric&#39;s Blog 2022
                     <br>
                     <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
                     <iframe
@@ -691,7 +699,7 @@ find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672"
 
 
 <script>
-    function async(u, c) {
+    function loadAsync(u, c) {
       var d = document, t = 'script',
           o = d.createElement(t),
           s = d.getElementsByTagName(t)[0];
@@ -709,7 +717,7 @@ find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672"
 <script>
     
     if($('#tag_cloud').length !== 0){
-        async("/js/jquery.tagcloud.js",function(){
+        loadAsync("/js/jquery.tagcloud.js",function(){
             $.fn.tagcloud.defaults = {
                 
                 color: {start: '#bbbbee', end: '#0085a1'},
@@ -721,7 +729,7 @@ find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672"
 
 
 <script>
-    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
         var $nav = document.querySelector("nav");
         if($nav) FastClick.attach($nav);
     })
@@ -732,16 +740,65 @@ find <span style="color:#f92672">[</span>搜索范围<span style="color:#f92672"
 
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-158682233-1', 'auto');
-	
-	ga('send', 'pageview');
-}
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
 
 
 

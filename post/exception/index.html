@@ -34,46 +34,38 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>异常处理背后的JVM原理-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>异常处理背后的JVM原理 | 吴昊的博客 | Eric&#39;s Blog</title>
 
     <link rel="canonical" href="/post/exception/">
 
-    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
-	
+    
+    
     
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
     
-    <link rel="stylesheet" href="/css/hux-blog.min.css">
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
 
-    
-    <link rel="stylesheet" href="/css/syntax.css">
-    
     
     <link rel="stylesheet" href="/css/zanshang.css">
+
     
-    
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
 
     
     
 
-    
     
     <script src="/js/jquery.min.js"></script>
-    
+
     
     <script src="/js/bootstrap.min.js"></script>
-    
+
     
     <script src="/js/hux-blog.min.js"></script>
 
     
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/lazysizes.min.js"></script>
 
     
     
@@ -82,7 +74,25 @@
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
     <div class="container-fluid">
         
         <div class="navbar-header page-scroll">
@@ -101,7 +111,7 @@
             <div class="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="/">Home</a>
+                        <a href="/">All Posts</a>
                     </li>
                     
                         
@@ -154,12 +164,9 @@
 		    
                         <li><a href="/top/about/">ABOUT</a></li>
                     
-
-                    
-		    <li>
-                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
-		    </li>
-                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
                 </ul>
             </div>
         </div>
@@ -204,7 +211,9 @@
         background-image: url('/img/roof.jpg')
     }
 </style>
-<header class="intro-header">
+
+<header class="intro-header" >
+
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -223,15 +232,17 @@
                     <h1>异常处理背后的JVM原理</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
-                        Posted by 
                         
-                                 &#34;Eric&#34;
-                         
-                        on 
-                        Friday, March 6, 2020
-                        
-                        
-                        
+                            Posted by 
+                            
+                                     &#34;Eric&#34;
+                             
+                            on 
+                            Friday, March 6, 2020
+                            
+                            
+                            
+                            
                     </span>
                 </div>
             </div>
@@ -253,22 +264,6 @@
                 post-container">
 
                 
-                <header>
-                    <h2>TOC</h2>
-                </header>
-                <nav id="TableOfContents">
-  <ul>
-    <li><a href="#1-异常分类">1. 异常分类</a></li>
-    <li><a href="#2-异常处理在jvm中的体现">2. 异常处理在JVM中的体现</a></li>
-    <li><a href="#3-finally的执行时机">3. finally的执行时机</a>
-      <ul>
-        <li><a href="#1-finally子句应该是在控制转移语句之前执行">1. finally子句应该是在控制转移语句之前执行</a></li>
-        <li><a href="#2-finally对返回值影响">2. finally对返回值影响</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-                
                 <h1 id="异常处理背后的jvm原理">异常处理背后的JVM原理</h1>
 <h2 id="1-异常分类">1. 异常分类</h2>
 <p>Java体系中异常的组织分类如下图所示，所有异常类型的根类为 Throwable，具体包括两大类：Error 与 Exception。Error是指程序无法处理的错误，表示运行应用程序中较严重的问题；Exception是指程序本身可以处理的错误，具体可分为运行时异常（派生于RuntimeException）和其他异常。</p>
@@ -280,140 +275,147 @@
 </ul>
 <p>“如果出现了RuntimeException异常，那一定是你的问题”，例如访问数组前一定要先检测数组下标是否越界；在使用变量之前检测是否为null来杜绝NullPointerException异常的发生。</p>
 <p>Error和RuntimeException是不受检查的异常，其他的所有异常都是受检查的异常。</p>
-<p><img src="http://static.zybuluo.com/Rico123/pgluejr2qhw1pihnh9ozrr57/%E5%BC%82%E5%B8%B8" alt="异常-52.7kB"></p>
+<p>
+  <img src="http://static.zybuluo.com/Rico123/pgluejr2qhw1pihnh9ozrr57/%E5%BC%82%E5%B8%B8" alt="异常-52.7kB">
+
+</p>
 <h2 id="2-异常处理在jvm中的体现">2. 异常处理在JVM中的体现</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-            i<span style="color:#f92672">=</span>10<span style="color:#f92672">;</span>
-        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            <span style="color:#75715e">//TODO: handle exception
-</span><span style="color:#75715e"></span>            i<span style="color:#f92672">=</span>20<span style="color:#f92672">;</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>字节码反编译后</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#f92672">)</span>V
-    flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0009<span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_STATIC
-    Code<span style="color:#f92672">:</span>
-      stack<span style="color:#f92672">=</span>1<span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span>3<span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span>1
-         0<span style="color:#f92672">:</span> iconst_0
-         1<span style="color:#f92672">:</span> istore_1
-         2<span style="color:#f92672">:</span> bipush        10
-         4<span style="color:#f92672">:</span> istore_1
-         5<span style="color:#f92672">:</span> <span style="color:#66d9ef">goto</span>          12
-         8<span style="color:#f92672">:</span> astore_2
-         9<span style="color:#f92672">:</span> bipush        20
-        11<span style="color:#f92672">:</span> istore_1
-        12<span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
-      Exception table<span style="color:#f92672">:</span>
-         from    to  target type
-             2     5     8   Class java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception
-		LineNumberTable<span style="color:#f92672">:</span>
-        line 6<span style="color:#f92672">:</span> 0
-        line 8<span style="color:#f92672">:</span> 2
-        line 12<span style="color:#f92672">:</span> 5
-        line 9<span style="color:#f92672">:</span> 8
-        line 11<span style="color:#f92672">:</span> 9
-        line 13<span style="color:#f92672">:</span> 12
-      StackMapTable<span style="color:#f92672">:</span> number_of_entries <span style="color:#f92672">=</span> 2
-        	  frame_type <span style="color:#f92672">=</span> 255 <span style="color:#75715e">/* full_frame */</span>
-          offset_delta <span style="color:#f92672">=</span> 8
-          locals <span style="color:#f92672">=</span> <span style="color:#f92672">[</span> <span style="color:#66d9ef">class</span> <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#960050;background-color:#1e0010">[</span><span style="color:#a6e22e">Ljava</span><span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> <span style="color:#f92672">]</span>
-          stack <span style="color:#f92672">=</span> <span style="color:#f92672">[</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">java</span><span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception <span style="color:#f92672">]</span>
-          frame_type <span style="color:#f92672">=</span> 3 <span style="color:#75715e">/* same */</span>
-</code></pre></div><p>Exception table中的一列表示try语句的范围，即2-4行（不包括第五行），如果发生的异常与Exception一致，则进入第8行。第8行的astore_2的含义是将异常对象的引用地址储存在e槽位上。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span> <span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-            i<span style="color:#f92672">=</span>10<span style="color:#f92672">;</span>
-        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            i<span style="color:#f92672">=</span>20<span style="color:#f92672">;</span>
-        <span style="color:#f92672">}</span><span style="color:#66d9ef">finally</span><span style="color:#f92672">{</span>
-            i<span style="color:#f92672">=</span>30<span style="color:#f92672">;</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>字节码反编译后</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#f92672">)</span>V
-    flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0009<span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_STATIC
-    Code<span style="color:#f92672">:</span>
-      stack<span style="color:#f92672">=</span>1<span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span>4<span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span>1
-         0<span style="color:#f92672">:</span> iconst_0
-         1<span style="color:#f92672">:</span> istore_1
-         2<span style="color:#f92672">:</span> bipush        10
-         4<span style="color:#f92672">:</span> istore_1
-         5<span style="color:#f92672">:</span> bipush        30
-         7<span style="color:#f92672">:</span> istore_1
-         8<span style="color:#f92672">:</span> <span style="color:#66d9ef">goto</span>          27
-        11<span style="color:#f92672">:</span> astore_2
-        12<span style="color:#f92672">:</span> bipush        20
-        14<span style="color:#f92672">:</span> istore_1
-        15<span style="color:#f92672">:</span> bipush        30
-        17<span style="color:#f92672">:</span> istore_1
-        18<span style="color:#f92672">:</span> <span style="color:#66d9ef">goto</span>          27
-        21<span style="color:#f92672">:</span> astore_3
-        22<span style="color:#f92672">:</span> bipush        30
-        24<span style="color:#f92672">:</span> istore_1
-        25<span style="color:#f92672">:</span> aload_3
-        26<span style="color:#f92672">:</span> athrow
-        27<span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
-      Exception table<span style="color:#f92672">:</span>
-         from    to  target type
-             2     5    11   Class java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception
-             2     5    21   any
-            11    15    21   any
-		LocalVariableTable<span style="color:#f92672">:</span>
-			Start   Length	Slot	Name	Signature
-			   12        3     2      e   Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception<span style="color:#f92672">;</span>
-				0        28     0    args <span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span>
-				2        26     1       i I
-</code></pre></div><p>finally中的代码被复制了三份，分别放入try流程，catch流程以及catch剩余异常类型流程</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            i<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//TODO: handle exception
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            i<span style="color:#f92672">=</span><span style="color:#ae81ff">20</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>字节码反编译后</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[]);</span>
+</span></span><span style="display:flex;"><span>    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">([</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;)</span>V
+</span></span><span style="display:flex;"><span>    flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#ae81ff">0x0009</span><span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_STATIC
+</span></span><span style="display:flex;"><span>    Code<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>      stack<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span><span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">0</span><span style="color:#f92672">:</span> iconst_0
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span> istore_1
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">2</span><span style="color:#f92672">:</span> bipush        <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">4</span><span style="color:#f92672">:</span> istore_1
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">5</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">goto</span>          <span style="color:#ae81ff">12</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">8</span><span style="color:#f92672">:</span> astore_2
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">9</span><span style="color:#f92672">:</span> bipush        <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">11</span><span style="color:#f92672">:</span> istore_1
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">12</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>      Exception table<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>         from    to  target type
+</span></span><span style="display:flex;"><span>             <span style="color:#ae81ff">2</span>     <span style="color:#ae81ff">5</span>     <span style="color:#ae81ff">8</span>   Class java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception
+</span></span><span style="display:flex;"><span>		LineNumberTable<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">6</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">8</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">12</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">9</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">8</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">11</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">9</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">13</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">12</span>
+</span></span><span style="display:flex;"><span>      StackMapTable<span style="color:#f92672">:</span> number_of_entries <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>        	  frame_type <span style="color:#f92672">=</span> <span style="color:#ae81ff">255</span> <span style="color:#75715e">/* full_frame */</span>
+</span></span><span style="display:flex;"><span>          offset_delta <span style="color:#f92672">=</span> <span style="color:#ae81ff">8</span>
+</span></span><span style="display:flex;"><span>          locals <span style="color:#f92672">=</span> <span style="color:#f92672">[</span> <span style="color:#66d9ef">class</span> <span style="color:#960050;background-color:#1e0010">&#34;[</span><span style="color:#a6e22e">Ljava</span><span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>          stack <span style="color:#f92672">=</span> <span style="color:#f92672">[</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">java</span><span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>          frame_type <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span> <span style="color:#75715e">/* same */</span>
+</span></span></code></pre></div><p>Exception table中的一列表示try语句的范围，即2-4行（不包括第五行），如果发生的异常与Exception一致，则进入第8行。第8行的astore_2的含义是将异常对象的引用地址储存在e槽位上。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            i<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            i<span style="color:#f92672">=</span><span style="color:#ae81ff">20</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span><span style="color:#66d9ef">finally</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            i<span style="color:#f92672">=</span><span style="color:#ae81ff">30</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>字节码反编译后</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[]);</span>
+</span></span><span style="display:flex;"><span>    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">([</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;)</span>V
+</span></span><span style="display:flex;"><span>    flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#ae81ff">0x0009</span><span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_STATIC
+</span></span><span style="display:flex;"><span>    Code<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>      stack<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">0</span><span style="color:#f92672">:</span> iconst_0
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span> istore_1
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">2</span><span style="color:#f92672">:</span> bipush        <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">4</span><span style="color:#f92672">:</span> istore_1
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">5</span><span style="color:#f92672">:</span> bipush        <span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">7</span><span style="color:#f92672">:</span> istore_1
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">8</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">goto</span>          <span style="color:#ae81ff">27</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">11</span><span style="color:#f92672">:</span> astore_2
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">12</span><span style="color:#f92672">:</span> bipush        <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">14</span><span style="color:#f92672">:</span> istore_1
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">15</span><span style="color:#f92672">:</span> bipush        <span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">17</span><span style="color:#f92672">:</span> istore_1
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">18</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">goto</span>          <span style="color:#ae81ff">27</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">21</span><span style="color:#f92672">:</span> astore_3
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">22</span><span style="color:#f92672">:</span> bipush        <span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">24</span><span style="color:#f92672">:</span> istore_1
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">25</span><span style="color:#f92672">:</span> aload_3
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">26</span><span style="color:#f92672">:</span> athrow
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">27</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>      Exception table<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>         from    to  target type
+</span></span><span style="display:flex;"><span>             <span style="color:#ae81ff">2</span>     <span style="color:#ae81ff">5</span>    <span style="color:#ae81ff">11</span>   Class java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception
+</span></span><span style="display:flex;"><span>             <span style="color:#ae81ff">2</span>     <span style="color:#ae81ff">5</span>    <span style="color:#ae81ff">21</span>   any
+</span></span><span style="display:flex;"><span>            <span style="color:#ae81ff">11</span>    <span style="color:#ae81ff">15</span>    <span style="color:#ae81ff">21</span>   any
+</span></span><span style="display:flex;"><span>		LocalVariableTable<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>			Start   Length	Slot	Name	Signature
+</span></span><span style="display:flex;"><span>			   <span style="color:#ae81ff">12</span>        <span style="color:#ae81ff">3</span>     <span style="color:#ae81ff">2</span>      e   Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Exception<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#ae81ff">0</span>        <span style="color:#ae81ff">28</span>     <span style="color:#ae81ff">0</span>    args <span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#ae81ff">2</span>        <span style="color:#ae81ff">26</span>     <span style="color:#ae81ff">1</span>       i I
+</span></span></code></pre></div><p>finally中的代码被复制了三份，分别放入try流程，catch流程以及catch剩余异常类型流程</p>
 <h2 id="3-finally的执行时机">3. finally的执行时机</h2>
 <h3 id="1-finally子句应该是在控制转移语句之前执行">1. finally子句应该是在控制转移语句之前执行</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span> <span style="color:#f92672">{</span> 
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span> 
-        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;return value of getValue(): &#34;</span> <span style="color:#f92672">+</span> getValue<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span> 
-    <span style="color:#f92672">}</span> 
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getValue</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span> 
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span> 
-                <span style="color:#66d9ef">return</span> 0<span style="color:#f92672">;</span> 
-        <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span> 
-                <span style="color:#66d9ef">return</span> 1<span style="color:#f92672">;</span> 
-            <span style="color:#f92672">}</span> 
-     <span style="color:#f92672">}</span> 
- <span style="color:#f92672">}</span>
-<span style="color:#75715e">/* Output:
-</span><span style="color:#75715e">        return value of getValue(): 1
-</span><span style="color:#75715e"> */</span><span style="color:#75715e">//:~ 
-</span></code></pre></div><p>try块被执行，其finally子句一定会被执行，因此在return之前，会执行finally块中的return 1指令，自然后返回1；</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span> <span style="color:#f92672">{</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span> 
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;return value of getValue(): &#34;</span> <span style="color:#f92672">+</span> getValue<span style="color:#f92672">());</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getValue</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span> 
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span> 
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span> 
+</span></span><span style="display:flex;"><span>     <span style="color:#f92672">}</span> 
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/* Output:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        return value of getValue(): 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span><span style="color:#75715e">//:~ 
+</span></span></span></code></pre></div><p>try块被执行，其finally子句一定会被执行，因此在return之前，会执行finally块中的return 1指令，自然后返回1；</p>
 <h3 id="2-finally对返回值影响">2. finally对返回值影响</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">int</span> result<span style="color:#f92672">=</span>test<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>result<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    <span style="color:#f92672">}</span>
-    
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>10<span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">try</span><span style="color:#f92672">{</span>
-            <span style="color:#66d9ef">return</span> i<span style="color:#f92672">;</span>
-        <span style="color:#f92672">}</span><span style="color:#66d9ef">finally</span><span style="color:#f92672">{</span>
-            i<span style="color:#f92672">=</span>20<span style="color:#f92672">;</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-<span style="color:#75715e">// Output: print 10;
-</span></code></pre></div><p><img src="https://s2.ax1x.com/2020/03/06/3b6D2Q.png" alt="3b6D2Q.png"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> result<span style="color:#f92672">=</span>test<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>result<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> i<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span><span style="color:#66d9ef">finally</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            i<span style="color:#f92672">=</span><span style="color:#ae81ff">20</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Output: print 10;
+</span></span></span></code></pre></div><p>
+  <img src="https://s2.ax1x.com/2020/03/06/3b6D2Q.png" alt="3b6D2Q.png">
+
+</p>
 <p>虽然在返回i之前，会首先执行finally子句块中的i=20这一步，但是在执行finally这一步之前，会将数据保存在本地变量表中，执行完finally块后，再将其从变量表中取出并返回。因此，尽管finally中改变了i的值，但是返回的是i的一个拷贝</p>
 
 
                 
 
+                
                 <hr>
                 <ul class="pager">
                     
@@ -429,13 +431,31 @@
                     </li>
                     
                 </ul>
+                
 
                 
-<div id="disqus-comment"></div>
 
 
 
             </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
             
             <div class="
                 col-lg-8 col-lg-offset-2
@@ -459,76 +479,77 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <ul class="list-inline text-center">
-                   
+                <ul class="list-inline text-center">                  
                     
                     <li>
                         <a href="mailto:is.eric.wu@gmail.com">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-                    
+		           
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-
+		           
                     
 
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="/img/we_chat.JPG">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="https://github.com/ericwu0930/">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		           
+                    
                     
                     
                     
                     
                     
             
-                </ul>
+            
+            
+           
+             </ul>
 		<p class="copyright text-muted">
-                    Copyright &copy; Eric&#39;s Blog 2021
+                    Copyright &copy; Eric&#39;s Blog 2022
                     <br>
                     <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
                     <iframe
@@ -546,7 +567,7 @@
 
 
 <script>
-    function async(u, c) {
+    function loadAsync(u, c) {
       var d = document, t = 'script',
           o = d.createElement(t),
           s = d.getElementsByTagName(t)[0];
@@ -564,7 +585,7 @@
 <script>
     
     if($('#tag_cloud').length !== 0){
-        async("/js/jquery.tagcloud.js",function(){
+        loadAsync("/js/jquery.tagcloud.js",function(){
             $.fn.tagcloud.defaults = {
                 
                 color: {start: '#bbbbee', end: '#0085a1'},
@@ -576,7 +597,7 @@
 
 
 <script>
-    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
         var $nav = document.querySelector("nav");
         if($nav) FastClick.attach($nav);
     })
@@ -587,16 +608,65 @@
 
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-158682233-1', 'auto');
-	
-	ga('send', 'pageview');
-}
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
 
 
 

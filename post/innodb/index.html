@@ -34,46 +34,38 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>InnoDB存储引擎结构-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>InnoDB存储引擎结构 | 吴昊的博客 | Eric&#39;s Blog</title>
 
     <link rel="canonical" href="/post/innodb/">
 
-    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
-	
+    
+    
     
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
     
-    <link rel="stylesheet" href="/css/hux-blog.min.css">
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
 
-    
-    <link rel="stylesheet" href="/css/syntax.css">
-    
     
     <link rel="stylesheet" href="/css/zanshang.css">
+
     
-    
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
 
     
     
 
-    
     
     <script src="/js/jquery.min.js"></script>
-    
+
     
     <script src="/js/bootstrap.min.js"></script>
-    
+
     
     <script src="/js/hux-blog.min.js"></script>
 
     
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/lazysizes.min.js"></script>
 
     
     
@@ -82,7 +74,25 @@
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
     <div class="container-fluid">
         
         <div class="navbar-header page-scroll">
@@ -101,7 +111,7 @@
             <div class="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="/">Home</a>
+                        <a href="/">All Posts</a>
                     </li>
                     
                         
@@ -154,12 +164,9 @@
 		    
                         <li><a href="/top/about/">ABOUT</a></li>
                     
-
-                    
-		    <li>
-                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
-		    </li>
-                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
                 </ul>
             </div>
         </div>
@@ -204,7 +211,9 @@
         background-image: url('https://live.staticflickr.com/2930/32735077424_e64622308e_k.jpg')
     }
 </style>
-<header class="intro-header">
+
+<header class="intro-header" >
+
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -223,15 +232,17 @@
                     <h1>InnoDB存储引擎结构</h1>
                     <h2 class="subheading">MySQL学习笔记</h2>
                     <span class="meta">
-                        Posted by 
                         
-                                 &#34;Eric&#34;
-                         
-                        on 
-                        Sunday, March 22, 2020
-                        
-                        
-                        
+                            Posted by 
+                            
+                                     &#34;Eric&#34;
+                             
+                            on 
+                            Sunday, March 22, 2020
+                            
+                            
+                            
+                            
                     </span>
                 </div>
             </div>
@@ -253,35 +264,13 @@
                 post-container">
 
                 
-                <header>
-                    <h2>TOC</h2>
-                </header>
-                <nav id="TableOfContents">
-  <ul>
-    <li><a href="#1-innodb体系结构">1. InnoDB体系结构</a>
-      <ul>
-        <li><a href="#11-后台线程">1.1 后台线程</a></li>
-        <li><a href="#io-thread">IO Thread</a></li>
-        <li><a href="#12-内存">1.2 内存</a></li>
-      </ul>
-    </li>
-    <li><a href="#2-checkpoint技术">2. CheckPoint技术</a></li>
-    <li><a href="#3-innodb关键特性">3. InnoDB关键特性</a>
-      <ul>
-        <li><a href="#31-插入缓冲">3.1 插入缓冲</a></li>
-        <li><a href="#32-两次写">3.2 两次写</a></li>
-        <li><a href="#33-自适应哈希索引">3.3 自适应哈希索引</a></li>
-        <li><a href="#34-异步io">3.4 异步IO</a></li>
-        <li><a href="#35-刷新邻接页">3.5 刷新邻接页</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-                
                 <p>由于Mysql数据库中的存储引擎是插件式的，而存储引擎又是基于表的，因此可以根据不同的需要使用不同的存储引擎创建表。</p>
 <p>InnoDB是Mysql默认的存储引擎，基于从磁盘存储，其特点是行锁设计、支持MVCC、支持外键、提供一致性非锁定读，同时被设计用来最有效的利用以及使用内存和CPU。</p>
 <h2 id="1-innodb体系结构">1. InnoDB体系结构</h2>
-<p><img src="https://s1.ax1x.com/2020/03/23/8T8Hh9.png" alt="8T8Hh9.png"></p>
+<p>
+  <img src="https://s1.ax1x.com/2020/03/23/8T8Hh9.png" alt="8T8Hh9.png">
+
+</p>
 <h3 id="11-后台线程">1.1 后台线程</h3>
 <p><strong>Master Thread</strong>(InnoDB 1.0.x版本之前)</p>
 <p>Master Thread是一个非常核心的后台线程，主要负责脏页面的刷新、合并插入缓冲、UNDO页的回收等。Master Thread具有最高的线程优先级别。其内部由多个循环组成：主循环、后台循环、刷新循环、暂停循环。Master Thread会根据数据库运行的状态在loop、background loop、flush loop和suspend loop中进行切换。</p>
@@ -330,48 +319,51 @@
 </ol>
 <p>如果flush loop中也没有什么事情可以做了，InnoDB存储引擎会切换到suspend_loop，将Master Thread挂起。</p>
 <p>整个Master Thread的伪代码如下所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">master_thread</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">goto</span> loop<span style="color:#f92672">;</span>
-loop:      <span style="color:#75715e">//主循环
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>0<span style="color:#f92672">;</span>i<span style="color:#f92672">&lt;</span>10<span style="color:#f92672">;</span><span style="color:#f92672">+</span><span style="color:#f92672">+</span>i<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-        thread_sleep<span style="color:#f92672">(</span>1<span style="color:#f92672">)</span><span style="color:#f92672">;</span>             <span style="color:#75715e">//每1s执行
-</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">do</span> log buffer flush to disk<span style="color:#f92672">;</span> <span style="color:#75715e">//将重做日志缓冲写进重做日志文件
-</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>last_one_second_ios<span style="color:#f92672">&lt;</span>5<span style="color:#f92672">)</span>
-            <span style="color:#66d9ef">do</span> merge at most 5 insert buffer<span style="color:#f92672">;</span> <span style="color:#75715e">//合并插入缓冲
-</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>buf_get_modified_ratio_pct<span style="color:#f92672">&gt;</span>innodb_max_dirty_pages_pct<span style="color:#f92672">)</span>
-            <span style="color:#66d9ef">do</span> buffer pool flush 100 dirty page<span style="color:#f92672">;</span> <span style="color:#75715e">//刷新100个脏页到磁盘
-</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>no user activity<span style="color:#f92672">)</span>
-            <span style="color:#66d9ef">goto</span> background loop<span style="color:#f92672">;</span>
-    <span style="color:#f92672">}</span>                                   <span style="color:#75715e">//每10s执行
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>last_ten_second_ios<span style="color:#f92672">&lt;</span>200<span style="color:#f92672">)</span>
-        <span style="color:#66d9ef">do</span> buffer pool flush 100 dirty page<span style="color:#f92672">;</span> <span style="color:#75715e">//脏页刷新
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> merge at most 5 insert buffer<span style="color:#f92672">;</span>  <span style="color:#75715e">//合并插入缓冲
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> log buffer flush to disk<span style="color:#f92672">;</span>       <span style="color:#75715e">//将重做日志缓冲写进重做日志文件
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> full purge<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>buf_get_modifed_ratio_pct<span style="color:#f92672">&gt;</span>70<span style="color:#f92672">%</span><span style="color:#f92672">)</span>
-        <span style="color:#66d9ef">do</span> buffer pool flush 100 dirty page<span style="color:#f92672">;</span> <span style="color:#75715e">//刷新脏页
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">else</span>
-        buffer pool flush 10 dirty page<span style="color:#f92672">;</span>    <span style="color:#75715e">//刷新脏页
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">goto</span> loop<span style="color:#f92672">;</span>
-backgroud loop<span style="color:#f92672">:</span>   <span style="color:#75715e">//background循环
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> full purge<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">do</span> merge 20 insert buffer<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">if</span> not idle<span style="color:#f92672">:</span>
-    	<span style="color:#66d9ef">goto</span> loop<span style="color:#f92672">:</span>
-    <span style="color:#66d9ef">else</span><span style="color:#f92672">:</span>
-    	<span style="color:#66d9ef">goto</span> flush loop<span style="color:#f92672">;</span>
-flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">//刷新循环
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> buffer pool flush 100 dirty page<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>buf_get_modified_ratio_pct<span style="color:#f92672">&gt;</span>innodb_max_dirty_pages_pct<span style="color:#f92672">)</span>
-        <span style="color:#66d9ef">goto</span> flush loop<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">goto</span> suspend loop<span style="color:#f92672">;</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><h3 id="io-thread">IO Thread</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">master_thread</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">goto</span> loop<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>loop:      <span style="color:#75715e">//主循环
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style="color:#f92672">;</span>i<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">10</span><span style="color:#f92672">;++</span>i<span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>        thread_sleep<span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">);</span>             <span style="color:#75715e">//每1s执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">do</span> log buffer flush to disk<span style="color:#f92672">;</span> <span style="color:#75715e">//将重做日志缓冲写进重做日志文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>last_one_second_ios<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">5</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">do</span> merge at most <span style="color:#ae81ff">5</span> insert buffer<span style="color:#f92672">;</span> <span style="color:#75715e">//合并插入缓冲
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>buf_get_modified_ratio_pct<span style="color:#f92672">&gt;</span>innodb_max_dirty_pages_pct<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">do</span> buffer pool flush <span style="color:#ae81ff">100</span> dirty page<span style="color:#f92672">;</span> <span style="color:#75715e">//刷新100个脏页到磁盘
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>no user activity<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">goto</span> background loop<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>                                   <span style="color:#75715e">//每10s执行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>last_ten_second_ios<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">200</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">do</span> buffer pool flush <span style="color:#ae81ff">100</span> dirty page<span style="color:#f92672">;</span> <span style="color:#75715e">//脏页刷新
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> merge at most <span style="color:#ae81ff">5</span> insert buffer<span style="color:#f92672">;</span>  <span style="color:#75715e">//合并插入缓冲
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> log buffer flush to disk<span style="color:#f92672">;</span>       <span style="color:#75715e">//将重做日志缓冲写进重做日志文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> full purge<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>buf_get_modifed_ratio_pct<span style="color:#f92672">&gt;</span><span style="color:#ae81ff">70</span><span style="color:#f92672">%)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">do</span> buffer pool flush <span style="color:#ae81ff">100</span> dirty page<span style="color:#f92672">;</span> <span style="color:#75715e">//刷新脏页
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        buffer pool flush <span style="color:#ae81ff">10</span> dirty page<span style="color:#f92672">;</span>    <span style="color:#75715e">//刷新脏页
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">goto</span> loop<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>backgroud loop<span style="color:#f92672">:</span>   <span style="color:#75715e">//background循环
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> full purge<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">do</span> merge <span style="color:#ae81ff">20</span> insert buffer<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> not idle<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    	<span style="color:#66d9ef">goto</span> loop<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    	<span style="color:#66d9ef">goto</span> flush loop<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">//刷新循环
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">do</span> buffer pool flush <span style="color:#ae81ff">100</span> dirty page<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>buf_get_modified_ratio_pct<span style="color:#f92672">&gt;</span>innodb_max_dirty_pages_pct<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">goto</span> flush loop<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">goto</span> suspend loop<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="io-thread">IO Thread</h3>
 <p>在InnoDB存储引擎中大量使用了AIO（Async IO）来处理写IO请求，read_thread和write_thread分别为4个，分别使用innodb_read_io_threads和innodb_write_io_threads参数进行设置。</p>
 <p><strong>Purge Thread</strong></p>
 <p>事务被提交后，其所使用的的undolog可能不再需要，需要PurgeThread来回收已经使用并分配的undo页。从InnoDB 1.1版本开始，purge操作可以独立到单独的线程中进行。</p>
 <h3 id="12-内存">1.2 内存</h3>
-<p><img src="https://s1.ax1x.com/2020/03/23/8T8vnK.png" alt="8T8vnK.png"></p>
+<p>
+  <img src="https://s1.ax1x.com/2020/03/23/8T8vnK.png" alt="8T8vnK.png">
+
+</p>
 <p>缓冲池中缓存的数据页类型有：索引页、数据页、undo页、插入缓冲(insert buffer)、自适应哈希索引、数据字典信息等。</p>
 <p>缓冲池是一个很大的内存区与，数据库中的缓冲池是通过LRU算法进行管理的。在InnoDB存储引擎中，缓冲池中页的大小默认为16KB。InnoDB对LRU进行了一些优化，在LRU列表中加入了midpoint位置，新读取到的页不是直接放入到LRU列表的首部，而是放入到LRU列表的midpoint位置。midpoint之前的是new列表，midpoint之后的列表是old列表。Innodb_old_blocks_time用于表示页读取到mid位置后需要等待多久才会被加入到LRU列表的热端。</p>
 <p>在数据库刚启动时，LRU列表是空的，这时页都存放在Free列表中，需要从缓冲池中分页时，首先从Free列表中查找是否有可用的空闲页，若有则将该页从Free列表中删除，放入到LRU列表中。否则，根据LRU算法，淘汰LRU列表末尾的页，将该内存空间分配给新的页。</p>
@@ -388,7 +380,10 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
 <p>数据库放生宕机时，数据库不需要重做所有的日志，只需要对Checkpoint后的重做日志进行恢复，这缩短了恢复的时间。</p>
 <p>当缓冲池不够用时，根据LRU算法，淘汰某页，如果该页是脏页，需要强制执行Checkpoint，将脏页也就是页的新版本刷回磁盘。</p>
 <p>重做日志出现不可用的情况是因为数据库操作系统对日志的设计都是循环使用的，并不是让其无限增大的。为了实现重做日志文件的重用，必须的强制产生Checkpoint。</p>
-<p><img src="https://s1.ax1x.com/2020/03/23/8TGkct.png" alt="8TGkct.png"></p>
+<p>
+  <img src="https://s1.ax1x.com/2020/03/23/8TGkct.png" alt="8TGkct.png">
+
+</p>
 <blockquote>
 <p>InnoDB存储引擎先写重做日志文件1，当达到文件的最后时，会切换至重做日志文件2，再当重做日志文件2也被写满时，会切换到日志文件3，当日志文件3也被写满时，会重写日志文件1，如此进行循环。</p>
 <p>重做日志文件不能设置的太大，如果设置的太大，恢复时可能需要很长的时间；另一方面也不能设置的太小，否则可能导致一个失误的日志需要多次切换重做日志文件。</p>
@@ -417,7 +412,10 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
 <h3 id="31-插入缓冲">3.1 插入缓冲</h3>
 <p>B+树的特性决定了非聚集索引插入的离散性（例如以主键顺序依次插入行，但这些行对于非聚集索引来说是离散的，定位非聚集索引的叶子结点是随机读取），对于非聚集索引的插入或更新操作，不是每一次直接插入到索引页中，而是先判断插入的非聚集索引页是否在缓冲池中，若在，直接插入，若不在，则先放入到一个Insert Buffer对象中，然后再以一定的频率和情况进行Insert Buffer和辅助索引叶子结点的merge操作，这时通常能将多个插入合并到一个操作中，大大提高了对于非聚集索引插入的性能。</p>
 <h3 id="32-两次写">3.2 两次写</h3>
-<p><img src="https://s1.ax1x.com/2020/03/23/8TGnAg.png" alt="8TGnAg.png"></p>
+<p>
+  <img src="https://s1.ax1x.com/2020/03/23/8TGnAg.png" alt="8TGnAg.png">
+
+</p>
 <p>两次写带给InnoDB存储引擎的是数据页的可靠性。</p>
 <p>在对缓冲池的脏页进行刷新时，并不直接写磁盘，而是现将其写入到doublewrite buffer，然后通过doublewrite buffer分两次，每次1MB顺序地写入共享表空间的物理磁盘上的doublewrite中，然后再doublewrite buffer中的内容写到各个表空间文件中。</p>
 <p>如果操作系统在将页写入磁盘的过程中发生崩溃，在恢复过程中，InnoDB可以从doublewrite中找到该页的一个副本，将其复制到表空间文件，再应用重做日志进行恢复。</p>
@@ -433,6 +431,7 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
 
                 
 
+                
                 <hr>
                 <ul class="pager">
                     
@@ -448,13 +447,31 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
                     </li>
                     
                 </ul>
+                
 
                 
-<div id="disqus-comment"></div>
 
 
 
             </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
             
             <div class="
                 col-lg-8 col-lg-offset-2
@@ -478,76 +495,77 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <ul class="list-inline text-center">
-                   
+                <ul class="list-inline text-center">                  
                     
                     <li>
                         <a href="mailto:is.eric.wu@gmail.com">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-                    
+		           
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-
+		           
                     
 
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="/img/we_chat.JPG">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="https://github.com/ericwu0930/">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		           
+                    
                     
                     
                     
                     
                     
             
-                </ul>
+            
+            
+           
+             </ul>
 		<p class="copyright text-muted">
-                    Copyright &copy; Eric&#39;s Blog 2021
+                    Copyright &copy; Eric&#39;s Blog 2022
                     <br>
                     <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
                     <iframe
@@ -565,7 +583,7 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
 
 
 <script>
-    function async(u, c) {
+    function loadAsync(u, c) {
       var d = document, t = 'script',
           o = d.createElement(t),
           s = d.getElementsByTagName(t)[0];
@@ -583,7 +601,7 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
 <script>
     
     if($('#tag_cloud').length !== 0){
-        async("/js/jquery.tagcloud.js",function(){
+        loadAsync("/js/jquery.tagcloud.js",function(){
             $.fn.tagcloud.defaults = {
                 
                 color: {start: '#bbbbee', end: '#0085a1'},
@@ -595,7 +613,7 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
 
 
 <script>
-    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
         var $nav = document.querySelector("nav");
         if($nav) FastClick.attach($nav);
     })
@@ -606,16 +624,65 @@ flush loop<span style="color:#f92672">:</span>      <span style="color:#75715e">
 
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-158682233-1', 'auto');
-	
-	ga('send', 'pageview');
-}
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
 
 
 

@@ -34,46 +34,38 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>加密与安全机制-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>加密与安全机制 | 吴昊的博客 | Eric&#39;s Blog</title>
 
     <link rel="canonical" href="/post/security/">
 
-    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
-	
+    
+    
     
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
     
-    <link rel="stylesheet" href="/css/hux-blog.min.css">
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
 
-    
-    <link rel="stylesheet" href="/css/syntax.css">
-    
     
     <link rel="stylesheet" href="/css/zanshang.css">
+
     
-    
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
 
     
     
 
-    
     
     <script src="/js/jquery.min.js"></script>
-    
+
     
     <script src="/js/bootstrap.min.js"></script>
-    
+
     
     <script src="/js/hux-blog.min.js"></script>
 
     
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/lazysizes.min.js"></script>
 
     
     
@@ -82,7 +74,25 @@
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
     <div class="container-fluid">
         
         <div class="navbar-header page-scroll">
@@ -101,7 +111,7 @@
             <div class="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="/">Home</a>
+                        <a href="/">All Posts</a>
                     </li>
                     
                         
@@ -154,12 +164,9 @@
 		    
                         <li><a href="/top/about/">ABOUT</a></li>
                     
-
-                    
-		    <li>
-                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
-		    </li>
-                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
                 </ul>
             </div>
         </div>
@@ -204,7 +211,9 @@
         background-image: url('/img/roof.jpg')
     }
 </style>
-<header class="intro-header">
+
+<header class="intro-header" >
+
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -223,15 +232,17 @@
                     <h1>加密与安全机制</h1>
                     <h2 class="subheading">计算机网络学习笔记之二</h2>
                     <span class="meta">
-                        Posted by 
                         
-                                 &#34;Eric&#34;
-                         
-                        on 
-                        Friday, February 14, 2020
-                        
-                        
-                        
+                            Posted by 
+                            
+                                     &#34;Eric&#34;
+                             
+                            on 
+                            Friday, February 14, 2020
+                            
+                            
+                            
+                            
                     </span>
                 </div>
             </div>
@@ -253,42 +264,47 @@
                 post-container">
 
                 
-                <header>
-                    <h2>TOC</h2>
-                </header>
-                <nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#对称密钥">对称密钥</a></li>
-        <li><a href="#非对称密钥">非对称密钥</a></li>
-        <li><a href="#数字签名过程">数字签名过程</a></li>
-        <li><a href="#消息认证码">消息认证码</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-                
                 <p>加密是为了满足以下需求：在不安全的信道上保护所传输信息的机密性、完整性以及可认证性。有两种重要的加密算法——对称密钥与非对称密钥。</p>
-<p><img src="https://i.loli.net/2020/02/14/ZqFWaQbjPp4Jo5X.png" alt="image-20200214191330790.png"></p>
+<p>
+  <img src="https://i.loli.net/2020/02/14/ZqFWaQbjPp4Jo5X.png" alt="image-20200214191330790.png">
+
+</p>
 <h3 id="对称密钥">对称密钥</h3>
 <p>在对称密钥系统中，由于加密与解密的算法相同，它们的密钥也是相同的。多年来，最流行的对称密码算法是数据加密标准（DES）。DES是一种分组密码，也就是说每次对固定数目的比特块进行操作。DES使用64比特的数据块与56位的密钥。如今被更高级的AES所取代，AES的不同版本提供了长度不同的密钥，比如128位，192位以及256位，即AES-128，AES-192以及AES-256。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pWPZd.png" alt="3pWPZd.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pWPZd.png" alt="3pWPZd.png">
+
+</p>
 <p>它加密过程效率高，但是密钥的分配和保存是一个问题，在互联网上转发密钥时，如果通信被监听那么密钥就可落入攻击者者手中，加密也就丧失了意义。</p>
 <h3 id="非对称密钥">非对称密钥</h3>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pfWcT.png" alt="3pfWcT.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pfWcT.png" alt="3pfWcT.png">
+
+</p>
 <p>上图过程是加密的过程，因为公钥是可以公开的，那么任何人都可以给私钥的拥有者发送信息，而接受者无法追溯信息的来源。如果这个过程翻过来，就变成了一个认证过程。例如A用自己的私钥加密了一个邮件（<strong>用私钥加密也被称为签名</strong>），发送给B，B有A的公钥，知道该信息一定来源于A，因为只有A有A的私钥。但是这样，该信息就丧失了加密的属性，因为大家都有A的公钥。</p>
 <p>如何即实现加密，又实现认证呢？首先A准备一把公钥和私钥，B也准备一把公钥和私钥，仍是A给B发信息，先用A的私钥进行加密，然后再用B的公钥加密，传递给B。此时，B先用自己的私钥解锁，然后再用A的公钥进行解密。</p>
-<p><img src="https://i.loli.net/2020/08/26/sq5GHnkBXp3wP6l.png" alt="image-20200826195410531"></p>
+<p>
+  <img src="https://i.loli.net/2020/08/26/sq5GHnkBXp3wP6l.png" alt="image-20200826195410531">
+
+</p>
 <p>非对称加密的过程效率比较低，在混合密码系统中，用非对称密钥对一会话密钥进行加密（对称的），然后用会话密钥对文件进行加密。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pWZz8.png" alt="3pWZz8.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pWZz8.png" alt="3pWZz8.png">
+
+</p>
 <h3 id="数字签名过程">数字签名过程</h3>
 <p>非对称加密还是存在一些问题，那就是无法证明公开密钥本身就是货真价实的公开密钥，比如正准备和某台服务器建立公开密钥加密方式下的通信，如何证明收到的公开密钥就是原本预想的那台服务器发型的公开密钥。或许在公开密钥传输途中，真正的公开密钥已经被攻击者替换掉了。</p>
 <p>数字签名的功能可用于维护信息的可认证性与不可抵赖性。证书的办法过程如下图所示。</p>
-<p><img src="https://s2.ax1x.com/2020/02/16/3pWnsg.png" alt="3pWnsg.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/02/16/3pWnsg.png" alt="3pWnsg.png">
+
+</p>
 <h3 id="消息认证码">消息认证码</h3>
 <p>消息认证码（简称为MAC，有时候也叫MIC）用于保证消息的完整性。</p>
-<p><a href="https://imgchr.com/i/3pW3iq"><img src="https://s2.ax1x.com/2020/02/16/3pW3iq.md.png" alt="3pW3iq.md.png"></a></p>
+<p><a href="https://imgchr.com/i/3pW3iq">
+  <img src="https://s2.ax1x.com/2020/02/16/3pW3iq.md.png" alt="3pW3iq.md.png">
+
+</a></p>
 <p>以上图为例，介绍消息认证过程。A公司要给B公司发送一个文件，为了保证文件的完整性，A公司首先对文件用加密散列函数进行处理，得到一个固定大小的摘要（或指纹）。加密列散函数需要满足三个特征：</p>
 <ol>
 <li>原像不可计算性：在给定摘要而未知消息的情况下，很难计算出消息得值。</li>
@@ -301,6 +317,7 @@
 
                 
 
+                
                 <hr>
                 <ul class="pager">
                     
@@ -316,13 +333,31 @@
                     </li>
                     
                 </ul>
+                
 
                 
-<div id="disqus-comment"></div>
 
 
 
             </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
             
             <div class="
                 col-lg-8 col-lg-offset-2
@@ -346,76 +381,77 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <ul class="list-inline text-center">
-                   
+                <ul class="list-inline text-center">                  
                     
                     <li>
                         <a href="mailto:is.eric.wu@gmail.com">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-                    
+		           
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-
+		           
                     
 
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="/img/we_chat.JPG">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="https://github.com/ericwu0930/">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		           
+                    
                     
                     
                     
                     
                     
             
-                </ul>
+            
+            
+           
+             </ul>
 		<p class="copyright text-muted">
-                    Copyright &copy; Eric&#39;s Blog 2021
+                    Copyright &copy; Eric&#39;s Blog 2022
                     <br>
                     <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
                     <iframe
@@ -433,7 +469,7 @@
 
 
 <script>
-    function async(u, c) {
+    function loadAsync(u, c) {
       var d = document, t = 'script',
           o = d.createElement(t),
           s = d.getElementsByTagName(t)[0];
@@ -451,7 +487,7 @@
 <script>
     
     if($('#tag_cloud').length !== 0){
-        async("/js/jquery.tagcloud.js",function(){
+        loadAsync("/js/jquery.tagcloud.js",function(){
             $.fn.tagcloud.defaults = {
                 
                 color: {start: '#bbbbee', end: '#0085a1'},
@@ -463,7 +499,7 @@
 
 
 <script>
-    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
         var $nav = document.querySelector("nav");
         if($nav) FastClick.attach($nav);
     })
@@ -474,16 +510,65 @@
 
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-158682233-1', 'auto');
-	
-	ga('send', 'pageview');
-}
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
 
 
 

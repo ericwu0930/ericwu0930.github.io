@@ -6,11 +6,7 @@
     <description>Recent content in Redis on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 06 Apr 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://ericwu0930.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 06 Apr 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Redis数据结构与对象</title>
       <link>https://ericwu0930.github.io/post/redis_struct/</link>

@@ -34,46 +34,38 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>数据库入门-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>数据库入门 | 吴昊的博客 | Eric&#39;s Blog</title>
 
     <link rel="canonical" href="/post/mysql/">
 
-    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
-	
+    
+    
     
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
     
-    <link rel="stylesheet" href="/css/hux-blog.min.css">
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
 
-    
-    <link rel="stylesheet" href="/css/syntax.css">
-    
     
     <link rel="stylesheet" href="/css/zanshang.css">
+
     
-    
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
 
     
     
 
-    
     
     <script src="/js/jquery.min.js"></script>
-    
+
     
     <script src="/js/bootstrap.min.js"></script>
-    
+
     
     <script src="/js/hux-blog.min.js"></script>
 
     
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/lazysizes.min.js"></script>
 
     
     
@@ -82,7 +74,25 @@
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
     <div class="container-fluid">
         
         <div class="navbar-header page-scroll">
@@ -101,7 +111,7 @@
             <div class="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="/">Home</a>
+                        <a href="/">All Posts</a>
                     </li>
                     
                         
@@ -154,12 +164,9 @@
 		    
                         <li><a href="/top/about/">ABOUT</a></li>
                     
-
-                    
-		    <li>
-                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
-		    </li>
-                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
                 </ul>
             </div>
         </div>
@@ -204,7 +211,9 @@
         background-image: url('/img/roof.jpg')
     }
 </style>
-<header class="intro-header">
+
+<header class="intro-header" >
+
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -223,15 +232,17 @@
                     <h1>数据库入门</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
-                        Posted by 
                         
-                                 &#34;Eric&#34;
-                         
-                        on 
-                        Monday, December 9, 2019
-                        
-                        
-                        
+                            Posted by 
+                            
+                                     &#34;Eric&#34;
+                             
+                            on 
+                            Monday, December 9, 2019
+                            
+                            
+                            
+                            
                     </span>
                 </div>
             </div>
@@ -253,56 +264,13 @@
                 post-container">
 
                 
-                <header>
-                    <h2>TOC</h2>
-                </header>
-                <nav id="TableOfContents">
-  <ul>
-    <li><a href="#一mysql数据库软件">一、MySQL数据库软件</a>
-      <ul>
-        <li><a href="#mysql的结构">MySQL的结构</a></li>
-        <li><a href="#存储引擎">存储引擎</a></li>
-        <li><a href="#登录">登录</a></li>
-        <li><a href="#退出">退出</a></li>
-        <li><a href="#mysql目录结构">MySQL目录结构</a></li>
-      </ul>
-    </li>
-    <li><a href="#二sql">二、SQL</a>
-      <ul>
-        <li><a href="#ddl操作数据库表">DDL：操作数据库、表</a></li>
-        <li><a href="#dml增删改表中数据">DML：增删改表中数据</a></li>
-        <li><a href="#dql查询表中的记录">DQL：查询表中的记录</a></li>
-        <li><a href="#约束">约束</a></li>
-      </ul>
-    </li>
-    <li><a href="#三多表查询">三、多表查询</a>
-      <ul>
-        <li><a href="#1-内连接">1. 内连接</a></li>
-        <li><a href="#2-外连接">2. 外连接</a></li>
-      </ul>
-    </li>
-    <li><a href="#四子查询">四、子查询</a></li>
-    <li><a href="#五数据库的设计">五、数据库的设计</a>
-      <ul>
-        <li><a href="#1-多表之间的关系">1. 多表之间的关系</a></li>
-        <li><a href="#2-数据库设计范式">2. 数据库设计范式</a></li>
-      </ul>
-    </li>
-    <li><a href="#六数据库的备份还原">六、数据库的备份还原</a></li>
-    <li><a href="#七事务">七、事务</a>
-      <ul>
-        <li><a href="#71-概念">7.1 概念</a></li>
-        <li><a href="#72-事务的四大特征">7.2 事务的四大特征</a></li>
-        <li><a href="#73-事务的隔离级别">7.3 事务的隔离级别</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-                
                 <h2 id="一mysql数据库软件">一、MySQL数据库软件</h2>
 <h3 id="mysql的结构">MySQL的结构</h3>
 <p>MySQL是一个客户端/服务器的架构，它的服务器程序直接和我们存储的数据打交道，然后可以有好多客户端程序连接到这个服务器程序，发送增删改查的请求，然后服务器就响应这些请求，从而操作它维护的数据。服务器进程对客户端进程发送的请求做了什么处理，才能产生最后的处理结果呢？客户端可以向服务器发送增删改查各类请求，我们这里以比较复杂的查询请求为例来画个图展示一下大致的过程：</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoeysvse3j31120p0771.jpg" alt="image-20200812224636555"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghoeysvse3j31120p0771.jpg" alt="image-20200812224636555">
+
+</p>
 <h3 id="存储引擎">存储引擎</h3>
 <p><code>MySQL</code>服务器把数据的存储和提取操作都封装到了一个叫<code>存储引擎</code>的模块里。我们知道<code>表</code>是由一行一行的记录组成的，但这只是一个逻辑上的概念，物理上如何表示记录，怎么从表中读取数据，怎么把数据写入具体的物理存储器上，这都是<code>存储引擎</code>负责的事情。为了实现不同的功能，<code>MySQL</code>提供了各式各样的<code>存储引擎</code>，不同<code>存储引擎</code>管理的表具体的存储结构可能不同，采用的存取算法也可能不同。</p>
 <h3 id="登录">登录</h3>
@@ -317,7 +285,10 @@
 <li>quit</li>
 </ol>
 <h3 id="mysql目录结构">MySQL目录结构</h3>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2reue4j31970u0tq4.jpg" alt="数据库目录"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2reue4j31970u0tq4.jpg" alt="数据库目录">
+
+</p>
 <p>MySQL有一个安装目录有一个数据目录，在数据目录中又有这样的几个概念</p>
 <ul>
 <li>数据库：文件夹</li>
@@ -357,7 +328,10 @@
 <p>用来定义数据库的访问权限和安全级别，及创建用户。关键字：GRANT， REVOKE 等</p>
 </li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2olqysj31v00u07wh.jpg" alt="SQL语句分类"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2olqysj31v00u07wh.jpg" alt="SQL语句分类">
+
+</p>
 <h3 id="ddl操作数据库表">DDL：操作数据库、表</h3>
 <p>对于DDL语句，可以分为操作数据库和操作表，并且对于数据库和表，又都可以分为CRUD操作，即Create，Retrieve，Update和Delete。</p>
 <ol>
@@ -367,56 +341,56 @@
 <ul>
 <li>
 <p>创建数据库：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">database</span> <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">库</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">database</span> <span style="color:#960050;background-color:#1e0010">数据库名称；</span>
+</span></span></code></pre></div></li>
 <li>
 <p>判断数据库是否存在，再创建：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">database</span> <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">not</span> <span style="color:#66d9ef">exists</span> <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">库</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">database</span> <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">not</span> <span style="color:#66d9ef">exists</span> <span style="color:#960050;background-color:#1e0010">数据库名称；</span>
+</span></span></code></pre></div></li>
 <li>
 <p>创建数据库，并制定字符集：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">database</span> <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">库</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span> <span style="color:#66d9ef">character</span> <span style="color:#66d9ef">set</span> <span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">符</span><span style="color:#960050;background-color:#1e0010">集</span><span style="color:#960050;background-color:#1e0010">名</span>;
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">database</span> <span style="color:#960050;background-color:#1e0010">数据库名称</span> <span style="color:#66d9ef">character</span> <span style="color:#66d9ef">set</span> <span style="color:#960050;background-color:#1e0010">字符集名</span>;
+</span></span></code></pre></div></li>
 </ul>
 <p>1.2 Retrieve：查询</p>
 <ul>
 <li>
 <p>查询所有数据库的名称：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">show</span> <span style="color:#66d9ef">databases</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">show</span> <span style="color:#66d9ef">databases</span><span style="color:#960050;background-color:#1e0010">；</span>
+</span></span></code></pre></div></li>
 <li>
 <p>查询某个数据库的字符集：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">show</span> <span style="color:#66d9ef">create</span> <span style="color:#66d9ef">database</span> <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">库</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span>;
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">show</span> <span style="color:#66d9ef">create</span> <span style="color:#66d9ef">database</span> <span style="color:#960050;background-color:#1e0010">数据库名称</span>;
+</span></span></code></pre></div></li>
 </ul>
 <p>1.3 Update: 修改</p>
 <ul>
 <li>
 <p>修改数据库的字符集</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">database</span> <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">库</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span> <span style="color:#66d9ef">character</span> <span style="color:#66d9ef">set</span> <span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">符</span><span style="color:#960050;background-color:#1e0010">集</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">database</span> <span style="color:#960050;background-color:#1e0010">数据库名称</span> <span style="color:#66d9ef">character</span> <span style="color:#66d9ef">set</span> <span style="color:#960050;background-color:#1e0010">字符集名称；</span>
+</span></span></code></pre></div></li>
 </ul>
 <p>1.4 Delete：删除</p>
 <ul>
 <li>
 <p>删除数据库</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">drop</span> <span style="color:#66d9ef">database</span> <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">库</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">drop</span> <span style="color:#66d9ef">database</span> <span style="color:#960050;background-color:#1e0010">数据库名称；</span>
+</span></span></code></pre></div></li>
 <li>
 <p>先判断数据库是否存在，再删除</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">drop</span> <span style="color:#66d9ef">database</span> <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">exists</span> <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">库</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span>;	
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">drop</span> <span style="color:#66d9ef">database</span> <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">exists</span> <span style="color:#960050;background-color:#1e0010">数据库名称</span>;	
+</span></span></code></pre></div></li>
 </ul>
 <p>1.5 使用数据库</p>
 <ul>
 <li>
 <p>查询当前正在使用的数据库名称</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">select</span> <span style="color:#66d9ef">database</span>()<span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#66d9ef">database</span>()<span style="color:#960050;background-color:#1e0010">；</span>
+</span></span></code></pre></div></li>
 <li>
 <p>使用数据库</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">use</span> <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">库</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#960050;background-color:#1e0010">数据库名称；</span>
+</span></span></code></pre></div></li>
 </ul>
 </li>
 <li>
@@ -425,70 +399,70 @@
 <ul>
 <li>创建表</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span>(
- <span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#ae81ff">1</span> <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">类</span><span style="color:#960050;background-color:#1e0010">型</span><span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">，</span>
- <span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#ae81ff">2</span> <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">类</span><span style="color:#960050;background-color:#1e0010">型</span><span style="color:#ae81ff">2</span><span style="color:#960050;background-color:#1e0010">，</span>
- ...
- <span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span>n <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">类</span><span style="color:#960050;background-color:#1e0010">型</span>n
-);
-   
-<span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">类</span><span style="color:#960050;background-color:#1e0010">型</span><span style="color:#960050;background-color:#1e0010">：</span>
-<span style="color:#ae81ff">1</span>. <span style="color:#66d9ef">int</span><span style="color:#960050;background-color:#1e0010">：</span><span style="color:#960050;background-color:#1e0010">整</span><span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">类</span><span style="color:#960050;background-color:#1e0010">型</span>
-   <span style="color:#f92672">*</span> age <span style="color:#66d9ef">int</span>,
-<span style="color:#ae81ff">2</span>. <span style="color:#66d9ef">double</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#960050;background-color:#1e0010">总</span><span style="color:#960050;background-color:#1e0010">位</span><span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#960050;background-color:#1e0010">小</span><span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">点</span><span style="color:#960050;background-color:#1e0010">后</span><span style="color:#960050;background-color:#1e0010">位</span><span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">）</span>:<span style="color:#960050;background-color:#1e0010">小</span><span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">类</span><span style="color:#960050;background-color:#1e0010">型</span>
-   <span style="color:#f92672">*</span> score <span style="color:#66d9ef">double</span>(<span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">2</span>)
-<span style="color:#ae81ff">3</span>. <span style="color:#66d9ef">date</span>:<span style="color:#960050;background-color:#1e0010">日</span><span style="color:#960050;background-color:#1e0010">期</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#960050;background-color:#1e0010">只</span><span style="color:#960050;background-color:#1e0010">包</span><span style="color:#960050;background-color:#1e0010">含</span><span style="color:#960050;background-color:#1e0010">年</span><span style="color:#960050;background-color:#1e0010">月</span><span style="color:#960050;background-color:#1e0010">日</span><span style="color:#960050;background-color:#1e0010">，</span>yyyy<span style="color:#f92672">-</span>MM<span style="color:#f92672">-</span>dd
-<span style="color:#ae81ff">4</span>. <span style="color:#66d9ef">datetime</span>:<span style="color:#960050;background-color:#1e0010">日</span><span style="color:#960050;background-color:#1e0010">期</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#960050;background-color:#1e0010">包</span><span style="color:#960050;background-color:#1e0010">含</span><span style="color:#960050;background-color:#1e0010">年</span><span style="color:#960050;background-color:#1e0010">月</span><span style="color:#960050;background-color:#1e0010">日</span><span style="color:#960050;background-color:#1e0010">时</span><span style="color:#960050;background-color:#1e0010">分</span><span style="color:#960050;background-color:#1e0010">秒</span>	 yyyy<span style="color:#f92672">-</span>MM<span style="color:#f92672">-</span>dd HH:mm:ss
-<span style="color:#ae81ff">5</span>. <span style="color:#66d9ef">timestamp</span>:<span style="color:#960050;background-color:#1e0010">时</span><span style="color:#960050;background-color:#1e0010">间</span><span style="color:#960050;background-color:#1e0010">错</span><span style="color:#960050;background-color:#1e0010">类</span><span style="color:#960050;background-color:#1e0010">型</span>	<span style="color:#960050;background-color:#1e0010">包</span><span style="color:#960050;background-color:#1e0010">含</span><span style="color:#960050;background-color:#1e0010">年</span><span style="color:#960050;background-color:#1e0010">月</span><span style="color:#960050;background-color:#1e0010">日</span><span style="color:#960050;background-color:#1e0010">时</span><span style="color:#960050;background-color:#1e0010">分</span><span style="color:#960050;background-color:#1e0010">秒</span>	 yyyy<span style="color:#f92672">-</span>MM<span style="color:#f92672">-</span>dd HH:mm:ss	
-   <span style="color:#f92672">*</span> <span style="color:#960050;background-color:#1e0010">如</span><span style="color:#960050;background-color:#1e0010">果</span><span style="color:#960050;background-color:#1e0010">将</span><span style="color:#960050;background-color:#1e0010">来</span><span style="color:#960050;background-color:#1e0010">不</span><span style="color:#960050;background-color:#1e0010">给</span><span style="color:#960050;background-color:#1e0010">这</span><span style="color:#960050;background-color:#1e0010">个</span><span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">段</span><span style="color:#960050;background-color:#1e0010">赋</span><span style="color:#960050;background-color:#1e0010">值</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#960050;background-color:#1e0010">或</span><span style="color:#960050;background-color:#1e0010">赋</span><span style="color:#960050;background-color:#1e0010">值</span><span style="color:#960050;background-color:#1e0010">为</span><span style="color:#66d9ef">null</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#960050;background-color:#1e0010">则</span><span style="color:#960050;background-color:#1e0010">默</span><span style="color:#960050;background-color:#1e0010">认</span><span style="color:#960050;background-color:#1e0010">使</span><span style="color:#960050;background-color:#1e0010">用</span><span style="color:#960050;background-color:#1e0010">当</span><span style="color:#960050;background-color:#1e0010">前</span><span style="color:#960050;background-color:#1e0010">的</span><span style="color:#960050;background-color:#1e0010">系</span><span style="color:#960050;background-color:#1e0010">统</span><span style="color:#960050;background-color:#1e0010">时</span><span style="color:#960050;background-color:#1e0010">间</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#960050;background-color:#1e0010">来</span><span style="color:#960050;background-color:#1e0010">自</span><span style="color:#960050;background-color:#1e0010">动</span><span style="color:#960050;background-color:#1e0010">赋</span><span style="color:#960050;background-color:#1e0010">值</span>
-<span style="color:#ae81ff">6</span>. <span style="color:#66d9ef">varchar</span><span style="color:#960050;background-color:#1e0010">：</span><span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">符</span><span style="color:#960050;background-color:#1e0010">串</span>
-   <span style="color:#f92672">*</span> name <span style="color:#66d9ef">varchar</span>(<span style="color:#ae81ff">20</span>):<span style="color:#960050;background-color:#1e0010">姓</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">最</span><span style="color:#960050;background-color:#1e0010">大</span><span style="color:#ae81ff">20</span><span style="color:#960050;background-color:#1e0010">个</span><span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">符</span><span style="color:#960050;background-color:#1e0010">复</span><span style="color:#960050;background-color:#1e0010">制</span><span style="color:#960050;background-color:#1e0010">表</span>
-</code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表名</span>(
+</span></span><span style="display:flex;"><span>	<span style="color:#960050;background-color:#1e0010">列名</span><span style="color:#ae81ff">1</span> <span style="color:#960050;background-color:#1e0010">数据类型</span><span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">，</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#960050;background-color:#1e0010">列名</span><span style="color:#ae81ff">2</span> <span style="color:#960050;background-color:#1e0010">数据类型</span><span style="color:#ae81ff">2</span><span style="color:#960050;background-color:#1e0010">，</span>
+</span></span><span style="display:flex;"><span>	...
+</span></span><span style="display:flex;"><span>	<span style="color:#960050;background-color:#1e0010">列名</span>n <span style="color:#960050;background-color:#1e0010">数据类型</span>n
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">数据类型：</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>. <span style="color:#66d9ef">int</span><span style="color:#960050;background-color:#1e0010">：整数类型</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">*</span> age <span style="color:#66d9ef">int</span>,
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span>. <span style="color:#66d9ef">double</span><span style="color:#960050;background-color:#1e0010">（总位数，小数点后位数）</span>:<span style="color:#960050;background-color:#1e0010">小数类型</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">*</span> score <span style="color:#66d9ef">double</span>(<span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span>. <span style="color:#66d9ef">date</span>:<span style="color:#960050;background-color:#1e0010">日期，只包含年月日，</span>yyyy<span style="color:#f92672">-</span>MM<span style="color:#f92672">-</span>dd
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span>. <span style="color:#66d9ef">datetime</span>:<span style="color:#960050;background-color:#1e0010">日期，包含年月日时分秒</span>	 yyyy<span style="color:#f92672">-</span>MM<span style="color:#f92672">-</span>dd HH:mm:ss
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">5</span>. <span style="color:#66d9ef">timestamp</span>:<span style="color:#960050;background-color:#1e0010">时间错类型</span>	<span style="color:#960050;background-color:#1e0010">包含年月日时分秒</span>	 yyyy<span style="color:#f92672">-</span>MM<span style="color:#f92672">-</span>dd HH:mm:ss	
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">*</span> <span style="color:#960050;background-color:#1e0010">如果将来不给这个字段赋值，或赋值为</span><span style="color:#66d9ef">null</span><span style="color:#960050;background-color:#1e0010">，则默认使用当前的系统时间，来自动赋值</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">6</span>. <span style="color:#66d9ef">varchar</span><span style="color:#960050;background-color:#1e0010">：字符串</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">*</span> name <span style="color:#66d9ef">varchar</span>(<span style="color:#ae81ff">20</span>):<span style="color:#960050;background-color:#1e0010">姓名最大</span><span style="color:#ae81ff">20</span><span style="color:#960050;background-color:#1e0010">个字符复制表</span>
+</span></span></code></pre></div><ul>
 <li>复制表</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#66d9ef">like</span> <span style="color:#960050;background-color:#1e0010">被</span><span style="color:#960050;background-color:#1e0010">复</span><span style="color:#960050;background-color:#1e0010">制</span><span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">明</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div><p>2.2 Retrieve：查询</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表名</span> <span style="color:#66d9ef">like</span> <span style="color:#960050;background-color:#1e0010">被复制表明；</span>
+</span></span></code></pre></div><p>2.2 Retrieve：查询</p>
 <ul>
 <li>查询某个数据库中所有的表名称</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">show</span> <span style="color:#66d9ef">tables</span>;
-</code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">show</span> <span style="color:#66d9ef">tables</span>;
+</span></span></code></pre></div><ul>
 <li>查询表结构</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">desc</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">明</span>
-</code></pre></div><p>2.3 Update：修改</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">desc</span> <span style="color:#960050;background-color:#1e0010">表明</span>
+</span></span></code></pre></div><p>2.3 Update：修改</p>
 <ul>
 <li>修改表名</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#66d9ef">rename</span> <span style="color:#66d9ef">to</span> <span style="color:#960050;background-color:#1e0010">新</span><span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表名</span> <span style="color:#66d9ef">rename</span> <span style="color:#66d9ef">to</span> <span style="color:#960050;background-color:#1e0010">新表名；</span>
+</span></span></code></pre></div><ul>
 <li>修改表的字符集</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#66d9ef">character</span> <span style="color:#66d9ef">set</span> <span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">符</span><span style="color:#960050;background-color:#1e0010">集</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表名</span> <span style="color:#66d9ef">character</span> <span style="color:#66d9ef">set</span> <span style="color:#960050;background-color:#1e0010">字符集名称；</span>
+</span></span></code></pre></div><ul>
 <li>添加一列</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#66d9ef">add</span> <span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">类</span><span style="color:#960050;background-color:#1e0010">型</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表名</span> <span style="color:#66d9ef">add</span> <span style="color:#960050;background-color:#1e0010">列名</span> <span style="color:#960050;background-color:#1e0010">数据类型；</span>
+</span></span></code></pre></div><ul>
 <li>修改列名称 类型</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#66d9ef">change</span> <span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#960050;background-color:#1e0010">新</span><span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#960050;background-color:#1e0010">新</span><span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">类</span><span style="color:#960050;background-color:#1e0010">型</span><span style="color:#960050;background-color:#1e0010">；</span>
-<span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> modify <span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#960050;background-color:#1e0010">新</span><span style="color:#960050;background-color:#1e0010">数</span><span style="color:#960050;background-color:#1e0010">据</span><span style="color:#960050;background-color:#1e0010">类</span><span style="color:#960050;background-color:#1e0010">型</span>
-</code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表名</span> <span style="color:#66d9ef">change</span> <span style="color:#960050;background-color:#1e0010">列名</span> <span style="color:#960050;background-color:#1e0010">新列名</span> <span style="color:#960050;background-color:#1e0010">新数据类型；</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表名</span> modify <span style="color:#960050;background-color:#1e0010">列名</span> <span style="color:#960050;background-color:#1e0010">新数据类型</span>
+</span></span></code></pre></div><ul>
 <li>删除列</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#66d9ef">drop</span> <span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span>	
-</code></pre></div><p>2.4 Delete：删除</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">drop</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">；</span>
-<span style="color:#66d9ef">drop</span> <span style="color:#66d9ef">table</span> <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">exists</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">alter</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表名</span> <span style="color:#66d9ef">drop</span> <span style="color:#960050;background-color:#1e0010">列名</span>	
+</span></span></code></pre></div><p>2.4 Delete：删除</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">drop</span> <span style="color:#66d9ef">table</span> <span style="color:#960050;background-color:#1e0010">表名；</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">drop</span> <span style="color:#66d9ef">table</span> <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">exists</span> <span style="color:#960050;background-color:#1e0010">表名</span>
+</span></span></code></pre></div></li>
 </ol>
 <h3 id="dml增删改表中数据">DML：增删改表中数据</h3>
 <ol>
 <li>
 <p>添加数据：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">insert</span> <span style="color:#66d9ef">into</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span>(<span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#ae81ff">1</span>,<span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#ae81ff">2</span>,...<span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span>n) <span style="color:#66d9ef">values</span>(<span style="color:#960050;background-color:#1e0010">值</span><span style="color:#ae81ff">1</span>,<span style="color:#960050;background-color:#1e0010">值</span><span style="color:#ae81ff">2</span>,...<span style="color:#960050;background-color:#1e0010">值</span>n);
-</code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">insert</span> <span style="color:#66d9ef">into</span> <span style="color:#960050;background-color:#1e0010">表名</span>(<span style="color:#960050;background-color:#1e0010">列名</span><span style="color:#ae81ff">1</span>,<span style="color:#960050;background-color:#1e0010">列名</span><span style="color:#ae81ff">2</span>,...<span style="color:#960050;background-color:#1e0010">列名</span>n) <span style="color:#66d9ef">values</span>(<span style="color:#960050;background-color:#1e0010">值</span><span style="color:#ae81ff">1</span>,<span style="color:#960050;background-color:#1e0010">值</span><span style="color:#ae81ff">2</span>,...<span style="color:#960050;background-color:#1e0010">值</span>n);
+</span></span></code></pre></div><ul>
 <li>注意：
 <ol>
 <li>列名和值要一一对应。</li>
@@ -501,8 +475,8 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 </li>
 <li>
 <p>删除数据：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">delete</span> <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> [<span style="color:#66d9ef">where</span> <span style="color:#960050;background-color:#1e0010">条</span><span style="color:#960050;background-color:#1e0010">件</span>]
-</code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">delete</span> <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表名</span> [<span style="color:#66d9ef">where</span> <span style="color:#960050;background-color:#1e0010">条件</span>]
+</span></span></code></pre></div><ul>
 <li>注意：
 <ol>
 <li>如果不加条件，则删除表中所有记录。</li>
@@ -518,41 +492,41 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 </li>
 <li>
 <p>修改数据：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">update</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#66d9ef">set</span> <span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#ae81ff">1</span> <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">值</span><span style="color:#ae81ff">1</span>, <span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">值</span><span style="color:#ae81ff">2</span>,... [<span style="color:#66d9ef">where</span> <span style="color:#960050;background-color:#1e0010">条</span><span style="color:#960050;background-color:#1e0010">件</span>];
-</code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">update</span> <span style="color:#960050;background-color:#1e0010">表名</span> <span style="color:#66d9ef">set</span> <span style="color:#960050;background-color:#1e0010">列名</span><span style="color:#ae81ff">1</span> <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">值</span><span style="color:#ae81ff">1</span>, <span style="color:#960050;background-color:#1e0010">列名</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">值</span><span style="color:#ae81ff">2</span>,... [<span style="color:#66d9ef">where</span> <span style="color:#960050;background-color:#1e0010">条件</span>];
+</span></span></code></pre></div><ul>
 <li>注意：如果不加任何条件，则会将表中所有记录全部修改。</li>
 </ul>
 </li>
 </ol>
 <h3 id="dql查询表中的记录">DQL：查询表中的记录</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span>;
-
-<span style="color:#66d9ef">select</span>
-		<span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">段</span><span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">表</span>
-<span style="color:#66d9ef">from</span>
-		<span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">表</span>
-<span style="color:#66d9ef">where</span>
-		<span style="color:#960050;background-color:#1e0010">条</span><span style="color:#960050;background-color:#1e0010">件</span><span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">表</span>
-<span style="color:#66d9ef">group</span> <span style="color:#66d9ef">by</span>
-		<span style="color:#960050;background-color:#1e0010">分</span><span style="color:#960050;background-color:#1e0010">组</span><span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">段</span>
-<span style="color:#66d9ef">having</span>
-		<span style="color:#960050;background-color:#1e0010">分</span><span style="color:#960050;background-color:#1e0010">组</span><span style="color:#960050;background-color:#1e0010">之</span><span style="color:#960050;background-color:#1e0010">后</span><span style="color:#960050;background-color:#1e0010">的</span><span style="color:#960050;background-color:#1e0010">条</span><span style="color:#960050;background-color:#1e0010">件</span>
-<span style="color:#66d9ef">order</span> <span style="color:#66d9ef">by</span>
-		<span style="color:#960050;background-color:#1e0010">排</span><span style="color:#960050;background-color:#1e0010">序</span>
-<span style="color:#66d9ef">limit</span>
-		<span style="color:#960050;background-color:#1e0010">分</span><span style="color:#960050;background-color:#1e0010">页</span><span style="color:#960050;background-color:#1e0010">限</span><span style="color:#960050;background-color:#1e0010">定</span>
-</code></pre></div><ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表名</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">select</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#960050;background-color:#1e0010">字段列表</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">from</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#960050;background-color:#1e0010">表名列表</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">where</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#960050;background-color:#1e0010">条件列表</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">group</span> <span style="color:#66d9ef">by</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#960050;background-color:#1e0010">分组字段</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">having</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#960050;background-color:#1e0010">分组之后的条件</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">order</span> <span style="color:#66d9ef">by</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#960050;background-color:#1e0010">排序</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">limit</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#960050;background-color:#1e0010">分页限定</span>
+</span></span></code></pre></div><ol>
 <li>
 <p>多个字段的查询</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">select</span> <span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">段</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">段</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#ae81ff">2</span>... <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#960050;background-color:#1e0010">字段名</span><span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">，字段名</span><span style="color:#ae81ff">2</span>... <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表名；</span>
+</span></span></code></pre></div><ul>
 <li>注意：如果查询所有字段，则可以使用*来替代字段列表。</li>
 </ul>
 </li>
 <li>
 <p>去除重复：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">distinct</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">distinct</span>
+</span></span></code></pre></div></li>
 <li>
 <p>计算列</p>
 <ul>
@@ -680,7 +654,7 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 <p>SELECT * FROM student LIMIT 6,3; &ndash; 第3页</p>
 </li>
 <li>
-<p>limit 是一个MySQL&quot;方言&rdquo;</p>
+<p>limit 是一个MySQL&quot;方言&quot;</p>
 </li>
 </ul>
 <h3 id="约束">约束</h3>
@@ -700,36 +674,36 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 <ol>
 <li>创建表时添加约束</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#a6e22e">stu</span>(
-    id <span style="color:#66d9ef">INT</span>,
-    NAME <span style="color:#66d9ef">VARCHAR</span>(<span style="color:#ae81ff">20</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#75715e">-- name为非空
-</span><span style="color:#75715e"></span>);
-</code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#a6e22e">stu</span>(
+</span></span><span style="display:flex;"><span>    id <span style="color:#66d9ef">INT</span>,
+</span></span><span style="display:flex;"><span>    NAME <span style="color:#66d9ef">VARCHAR</span>(<span style="color:#ae81ff">20</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#75715e">-- name为非空
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>);
+</span></span></code></pre></div><ol start="2">
 <li>创建表完后，添加非空约束</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY NAME <span style="color:#66d9ef">VARCHAR</span>(<span style="color:#ae81ff">20</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>;
-</code></pre></div><ol start="3">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY NAME <span style="color:#66d9ef">VARCHAR</span>(<span style="color:#ae81ff">20</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>;
+</span></span></code></pre></div><ol start="3">
 <li>删除name的非空约束</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY NAME <span style="color:#66d9ef">VARCHAR</span>(<span style="color:#ae81ff">20</span>);
-</code></pre></div><h4 id="唯一约束">唯一约束</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY NAME <span style="color:#66d9ef">VARCHAR</span>(<span style="color:#ae81ff">20</span>);
+</span></span></code></pre></div><h4 id="唯一约束">唯一约束</h4>
 <p>值不能重复</p>
 <ol>
 <li>创建表时，添加唯一约束</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#a6e22e">stu</span>(
-	id <span style="color:#66d9ef">INT</span>,
-	phone_number <span style="color:#66d9ef">VARCHAR</span>(<span style="color:#ae81ff">20</span>) <span style="color:#66d9ef">UNIQUE</span> <span style="color:#75715e">-- 添加了唯一约束
-</span><span style="color:#75715e"></span>);
-</code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#a6e22e">stu</span>(
+</span></span><span style="display:flex;"><span>	id <span style="color:#66d9ef">INT</span>,
+</span></span><span style="display:flex;"><span>	phone_number <span style="color:#66d9ef">VARCHAR</span>(<span style="color:#ae81ff">20</span>) <span style="color:#66d9ef">UNIQUE</span> <span style="color:#75715e">-- 添加了唯一约束
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>);
+</span></span></code></pre></div><ol start="2">
 <li>删除唯一约束</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu <span style="color:#66d9ef">DROP</span> <span style="color:#66d9ef">INDEX</span> phone_number;
-</code></pre></div><ol start="3">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu <span style="color:#66d9ef">DROP</span> <span style="color:#66d9ef">INDEX</span> phone_number;
+</span></span></code></pre></div><ol start="3">
 <li>在创建表后，添加唯一约束</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY phone_number <span style="color:#66d9ef">VARCHAR</span>(<span style="color:#ae81ff">20</span>) <span style="color:#66d9ef">UNIQUE</span>;		
-</code></pre></div><h4 id="主键约束">主键约束</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY phone_number <span style="color:#66d9ef">VARCHAR</span>(<span style="color:#ae81ff">20</span>) <span style="color:#66d9ef">UNIQUE</span>;		
+</span></span></code></pre></div><h4 id="主键约束">主键约束</h4>
 <ol>
 <li>
 <p>注意：</p>
@@ -743,87 +717,87 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 <p>在创建表时，添加主键约束</p>
 </li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#a6e22e">stu</span>(
-	id <span style="color:#66d9ef">int</span> <span style="color:#66d9ef">primary</span> <span style="color:#66d9ef">key</span>, <span style="color:#75715e">-- 给id添加主键约束
-</span><span style="color:#75715e"></span>	name <span style="color:#66d9ef">varchar</span>(<span style="color:#ae81ff">20</span>)
-);
-</code></pre></div><ol start="3">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#a6e22e">stu</span>(
+</span></span><span style="display:flex;"><span>	id <span style="color:#66d9ef">int</span> <span style="color:#66d9ef">primary</span> <span style="color:#66d9ef">key</span>, <span style="color:#75715e">-- 给id添加主键约束
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	name <span style="color:#66d9ef">varchar</span>(<span style="color:#ae81ff">20</span>)
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><ol start="3">
 <li>删除主键</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu <span style="color:#66d9ef">DROP</span> <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>;	
-</code></pre></div><ol start="4">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu <span style="color:#66d9ef">DROP</span> <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>;	
+</span></span></code></pre></div><ol start="4">
 <li>创建完表后，添加主键</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY id <span style="color:#66d9ef">INT</span> <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>;	
-</code></pre></div><ol start="5">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY id <span style="color:#66d9ef">INT</span> <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>;	
+</span></span></code></pre></div><ol start="5">
 <li>
 <p>自动增长：</p>
 <ol>
 <li>概念：如果某一列是数值类型，使用<code>auto_increment</code>可以来完成值的自动增长</li>
 <li>在创建表时，添加主键约束，并且完成主键自增长</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-MYSQL" data-lang="MYSQL"><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#a6e22e">stu</span>(
- id <span style="color:#66d9ef">INT</span> <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> <span style="color:#66d9ef">AUTO_INCREMENT</span>,
- name <span style="color:#a6e22e">VARCAHR</span>(<span style="color:#ae81ff">20</span>)
-);
-</code></pre></div><ol start="3">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-MYSQL" data-lang="MYSQL"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#a6e22e">stu</span>(
+</span></span><span style="display:flex;"><span>	id <span style="color:#66d9ef">INT</span> <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> <span style="color:#66d9ef">AUTO_INCREMENT</span>,
+</span></span><span style="display:flex;"><span>	name <span style="color:#a6e22e">VARCAHR</span>(<span style="color:#ae81ff">20</span>)
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><ol start="3">
 <li>删除自动增长</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-MYSQL" data-lang="MYSQL"><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY id <span style="color:#66d9ef">INT</span>;
-</code></pre></div><ol start="4">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-MYSQL" data-lang="MYSQL"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY id <span style="color:#66d9ef">INT</span>;
+</span></span></code></pre></div><ol start="4">
 <li>添加自动增长</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY id <span style="color:#66d9ef">INT</span> <span style="color:#66d9ef">AUTO_INCREMENT</span>;
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> stu MODIFY id <span style="color:#66d9ef">INT</span> <span style="color:#66d9ef">AUTO_INCREMENT</span>;
+</span></span></code></pre></div></li>
 </ol>
 <h4 id="外键约束">外键约束</h4>
 <p>让表与表之间产生关系，从而保证数据的正确性</p>
 <ol>
 <li>
 <p>在创建表时，可以添加外键</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#a6e22e">stu</span>(
- ...
- constraints <span style="color:#960050;background-color:#1e0010">外</span><span style="color:#960050;background-color:#1e0010">键</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span> <span style="color:#66d9ef">foreign</span> <span style="color:#66d9ef">key</span> (<span style="color:#960050;background-color:#1e0010">外</span><span style="color:#960050;background-color:#1e0010">键</span><span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span>) <span style="color:#66d9ef">references</span> <span style="color:#960050;background-color:#1e0010">主</span><span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span>(<span style="color:#960050;background-color:#1e0010">主</span><span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span>)
-);
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#a6e22e">stu</span>(
+</span></span><span style="display:flex;"><span>	...
+</span></span><span style="display:flex;"><span>	constraints <span style="color:#960050;background-color:#1e0010">外键名称</span> <span style="color:#66d9ef">foreign</span> <span style="color:#66d9ef">key</span> (<span style="color:#960050;background-color:#1e0010">外键列名</span>) <span style="color:#66d9ef">references</span> <span style="color:#960050;background-color:#1e0010">主表名称</span>(<span style="color:#960050;background-color:#1e0010">主表列名称</span>)
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div></li>
 <li>
 <p>删除外键</p>
 </li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#66d9ef">DROP</span> <span style="color:#66d9ef">FOREIGN</span> <span style="color:#66d9ef">KEY</span> <span style="color:#960050;background-color:#1e0010">外</span><span style="color:#960050;background-color:#1e0010">键</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div><ol start="3">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#960050;background-color:#1e0010">表名</span> <span style="color:#66d9ef">DROP</span> <span style="color:#66d9ef">FOREIGN</span> <span style="color:#66d9ef">KEY</span> <span style="color:#960050;background-color:#1e0010">外键名称；</span>
+</span></span></code></pre></div><ol start="3">
 <li>创建表之后，添加外键</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#66d9ef">ADD</span> <span style="color:#66d9ef">CONSTRAINT</span> <span style="color:#960050;background-color:#1e0010">外</span><span style="color:#960050;background-color:#1e0010">键</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#66d9ef">FOREIGN</span> <span style="color:#66d9ef">KEY</span> (<span style="color:#960050;background-color:#1e0010">外</span><span style="color:#960050;background-color:#1e0010">键</span><span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">段</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span>) <span style="color:#66d9ef">REFERENCES</span> <span style="color:#960050;background-color:#1e0010">主</span><span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span>(<span style="color:#960050;background-color:#1e0010">主</span><span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span>);
-</code></pre></div><ol start="4">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#960050;background-color:#1e0010">表名</span> <span style="color:#66d9ef">ADD</span> <span style="color:#66d9ef">CONSTRAINT</span> <span style="color:#960050;background-color:#1e0010">外键名</span> <span style="color:#66d9ef">FOREIGN</span> <span style="color:#66d9ef">KEY</span> (<span style="color:#960050;background-color:#1e0010">外键字段名称</span>) <span style="color:#66d9ef">REFERENCES</span> <span style="color:#960050;background-color:#1e0010">主表名称</span>(<span style="color:#960050;background-color:#1e0010">主表列名称</span>);
+</span></span></code></pre></div><ol start="4">
 <li>级联操作</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span> <span style="color:#66d9ef">ADD</span> <span style="color:#66d9ef">CONSTRAINT</span> <span style="color:#960050;background-color:#1e0010">外</span><span style="color:#960050;background-color:#1e0010">键</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span> 
-					<span style="color:#66d9ef">FOREIGN</span> <span style="color:#66d9ef">KEY</span> (<span style="color:#960050;background-color:#1e0010">外</span><span style="color:#960050;background-color:#1e0010">键</span><span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">段</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span>) <span style="color:#66d9ef">REFERENCES</span> <span style="color:#960050;background-color:#1e0010">主</span><span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span>(<span style="color:#960050;background-color:#1e0010">主</span><span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#960050;background-color:#1e0010">称</span>) <span style="color:#66d9ef">ON</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">CASCADE</span> <span style="color:#66d9ef">ON</span>
-                    <span style="color:#66d9ef">DELETE</span> <span style="color:#66d9ef">CASCADE</span>;
-</code></pre></div><h2 id="三多表查询">三、多表查询</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">ALTER</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#960050;background-color:#1e0010">表名</span> <span style="color:#66d9ef">ADD</span> <span style="color:#66d9ef">CONSTRAINT</span> <span style="color:#960050;background-color:#1e0010">外键名称</span> 
+</span></span><span style="display:flex;"><span>					<span style="color:#66d9ef">FOREIGN</span> <span style="color:#66d9ef">KEY</span> (<span style="color:#960050;background-color:#1e0010">外键字段名称</span>) <span style="color:#66d9ef">REFERENCES</span> <span style="color:#960050;background-color:#1e0010">主表名称</span>(<span style="color:#960050;background-color:#1e0010">主表列名称</span>) <span style="color:#66d9ef">ON</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">CASCADE</span> <span style="color:#66d9ef">ON</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">DELETE</span> <span style="color:#66d9ef">CASCADE</span>;
+</span></span></code></pre></div><h2 id="三多表查询">三、多表查询</h2>
 <h3 id="1-内连接">1. 内连接</h3>
 <h4 id="隐式内连接">隐式内连接</h4>
 <p>使用where消除无用数据</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> emp,dept <span style="color:#66d9ef">WHERE</span> emp.<span style="color:#f92672">`</span>dept_id<span style="color:#f92672">`</span> <span style="color:#f92672">=</span> dept.<span style="color:#f92672">`</span>id<span style="color:#f92672">`</span>;
-</code></pre></div><p>或者使用如下语句，可以给表起别名，从而简化写法</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">SELECT</span> 
-    t1.name, <span style="color:#75715e">-- 员工表的姓名
-</span><span style="color:#75715e"></span>    t1.gender,<span style="color:#75715e">-- 员工表的性别
-</span><span style="color:#75715e"></span>    t2.name <span style="color:#75715e">-- 部门表的名称
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">FROM</span>
-    emp t1,  <span style="color:#f92672">-</span><span style="color:#f92672">-</span><span style="color:#960050;background-color:#1e0010">起</span><span style="color:#960050;background-color:#1e0010">别</span><span style="color:#960050;background-color:#1e0010">名</span>
-    dept t2  <span style="color:#f92672">-</span><span style="color:#f92672">-</span><span style="color:#960050;background-color:#1e0010">起</span><span style="color:#960050;background-color:#1e0010">别</span><span style="color:#960050;background-color:#1e0010">名</span>
-<span style="color:#66d9ef">WHERE</span> 
-    t1.<span style="color:#f92672">`</span>dept_id<span style="color:#f92672">`</span> <span style="color:#f92672">=</span> t2.<span style="color:#f92672">`</span>id<span style="color:#f92672">`</span>;
-</code></pre></div><h4 id="显式内连接">显式内连接</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">select</span> <span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">段</span><span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">表</span> <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#ae81ff">1</span> [<span style="color:#66d9ef">inner</span>] <span style="color:#66d9ef">join</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#960050;background-color:#1e0010">名</span><span style="color:#ae81ff">2</span> <span style="color:#66d9ef">on</span> <span style="color:#960050;background-color:#1e0010">条</span><span style="color:#960050;background-color:#1e0010">件</span>
-</code></pre></div><h3 id="2-外连接">2. 外连接</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> emp,dept <span style="color:#66d9ef">WHERE</span> emp.<span style="color:#f92672">`</span>dept_id<span style="color:#f92672">`</span> <span style="color:#f92672">=</span> dept.<span style="color:#f92672">`</span>id<span style="color:#f92672">`</span>;
+</span></span></code></pre></div><p>或者使用如下语句，可以给表起别名，从而简化写法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> 
+</span></span><span style="display:flex;"><span>    t1.name, <span style="color:#75715e">-- 员工表的姓名
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    t1.gender,<span style="color:#75715e">-- 员工表的性别
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    t2.name <span style="color:#75715e">-- 部门表的名称
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">FROM</span>
+</span></span><span style="display:flex;"><span>    emp t1,  <span style="color:#f92672">--</span><span style="color:#960050;background-color:#1e0010">起别名</span>
+</span></span><span style="display:flex;"><span>    dept t2  <span style="color:#f92672">--</span><span style="color:#960050;background-color:#1e0010">起别名</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> 
+</span></span><span style="display:flex;"><span>    t1.<span style="color:#f92672">`</span>dept_id<span style="color:#f92672">`</span> <span style="color:#f92672">=</span> t2.<span style="color:#f92672">`</span>id<span style="color:#f92672">`</span>;
+</span></span></code></pre></div><h4 id="显式内连接">显式内连接</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#960050;background-color:#1e0010">字段列表</span> <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表名</span><span style="color:#ae81ff">1</span> [<span style="color:#66d9ef">inner</span>] <span style="color:#66d9ef">join</span> <span style="color:#960050;background-color:#1e0010">表名</span><span style="color:#ae81ff">2</span> <span style="color:#66d9ef">on</span> <span style="color:#960050;background-color:#1e0010">条件</span>
+</span></span></code></pre></div><h3 id="2-外连接">2. 外连接</h3>
 <p>左外连接：左表以及左表与右表的交集</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">select</span> <span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">段</span><span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">表</span> <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">left</span> [<span style="color:#66d9ef">outer</span>] <span style="color:#66d9ef">join</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#ae81ff">2</span> <span style="color:#66d9ef">on</span> <span style="color:#960050;background-color:#1e0010">条</span><span style="color:#960050;background-color:#1e0010">件</span><span style="color:#960050;background-color:#1e0010">；</span>
-</code></pre></div><p>右外连接：右表以及右表与左表的交集</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="color:#66d9ef">select</span> <span style="color:#960050;background-color:#1e0010">字</span><span style="color:#960050;background-color:#1e0010">段</span><span style="color:#960050;background-color:#1e0010">列</span><span style="color:#960050;background-color:#1e0010">表</span> <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">right</span> [<span style="color:#66d9ef">outer</span>] <span style="color:#66d9ef">join</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#ae81ff">2</span> <span style="color:#66d9ef">on</span> <span style="color:#960050;background-color:#1e0010">条</span><span style="color:#960050;background-color:#1e0010">件</span>;
-</code></pre></div><h2 id="四子查询">四、子查询</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#960050;background-color:#1e0010">字段列表</span> <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">left</span> [<span style="color:#66d9ef">outer</span>] <span style="color:#66d9ef">join</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#ae81ff">2</span> <span style="color:#66d9ef">on</span> <span style="color:#960050;background-color:#1e0010">条件；</span>
+</span></span></code></pre></div><p>右外连接：右表以及右表与左表的交集</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#960050;background-color:#1e0010">字段列表</span> <span style="color:#66d9ef">from</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">right</span> [<span style="color:#66d9ef">outer</span>] <span style="color:#66d9ef">join</span> <span style="color:#960050;background-color:#1e0010">表</span><span style="color:#ae81ff">2</span> <span style="color:#66d9ef">on</span> <span style="color:#960050;background-color:#1e0010">条件</span>;
+</span></span></code></pre></div><h2 id="四子查询">四、子查询</h2>
 <p>查询中嵌套查询，称嵌套查询为子查询</p>
 <p>子查询分为以下三种不同情况：</p>
 <ol>
@@ -885,11 +859,20 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 </li>
 </ol>
 </blockquote>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2ntonej310y0t2aza.jpg" alt="image-20191208224853847"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2ntonej310y0t2aza.jpg" alt="image-20191208224853847">
+
+</p>
 <p>分析上表，<strong>学号和课程名称</strong>组成的属性组是码，则这两个属性也就是主属性。可见，姓名只需要学号就可以确定，所以对于码而言，是一个部分函数依赖，系所、系主任也是，因此将其剥离，也就是根据第二范式，可以将上表修改为下图。</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2pljs2j31z20u07wh.jpg" alt="image-20191208225906983"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2pljs2j31z20u07wh.jpg" alt="image-20191208225906983">
+
+</p>
 <p>但此表仍然存在问题，虽然右边的表满足于范式二，但是存在传递函数依赖，如果此时我想设立一个计算机系，然而该系还未招生，就无法把这种关系表现出来，因此继续剥离，变成以下三个表</p>
-<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2qgo8tj319x0u0axl.jpg" alt="image-20191208225839666"></p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfkw2qgo8tj319x0u0axl.jpg" alt="image-20191208225839666">
+
+</p>
 <h2 id="六数据库的备份还原">六、数据库的备份还原</h2>
 <ol>
 <li>命令行：
@@ -976,6 +959,7 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 
                 
 
+                
                 <hr>
                 <ul class="pager">
                     
@@ -991,13 +975,31 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
                     </li>
                     
                 </ul>
+                
 
                 
-<div id="disqus-comment"></div>
 
 
 
             </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
             
             <div class="
                 col-lg-8 col-lg-offset-2
@@ -1021,76 +1023,77 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <ul class="list-inline text-center">
-                   
+                <ul class="list-inline text-center">                  
                     
                     <li>
                         <a href="mailto:is.eric.wu@gmail.com">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-                    
+		           
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-
+		           
                     
 
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="/img/we_chat.JPG">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="https://github.com/ericwu0930/">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		           
+                    
                     
                     
                     
                     
                     
             
-                </ul>
+            
+            
+           
+             </ul>
 		<p class="copyright text-muted">
-                    Copyright &copy; Eric&#39;s Blog 2021
+                    Copyright &copy; Eric&#39;s Blog 2022
                     <br>
                     <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
                     <iframe
@@ -1108,7 +1111,7 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 
 
 <script>
-    function async(u, c) {
+    function loadAsync(u, c) {
       var d = document, t = 'script',
           o = d.createElement(t),
           s = d.getElementsByTagName(t)[0];
@@ -1126,7 +1129,7 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 <script>
     
     if($('#tag_cloud').length !== 0){
-        async("/js/jquery.tagcloud.js",function(){
+        loadAsync("/js/jquery.tagcloud.js",function(){
             $.fn.tagcloud.defaults = {
                 
                 color: {start: '#bbbbee', end: '#0085a1'},
@@ -1138,7 +1141,7 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 
 
 <script>
-    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
         var $nav = document.querySelector("nav");
         if($nav) FastClick.attach($nav);
     })
@@ -1149,16 +1152,65 @@ insert into 表名 values(值1,值2,&hellip;值n);</li>
 
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-158682233-1', 'auto');
-	
-	ga('send', 'pageview');
-}
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
 
 
 

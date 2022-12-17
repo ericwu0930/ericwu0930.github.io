@@ -34,46 +34,38 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>JVM方法调用过程-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>JVM方法调用过程 | 吴昊的博客 | Eric&#39;s Blog</title>
 
     <link rel="canonical" href="/post/method/">
 
-    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
-	
+    
+    
     
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
     
-    <link rel="stylesheet" href="/css/hux-blog.min.css">
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
 
-    
-    <link rel="stylesheet" href="/css/syntax.css">
-    
     
     <link rel="stylesheet" href="/css/zanshang.css">
+
     
-    
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
 
     
     
 
-    
     
     <script src="/js/jquery.min.js"></script>
-    
+
     
     <script src="/js/bootstrap.min.js"></script>
-    
+
     
     <script src="/js/hux-blog.min.js"></script>
 
     
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/lazysizes.min.js"></script>
 
     
     
@@ -82,7 +74,25 @@
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
     <div class="container-fluid">
         
         <div class="navbar-header page-scroll">
@@ -101,7 +111,7 @@
             <div class="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="/">Home</a>
+                        <a href="/">All Posts</a>
                     </li>
                     
                         
@@ -154,12 +164,9 @@
 		    
                         <li><a href="/top/about/">ABOUT</a></li>
                     
-
-                    
-		    <li>
-                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
-		    </li>
-                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
                 </ul>
             </div>
         </div>
@@ -204,7 +211,9 @@
         background-image: url('/img/roof.jpg')
     }
 </style>
-<header class="intro-header">
+
+<header class="intro-header" >
+
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -223,15 +232,17 @@
                     <h1>JVM方法调用过程</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
-                        Posted by 
                         
-                                 &#34;Eric&#34;
-                         
-                        on 
-                        Sunday, December 15, 2019
-                        
-                        
-                        
+                            Posted by 
+                            
+                                     &#34;Eric&#34;
+                             
+                            on 
+                            Sunday, December 15, 2019
+                            
+                            
+                            
+                            
                     </span>
                 </div>
             </div>
@@ -253,145 +264,176 @@
                 post-container">
 
                 
-                <header>
-                    <h2>TOC</h2>
-                </header>
-                <nav id="TableOfContents"></nav>
-                
                 <p>以Demo类中的main方法为例，讲解字节码在虚拟机运行的过程</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">int</span> a<span style="color:#f92672">=</span>10<span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">int</span> b<span style="color:#f92672">=</span>Short<span style="color:#f92672">.</span><span style="color:#a6e22e">MAX_VALUE</span><span style="color:#f92672">+</span>1<span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">int</span> c<span style="color:#f92672">=</span>a<span style="color:#f92672">+</span>b<span style="color:#f92672">;</span>
-        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>c<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>通过javap反编译后的代码</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">eric<span style="color:#a6e22e">@wuhaodeMacBook</span><span style="color:#f92672">-</span>Pro <span style="color:#960050;background-color:#1e0010"></span> <span style="color:#f92672">~</span><span style="color:#f92672">/</span>Desktop<span style="color:#f92672">/</span>jvM <span style="color:#960050;background-color:#1e0010"></span> javap <span style="color:#f92672">-</span>v Demo
-Classfile <span style="color:#f92672">/</span>Users<span style="color:#f92672">/</span>eric<span style="color:#f92672">/</span>Desktop<span style="color:#f92672">/</span>JVM<span style="color:#f92672">/</span>Demo<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span>
-  Last modified Nov 11<span style="color:#f92672">,</span> 2019<span style="color:#f92672">;</span> size 426 bytes
-  MD5 checksum 958b915048427f4b5d8ae3c770331963
-  Compiled from <span style="color:#e6db74">&#34;Demo.java&#34;</span>
-<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span>
-  minor version<span style="color:#f92672">:</span> 0
-  major version<span style="color:#f92672">:</span> 54
-  flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0021<span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_SUPER
-  this_class<span style="color:#f92672">:</span> <span style="color:#960050;background-color:#1e0010">#</span>6                          <span style="color:#75715e">// Demo
-</span><span style="color:#75715e"></span>  super_class<span style="color:#f92672">:</span> <span style="color:#960050;background-color:#1e0010">#</span>7                         <span style="color:#75715e">// java/lang/Object
-</span><span style="color:#75715e"></span>  interfaces<span style="color:#f92672">:</span> 0<span style="color:#f92672">,</span> fields<span style="color:#f92672">:</span> 0<span style="color:#f92672">,</span> methods<span style="color:#f92672">:</span> 2<span style="color:#f92672">,</span> attributes<span style="color:#f92672">:</span> 1
-Constant pool<span style="color:#f92672">:</span>
-   <span style="color:#960050;background-color:#1e0010">#</span>1 <span style="color:#f92672">=</span> Methodref          <span style="color:#960050;background-color:#1e0010">#</span>7<span style="color:#f92672">.</span><span style="color:#960050;background-color:#1e0010">#</span>16         <span style="color:#75715e">// java/lang/Object.&#34;&lt;init&gt;&#34;:()V
-</span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span>2 <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span>17            <span style="color:#75715e">// java/lang/Short
-</span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span>3 <span style="color:#f92672">=</span> Integer            32768
-   <span style="color:#960050;background-color:#1e0010">#</span>4 <span style="color:#f92672">=</span> Fieldref           <span style="color:#960050;background-color:#1e0010">#</span>18<span style="color:#f92672">.</span><span style="color:#960050;background-color:#1e0010">#</span>19        <span style="color:#75715e">// java/lang/System.out:Ljava/io/PrintStream;
-</span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span>5 <span style="color:#f92672">=</span> Methodref          <span style="color:#960050;background-color:#1e0010">#</span>20<span style="color:#f92672">.</span><span style="color:#960050;background-color:#1e0010">#</span>21        <span style="color:#75715e">// java/io/PrintStream.println:(I)V
-</span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span>6 <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span>22            <span style="color:#75715e">// Demo
-</span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span>7 <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span>23            <span style="color:#75715e">// java/lang/Object
-</span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span>8 <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">&lt;</span>init<span style="color:#f92672">&gt;</span>
-   <span style="color:#960050;background-color:#1e0010">#</span>9 <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">(</span><span style="color:#f92672">)</span>V
-  <span style="color:#960050;background-color:#1e0010">#</span>10 <span style="color:#f92672">=</span> Utf8               Code
-  <span style="color:#960050;background-color:#1e0010">#</span>11 <span style="color:#f92672">=</span> Utf8               LineNumberTable
-  <span style="color:#960050;background-color:#1e0010">#</span>12 <span style="color:#f92672">=</span> Utf8               main
-  <span style="color:#960050;background-color:#1e0010">#</span>13 <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">(</span><span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#f92672">)</span>V
-  <span style="color:#960050;background-color:#1e0010">#</span>14 <span style="color:#f92672">=</span> Utf8               SourceFile
-  <span style="color:#960050;background-color:#1e0010">#</span>15 <span style="color:#f92672">=</span> Utf8               Demo<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span>
-  <span style="color:#960050;background-color:#1e0010">#</span>16 <span style="color:#f92672">=</span> NameAndType        <span style="color:#960050;background-color:#1e0010">#</span>8<span style="color:#f92672">:</span><span style="color:#960050;background-color:#1e0010">#</span>9          <span style="color:#75715e">// &#34;&lt;init&gt;&#34;:()V
-</span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">#</span>17 <span style="color:#f92672">=</span> Utf8               java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Short
-  <span style="color:#960050;background-color:#1e0010">#</span>18 <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span>24            <span style="color:#75715e">// java/lang/System
-</span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">#</span>19 <span style="color:#f92672">=</span> NameAndType        <span style="color:#960050;background-color:#1e0010">#</span>25<span style="color:#f92672">:</span><span style="color:#960050;background-color:#1e0010">#</span>26        <span style="color:#75715e">// out:Ljava/io/PrintStream;
-</span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">#</span>20 <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span>27            <span style="color:#75715e">// java/io/PrintStream
-</span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">#</span>21 <span style="color:#f92672">=</span> NameAndType        <span style="color:#960050;background-color:#1e0010">#</span>28<span style="color:#f92672">:</span><span style="color:#960050;background-color:#1e0010">#</span>29        <span style="color:#75715e">// println:(I)V
-</span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">#</span>22 <span style="color:#f92672">=</span> Utf8               Demo
-  <span style="color:#960050;background-color:#1e0010">#</span>23 <span style="color:#f92672">=</span> Utf8               java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Object
-  <span style="color:#960050;background-color:#1e0010">#</span>24 <span style="color:#f92672">=</span> Utf8               java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>System
-  <span style="color:#960050;background-color:#1e0010">#</span>25 <span style="color:#f92672">=</span> Utf8               out
-  <span style="color:#960050;background-color:#1e0010">#</span>26 <span style="color:#f92672">=</span> Utf8               Ljava<span style="color:#f92672">/</span>io<span style="color:#f92672">/</span>PrintStream<span style="color:#f92672">;</span>
-  <span style="color:#960050;background-color:#1e0010">#</span>27 <span style="color:#f92672">=</span> Utf8               java<span style="color:#f92672">/</span>io<span style="color:#f92672">/</span>PrintStream
-  <span style="color:#960050;background-color:#1e0010">#</span>28 <span style="color:#f92672">=</span> Utf8               println
-  <span style="color:#960050;background-color:#1e0010">#</span>29 <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">(</span>I<span style="color:#f92672">)</span>V
-<span style="color:#f92672">{</span>
-  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Demo</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#f92672">)</span>V
-    flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0001<span style="color:#f92672">)</span> ACC_PUBLIC
-    Code<span style="color:#f92672">:</span>
-      stack<span style="color:#f92672">=</span>1<span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span>1<span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span>1
-         0<span style="color:#f92672">:</span> aload_0
-         1<span style="color:#f92672">:</span> invokespecial <span style="color:#960050;background-color:#1e0010">#</span>1                  <span style="color:#75715e">// Method java/lang/Object.&#34;&lt;init&gt;&#34;:()V
-</span><span style="color:#75715e"></span>         4<span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
-      LineNumberTable<span style="color:#f92672">:</span>
-        line 1<span style="color:#f92672">:</span> 0
-
-  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[</span><span style="color:#f92672">]</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#f92672">[</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;</span><span style="color:#f92672">)</span>V
-    flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span>0x0009<span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_STATIC
-    Code<span style="color:#f92672">:</span>
-      stack<span style="color:#f92672">=</span>2<span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span>4<span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span>1
-         0<span style="color:#f92672">:</span> bipush        10
-         2<span style="color:#f92672">:</span> istore_1
-         3<span style="color:#f92672">:</span> ldc           <span style="color:#960050;background-color:#1e0010">#</span>3                  <span style="color:#75715e">// int 32768
-</span><span style="color:#75715e"></span>         5<span style="color:#f92672">:</span> istore_2
-         6<span style="color:#f92672">:</span> iload_1
-         7<span style="color:#f92672">:</span> iload_2
-         8<span style="color:#f92672">:</span> iadd
-         9<span style="color:#f92672">:</span> istore_3
-        10<span style="color:#f92672">:</span> getstatic     <span style="color:#960050;background-color:#1e0010">#</span>4                  <span style="color:#75715e">// Field java/lang/System.out:Ljava/io/PrintStream;
-</span><span style="color:#75715e"></span>        13<span style="color:#f92672">:</span> iload_3
-        14<span style="color:#f92672">:</span> invokevirtual <span style="color:#960050;background-color:#1e0010">#</span>5                  <span style="color:#75715e">// Method java/io/PrintStream.println:(I)V
-</span><span style="color:#75715e"></span>        17<span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
-      LineNumberTable<span style="color:#f92672">:</span>
-        line 3<span style="color:#f92672">:</span> 0
-        line 4<span style="color:#f92672">:</span> 3
-        line 5<span style="color:#f92672">:</span> 6
-        line 6<span style="color:#f92672">:</span> 10
-        line 7<span style="color:#f92672">:</span> 17
-<span style="color:#f92672">}</span>
-SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
-</code></pre></div><ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> a<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> b<span style="color:#f92672">=</span>Short<span style="color:#f92672">.</span><span style="color:#a6e22e">MAX_VALUE</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> c<span style="color:#f92672">=</span>a<span style="color:#f92672">+</span>b<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>c<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>通过javap反编译后的代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>eric<span style="color:#a6e22e">@wuhaodeMacBook</span><span style="color:#f92672">-</span>Pro <span style="color:#960050;background-color:#1e0010"></span> <span style="color:#f92672">~/</span>Desktop<span style="color:#f92672">/</span>jvM <span style="color:#960050;background-color:#1e0010"></span> javap <span style="color:#f92672">-</span>v Demo
+</span></span><span style="display:flex;"><span>Classfile <span style="color:#f92672">/</span>Users<span style="color:#f92672">/</span>eric<span style="color:#f92672">/</span>Desktop<span style="color:#f92672">/</span>JVM<span style="color:#f92672">/</span>Demo<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span>
+</span></span><span style="display:flex;"><span>  Last modified Nov <span style="color:#ae81ff">11</span><span style="color:#f92672">,</span> <span style="color:#ae81ff">2019</span><span style="color:#f92672">;</span> size <span style="color:#ae81ff">426</span> bytes
+</span></span><span style="display:flex;"><span>  MD5 checksum <span style="color:#ae81ff">958</span>b915048427f4b5d8ae3c770331963
+</span></span><span style="display:flex;"><span>  Compiled from <span style="color:#e6db74">&#34;Demo.java&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span>
+</span></span><span style="display:flex;"><span>  minor version<span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>  major version<span style="color:#f92672">:</span> <span style="color:#ae81ff">54</span>
+</span></span><span style="display:flex;"><span>  flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#ae81ff">0x0021</span><span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_SUPER
+</span></span><span style="display:flex;"><span>  this_class<span style="color:#f92672">:</span> <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">6</span>                          <span style="color:#75715e">// Demo
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  super_class<span style="color:#f92672">:</span> <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">7</span>                         <span style="color:#75715e">// java/lang/Object
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  interfaces<span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">,</span> fields<span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">,</span> methods<span style="color:#f92672">:</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">,</span> attributes<span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>Constant pool<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">1</span> <span style="color:#f92672">=</span> Methodref          <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">7.</span><span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">16</span>         <span style="color:#75715e">// java/lang/Object.&#34;&lt;init&gt;&#34;:()V
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">17</span>            <span style="color:#75715e">// java/lang/Short
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">3</span> <span style="color:#f92672">=</span> Integer            <span style="color:#ae81ff">32768</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">4</span> <span style="color:#f92672">=</span> Fieldref           <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">18.</span><span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">19</span>        <span style="color:#75715e">// java/lang/System.out:Ljava/io/PrintStream;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">5</span> <span style="color:#f92672">=</span> Methodref          <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">20.</span><span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">21</span>        <span style="color:#75715e">// java/io/PrintStream.println:(I)V
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">6</span> <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">22</span>            <span style="color:#75715e">// Demo
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">7</span> <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">23</span>            <span style="color:#75715e">// java/lang/Object
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">8</span> <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">&lt;</span>init<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">9</span> <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">()</span>V
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">10</span> <span style="color:#f92672">=</span> Utf8               Code
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">11</span> <span style="color:#f92672">=</span> Utf8               LineNumberTable
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">12</span> <span style="color:#f92672">=</span> Utf8               main
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">13</span> <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">([</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;)</span>V
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">14</span> <span style="color:#f92672">=</span> Utf8               SourceFile
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">15</span> <span style="color:#f92672">=</span> Utf8               Demo<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">16</span> <span style="color:#f92672">=</span> NameAndType        <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">8</span><span style="color:#f92672">:</span><span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">9</span>          <span style="color:#75715e">// &#34;&lt;init&gt;&#34;:()V
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">17</span> <span style="color:#f92672">=</span> Utf8               java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Short
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">18</span> <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">24</span>            <span style="color:#75715e">// java/lang/System
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">19</span> <span style="color:#f92672">=</span> NameAndType        <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">25</span><span style="color:#f92672">:</span><span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">26</span>        <span style="color:#75715e">// out:Ljava/io/PrintStream;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">20</span> <span style="color:#f92672">=</span> Class              <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">27</span>            <span style="color:#75715e">// java/io/PrintStream
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">21</span> <span style="color:#f92672">=</span> NameAndType        <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">28</span><span style="color:#f92672">:</span><span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">29</span>        <span style="color:#75715e">// println:(I)V
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">22</span> <span style="color:#f92672">=</span> Utf8               Demo
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">23</span> <span style="color:#f92672">=</span> Utf8               java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>Object
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">24</span> <span style="color:#f92672">=</span> Utf8               java<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>System
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">25</span> <span style="color:#f92672">=</span> Utf8               out
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">26</span> <span style="color:#f92672">=</span> Utf8               Ljava<span style="color:#f92672">/</span>io<span style="color:#f92672">/</span>PrintStream<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">27</span> <span style="color:#f92672">=</span> Utf8               java<span style="color:#f92672">/</span>io<span style="color:#f92672">/</span>PrintStream
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">28</span> <span style="color:#f92672">=</span> Utf8               println
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">29</span> <span style="color:#f92672">=</span> Utf8               <span style="color:#f92672">(</span>I<span style="color:#f92672">)</span>V
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Demo</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">()</span>V
+</span></span><span style="display:flex;"><span>    flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#ae81ff">0x0001</span><span style="color:#f92672">)</span> ACC_PUBLIC
+</span></span><span style="display:flex;"><span>    Code<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>      stack<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">0</span><span style="color:#f92672">:</span> aload_0
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span> invokespecial <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">1</span>                  <span style="color:#75715e">// Method java/lang/Object.&#34;&lt;init&gt;&#34;:()V
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>         <span style="color:#ae81ff">4</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>      LineNumberTable<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">String</span><span style="color:#f92672">[]);</span>
+</span></span><span style="display:flex;"><span>    descriptor<span style="color:#f92672">:</span> <span style="color:#f92672">([</span>Ljava<span style="color:#f92672">/</span>lang<span style="color:#f92672">/</span>String<span style="color:#f92672">;)</span>V
+</span></span><span style="display:flex;"><span>    flags<span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#ae81ff">0x0009</span><span style="color:#f92672">)</span> ACC_PUBLIC<span style="color:#f92672">,</span> ACC_STATIC
+</span></span><span style="display:flex;"><span>    Code<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>      stack<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">,</span> locals<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span><span style="color:#f92672">,</span> args_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">0</span><span style="color:#f92672">:</span> bipush        <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">2</span><span style="color:#f92672">:</span> istore_1
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">3</span><span style="color:#f92672">:</span> ldc           <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">3</span>                  <span style="color:#75715e">// int 32768
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>         <span style="color:#ae81ff">5</span><span style="color:#f92672">:</span> istore_2
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">6</span><span style="color:#f92672">:</span> iload_1
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">7</span><span style="color:#f92672">:</span> iload_2
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">8</span><span style="color:#f92672">:</span> iadd
+</span></span><span style="display:flex;"><span>         <span style="color:#ae81ff">9</span><span style="color:#f92672">:</span> istore_3
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">10</span><span style="color:#f92672">:</span> getstatic     <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">4</span>                  <span style="color:#75715e">// Field java/lang/System.out:Ljava/io/PrintStream;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#ae81ff">13</span><span style="color:#f92672">:</span> iload_3
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">14</span><span style="color:#f92672">:</span> invokevirtual <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#ae81ff">5</span>                  <span style="color:#75715e">// Method java/io/PrintStream.println:(I)V
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#ae81ff">17</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>      LineNumberTable<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">3</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">4</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">5</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">6</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>        line <span style="color:#ae81ff">7</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">17</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
+</span></span></code></pre></div><ol>
 <li>
 <p>字节码文件经过类加载器加载到内存中，其中将字节码文件中的常量池加载到运行时常量池，将方法表的内容加载到方法区（运行时常量池在jdk1.8之前其实也属于方法区，这里只是为了表述方便，将其拆开为两部分），根据字节码文件中方法表中的内容（<code>stack=2, locals=4, args_size=1</code>）,分配四个Slot给局部变量（32位数据占1Slot，64位数据占2Slot），操作数栈的最大深度为2
-<img src="https://s2.ax1x.com/2020/03/06/3bYWlT.png" alt="3bYWlT.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/06/3bYWlT.png" alt="3bYWlT.png">
+
+</p>
 </li>
 <li>
 <p>Bipush 10 将常量10推入操作数栈
-<img src="https://s2.ax1x.com/2020/03/06/3bY5m4.png" alt="3bY5m4.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/06/3bY5m4.png" alt="3bY5m4.png">
+
+</p>
 </li>
 <li>
 <p>istore_1 将操作数栈栈顶元素弹出存入局部变量表1的位置
-<img src="https://s2.ax1x.com/2020/03/06/3bYI0J.png" alt="3bYI0J.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/06/3bYI0J.png" alt="3bYI0J.png">
+
+</p>
 </li>
 <li>
 <p>Ldc #3 将运行时常量表中的32768存入操作数栈中（比较小的数字随字节码指令存放在一起，一旦数字的范围超过Short整数的最大值，则会存放在常量池中）
-<img src="https://s2.ax1x.com/2020/03/06/3bYX6O.png" alt="3bYX6O.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/06/3bYX6O.png" alt="3bYX6O.png">
+
+</p>
 </li>
 <li>
 <p>istore_2 将操作栈栈顶元素弹出，保存在局部变量表2的位置
-<img src="https://s2.ax1x.com/2020/03/06/3bYxne.png" alt="3bYxne.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/06/3bYxne.png" alt="3bYxne.png">
+
+</p>
 </li>
 <li>
 <p>iload_1 iload_2这两个指令将局部变量1、2再次加载到了操作数栈中
-<img src="https://s2.ax1x.com/2020/03/06/3btCtI.png" alt="3btCtI.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/06/3btCtI.png" alt="3btCtI.png">
+
+</p>
 </li>
 <li>
 <p>iadd将栈中元素相加，并将结果置于栈顶
-<img src="https://s2.ax1x.com/2020/03/06/3btk1f.png" alt="3btk1f.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/06/3btk1f.png" alt="3btk1f.png">
+
+</p>
 </li>
 <li>
 <p>istore_3
-<img src="https://s2.ax1x.com/2020/03/06/3btEjS.png" alt="3btEjS.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/06/3btEjS.png" alt="3btEjS.png">
+
+</p>
 </li>
 <li>
 <p>getstatic #4 该指令获取类变量的一个引用，System.out这个类变量存放在堆内存中，于是将System.out的引用存放于操作数栈中
-<img src="https://s2.ax1x.com/2020/03/06/3btZng.png" alt="3btZng.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/06/3btZng.png" alt="3btZng.png">
+
+</p>
 </li>
 <li>
 <p>iload3 将局部变量3加载到操作数栈中
-<img src="https://s2.ax1x.com/2020/03/06/3btm7j.png" alt="3btm7j.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/06/3btm7j.png" alt="3btm7j.png">
+
+</p>
 </li>
 <li>
 <p>invokevirtual #5 调用运行时常量池中5所引用的方法，定位到方法区，然后由方法区生成新的栈帧，传递参数，执行新栈帧中的字节码。执行完毕后，将println的栈帧弹出，清楚main操作栈中的内容
-<img src="https://s2.ax1x.com/2020/03/06/3btuAs.png" alt="3btuAs.png"></p>
-<p><img src="https://s2.ax1x.com/2020/03/06/3btKNn.png" alt="3btKNn.png"></p>
+
+  <img src="https://s2.ax1x.com/2020/03/06/3btuAs.png" alt="3btuAs.png">
+
+</p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/06/3btKNn.png" alt="3btKNn.png">
+
+</p>
 </li>
 <li>
 <p>Return 完成主方法，main的栈帧也弹出</p>
@@ -401,6 +443,7 @@ SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
 
                 
 
+                
                 <hr>
                 <ul class="pager">
                     
@@ -416,13 +459,31 @@ SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
                     </li>
                     
                 </ul>
+                
 
                 
-<div id="disqus-comment"></div>
 
 
 
             </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
             
             <div class="
                 col-lg-8 col-lg-offset-2
@@ -446,76 +507,77 @@ SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <ul class="list-inline text-center">
-                   
+                <ul class="list-inline text-center">                  
                     
                     <li>
                         <a href="mailto:is.eric.wu@gmail.com">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-                    
+		           
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-
+		           
                     
 
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="/img/we_chat.JPG">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="https://github.com/ericwu0930/">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		           
+                    
                     
                     
                     
                     
                     
             
-                </ul>
+            
+            
+           
+             </ul>
 		<p class="copyright text-muted">
-                    Copyright &copy; Eric&#39;s Blog 2021
+                    Copyright &copy; Eric&#39;s Blog 2022
                     <br>
                     <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
                     <iframe
@@ -533,7 +595,7 @@ SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
 
 
 <script>
-    function async(u, c) {
+    function loadAsync(u, c) {
       var d = document, t = 'script',
           o = d.createElement(t),
           s = d.getElementsByTagName(t)[0];
@@ -551,7 +613,7 @@ SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
 <script>
     
     if($('#tag_cloud').length !== 0){
-        async("/js/jquery.tagcloud.js",function(){
+        loadAsync("/js/jquery.tagcloud.js",function(){
             $.fn.tagcloud.defaults = {
                 
                 color: {start: '#bbbbee', end: '#0085a1'},
@@ -563,7 +625,7 @@ SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
 
 
 <script>
-    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
         var $nav = document.querySelector("nav");
         if($nav) FastClick.attach($nav);
     })
@@ -574,16 +636,65 @@ SourceFile: <span style="color:#e6db74">&#34;Demo.java&#34;</span>
 
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-158682233-1', 'auto');
-	
-	ga('send', 'pageview');
-}
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
 
 
 

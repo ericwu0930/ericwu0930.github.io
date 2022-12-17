@@ -34,46 +34,38 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>Java内存模型与锁优化-吴昊的博客 | Eric&#39;s Blog</title>
+    <title>Java内存模型与锁优化 | 吴昊的博客 | Eric&#39;s Blog</title>
 
     <link rel="canonical" href="/post/lock/">
 
-    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
-	
+    
+    
     
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
     
-    <link rel="stylesheet" href="/css/hux-blog.min.css">
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
 
-    
-    <link rel="stylesheet" href="/css/syntax.css">
-    
     
     <link rel="stylesheet" href="/css/zanshang.css">
+
     
-    
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
 
     
     
 
-    
     
     <script src="/js/jquery.min.js"></script>
-    
+
     
     <script src="/js/bootstrap.min.js"></script>
-    
+
     
     <script src="/js/hux-blog.min.js"></script>
 
     
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/androidstudio.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/lazysizes.min.js"></script>
 
     
     
@@ -82,7 +74,25 @@
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
     <div class="container-fluid">
         
         <div class="navbar-header page-scroll">
@@ -101,7 +111,7 @@
             <div class="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="/">Home</a>
+                        <a href="/">All Posts</a>
                     </li>
                     
                         
@@ -154,12 +164,9 @@
 		    
                         <li><a href="/top/about/">ABOUT</a></li>
                     
-
-                    
-		    <li>
-                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
-		    </li>
-                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
                 </ul>
             </div>
         </div>
@@ -204,7 +211,9 @@
         background-image: url('/img/roof.jpg')
     }
 </style>
-<header class="intro-header">
+
+<header class="intro-header" >
+
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -223,15 +232,17 @@
                     <h1>Java内存模型与锁优化</h1>
                     <h2 class="subheading">并发编程学习笔记</h2>
                     <span class="meta">
-                        Posted by 
                         
-                                 &#34;Eric&#34;
-                         
-                        on 
-                        Wednesday, March 11, 2020
-                        
-                        
-                        
+                            Posted by 
+                            
+                                     &#34;Eric&#34;
+                             
+                            on 
+                            Wednesday, March 11, 2020
+                            
+                            
+                            
+                            
                     </span>
                 </div>
             </div>
@@ -253,38 +264,21 @@
                 post-container">
 
                 
-                <header>
-                    <h2>TOC</h2>
-                </header>
-                <nav id="TableOfContents">
-  <ul>
-    <li><a href="#1-java内存模型">1. Java内存模型</a>
-      <ul>
-        <li><a href="#11-硬件的效率与一致性">1.1 硬件的效率与一致性</a></li>
-        <li><a href="#12-java的内存模型">1.2 Java的内存模型</a></li>
-        <li><a href="#13-对于volatile型变量的特殊规则">1.3 对于volatile型变量的特殊规则</a></li>
-        <li><a href="#14-原子性可见性与有序性">1.4 原子性、可见性与有序性</a></li>
-        <li><a href="#15--先行发生原则happens-before">1.5  先行发生原则（happens-before）</a></li>
-      </ul>
-    </li>
-    <li><a href="#2-高效并发">2. 高效并发</a>
-      <ul>
-        <li><a href="#21-线程安全的实现方法">2.1 线程安全的实现方法</a></li>
-        <li><a href="#22-锁优化">2.2 锁优化</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-                
                 <h2 id="1-java内存模型">1. Java内存模型</h2>
 <h3 id="11-硬件的效率与一致性">1.1 硬件的效率与一致性</h3>
-<p><img src="https://s2.ax1x.com/2020/03/11/8AMdpT.png" alt="8AMdpT.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/11/8AMdpT.png" alt="8AMdpT.png">
+
+</p>
 <p>基于高速缓存的存储交互很好的解决了处理器与内存的速度矛盾，但也为计算机系统带来更高的复杂度，因为它引入了新的问题：缓存一致性。在多处理器系统中，每个处理器都有自己的高速缓存，而它们又共享同一个主存，如上图所示，为了保证主存的一致性，在高速缓存和主存之间引入了缓存一致性协议，这类协议有MSI，MESI等。</p>
 <p><code>所谓的内存模型是指在特定的操作协议下，对特定的内存或告诉缓存进行读写访问的过程抽象。</code></p>
 <p>另外为了使得处理器内部的运算单元能尽量被充分使用，处理器会在保证最终输出结果一致的情况下，对输入代码进行指令重排序。</p>
 <h3 id="12-java的内存模型">1.2 Java的内存模型</h3>
 <p>Java虚拟机规范中定义了一种Java内存模型来屏蔽各种硬件和操作系统的内存访问差异，如下图所示。</p>
-<p><img src="https://s2.ax1x.com/2020/03/11/8AM0cF.png" alt="8AM0cF.png"></p>
+<p>
+  <img src="https://s2.ax1x.com/2020/03/11/8AM0cF.png" alt="8AM0cF.png">
+
+</p>
 <p>主内存可以理解为硬件内存，每条线程有自己的工作内存，线程对变量的所有操作都必须在工作内存中进行，而不能直接读写在主内存中的变量。JVM为了保证缓存的一致性，Java内存模型中定义了8中操作，通过对这8中操作添加一些约束条件来实现。这八种操作为：</p>
 <table>
 <thead>
@@ -340,25 +334,25 @@
 <p>volatile关键字有两个作用，第一保证变量对所有的线程都是可见的，第二防止指令重排序。</p>
 <p>为了保证volatile的可见性，另外附加了两条规则：1. use前必须read和load 2. assign后必须store和write</p>
 <p>在DLC中，我们使用了一个volatile来修饰instance变量，原因为何？</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">volatile</span> <span style="color:#66d9ef">static</span> Singleton instance<span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span><span style="color:#f92672">}</span><span style="color:#f92672">;</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Singleton <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance <span style="color:#f92672">=</span><span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-            <span style="color:#66d9ef">synchronized</span><span style="color:#f92672">(</span>Singleton<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-                <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance<span style="color:#f92672">=</span><span style="color:#f92672">=</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
-                    instance<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Singleton<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-            <span style="color:#f92672">}</span>
-        <span style="color:#f92672">}</span>
-        <span style="color:#66d9ef">return</span> instance<span style="color:#f92672">;</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>instance = new Singleton() 这个操作可能会发生如下形式的重排序</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">1<span style="color:#f92672">.</span> <span style="color:#75715e">//分配内存
-</span><span style="color:#75715e"></span>2<span style="color:#f92672">.</span> <span style="color:#75715e">//给Singleton对象的成员变量分配“零值”
-</span><span style="color:#75715e"></span>3<span style="color:#f92672">.</span> <span style="color:#75715e">//将新键的对象赋值给instance
-</span><span style="color:#75715e"></span>4<span style="color:#f92672">.</span> <span style="color:#75715e">//按照构造方法以及程序块对成员变量重新设值
-</span></code></pre></div><p>如果这样的话，就会使得其他线程访问instance变量时，得到一个“未经过构造方法”的错误对象。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">volatile</span> <span style="color:#66d9ef">static</span> Singleton instance<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Singleton</span><span style="color:#f92672">(){};</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Singleton <span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">synchronized</span><span style="color:#f92672">(</span>Singleton<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>instance<span style="color:#f92672">==</span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                    instance<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Singleton<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> instance<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>instance = new Singleton() 这个操作可能会发生如下形式的重排序</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#ae81ff">1.</span> <span style="color:#75715e">//分配内存
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">2.</span> <span style="color:#75715e">//给Singleton对象的成员变量分配“零值”
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">3.</span> <span style="color:#75715e">//将新键的对象赋值给instance
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">4.</span> <span style="color:#75715e">//按照构造方法以及程序块对成员变量重新设值
+</span></span></span></code></pre></div><p>如果这样的话，就会使得其他线程访问instance变量时，得到一个“未经过构造方法”的错误对象。</p>
 <p>但是有一点也是需要注意的，volatile并不能保证线程安全，如把一个变量race声明为volatile，10个线程对race各执行100次自增操作，race并不能达到1000，而是比1000要少，这是为什么？因为race++虽然看起来只有一条指令，但是它不是原子操作。虽然volatile能够保证每次读取到栈顶的变量时一致的，但是因为没有锁，所以并不是线程安全的。</p>
 <h3 id="14-原子性可见性与有序性">1.4 原子性、可见性与有序性</h3>
 <p>Java的内存模型是围绕着在并发过程中如何处理原子性、可见性和有序性这3个特征来建立的，我们逐个来看哪些操作实现了这3个特性。</p>
@@ -387,7 +381,10 @@
 <p>同步是指在多个线程并发访问共享数据的时候，保证共享数据在同一时刻只被一个（或者一些线程使用）。而互斥是实现同步的一种手段。互斥是因，同步是果。</p>
 <p>在Java中常见的互斥同步手段就是synchronized关键字。synchronized 关键字修饰的代码块，在编译期会自动生成monitorenter和monitorexit这两个字节码指令，这两个字节码都需要一个reference类型的参数来指明要锁定和解锁的对象，在成员方法中默认是<code>this</code>，在静态方法中则默认是<code>.class</code>对象。而这个要被锁定的对象正是管程中的条件变量，只不过只有一个条件变量。</p>
 <p>Synchronized同步块对于同一条线程而言是可重入的，不会出现自己把自己锁死的问题。Java的线程都是映射到操作系统的原生线程之上的，阻塞或者唤醒一个线程都需要操作系统来帮忙完成，这就需要用户态到内核态的转换，这是相当耗时的。所以synchronized是Java语言中一个重量级的操作。</p>
-<p><img src="https://i.loli.net/2020/08/24/SvFOJ2bWpC79yrE.png" alt="管程"></p>
+<p>
+  <img src="https://i.loli.net/2020/08/24/SvFOJ2bWpC79yrE.png" alt="管程">
+
+</p>
 <p>除了synchronized之外，我们还可以使用java.util.concurrent包中的重入锁（ReentrantLock）来实现同步。synchronized是jvm（原生语法层面的互斥锁），而另一个则是api层面的。除此之外ReentrantLock增加了一些高级特性。</p>
 <ol>
 <li>等待可中断是指当持有锁的线程长期不释放时，正在等待的线程可以选择放弃等待，改为处理其他事情。</li>
@@ -400,15 +397,15 @@
 <p>CAS需要3个操作数，分别是内存位置、旧的预期值和新的预期值。CAS指令操作中，当且仅当V符合旧预期值的时，处理器用新值更新旧值。JDK1.5后支持了CAS，该操作由sun.misc.Unsafe类中的compareAndSwapInt()和compareAndSwapLong()等几个方法包装提供。</p>
 <p>Unsafe类不是提供给用户程序调用的类，但我们可以通过JUC包里的compareAndSet()和getAndIncrement()等方法使用Unsafe类的CAS操作。</p>
 <p>incrementAndGet()的jdk源码如下，可以看到incrementAndGet通过忙等，实现自增的操作。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">incrementAndGet</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style="color:#f92672">;</span><span style="color:#f92672">;</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">int</span> current <span style="color:#f92672">=</span> get<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">int</span> next <span style="color:#f92672">=</span> current <span style="color:#f92672">+</span> 1<span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>compareAndSet<span style="color:#f92672">(</span>current<span style="color:#f92672">,</span>next<span style="color:#f92672">)</span><span style="color:#f92672">)</span>
-            <span style="color:#66d9ef">return</span> next<span style="color:#f92672">;</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>CAS看起来尽管很美，但是可能会出现ABA的这种情况，也就是如果一个变量V初次读取的时候是A值，并且在准备赋值的时候检查到它仍然是A值，能排除它曾经是B然后被改为A么？为此JUC包提供了一个带有标记的原子引用类“AtomicStampedReference”，它可以通过控制变量的版本来保证CAS的正确性。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">incrementAndGet</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span><span style="color:#f92672">(;;){</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> current <span style="color:#f92672">=</span> get<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> next <span style="color:#f92672">=</span> current <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>compareAndSet<span style="color:#f92672">(</span>current<span style="color:#f92672">,</span>next<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> next<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>CAS看起来尽管很美，但是可能会出现ABA的这种情况，也就是如果一个变量V初次读取的时候是A值，并且在准备赋值的时候检查到它仍然是A值，能排除它曾经是B然后被改为A么？为此JUC包提供了一个带有标记的原子引用类“AtomicStampedReference”，它可以通过控制变量的版本来保证CAS的正确性。</p>
 <h4 id="3-无同步方案threadlocal类">3. 无同步方案——ThreadLocal类</h4>
 <p>使共享数据在同一个线程中执行，例如Java中的ThreadLocal类。ThreadLocal类中可以设置一个线程独享的变量。关于ThreadLocal类可以看下这篇<a href="https://ericwu0930.github.io/post/reference/">文章</a></p>
 <h3 id="22-锁优化">2.2 锁优化</h3>
@@ -418,32 +415,42 @@
 <p>如果锁被占用的时间很短，自选等待的效果会很好，反之，如果锁被占用的时间很长，则自选的线程会白白浪费消耗处理器的资源，因此会有一个自旋上限。</p>
 <h4 id="2-锁消除">2. 锁消除</h4>
 <p>锁消除主要基于逃逸分析的数据支持，如果判断在一段代码中，堆上的所有数据都不会逃逸出去从而被其他线程访问到，就可以把它当做栈上数据对待，同步加锁操作自然就无需进行。比如下面这个例子</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">concatString</span><span style="color:#f92672">(</span>String s1<span style="color:#f92672">,</span> String s2<span style="color:#f92672">,</span> String s3<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">return</span> s1<span style="color:#f92672">+</span>s2<span style="color:#f92672">+</span>s3<span style="color:#f92672">;</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>在jdk1.5之前，该语句会转换成如下，StringBuffer是一个线程安全的类，也就意味着以下三个append语句都是加锁的。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">StringBuffer sb <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> StringBuffer<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s1<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s2<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s3<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-<span style="color:#66d9ef">return</span> sb<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
-</code></pre></div><p>然而sb对象是不会逃逸到concatString方法之外的，其他线程无法访问它，因此就会把此处的加锁去除。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">concatString</span><span style="color:#f92672">(</span>String s1<span style="color:#f92672">,</span> String s2<span style="color:#f92672">,</span> String s3<span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> s1<span style="color:#f92672">+</span>s2<span style="color:#f92672">+</span>s3<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>在jdk1.5之前，该语句会转换成如下，StringBuffer是一个线程安全的类，也就意味着以下三个append语句都是加锁的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>StringBuffer sb <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> StringBuffer<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s1<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s2<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>s3<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">return</span> sb<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">();</span>
+</span></span></code></pre></div><p>然而sb对象是不会逃逸到concatString方法之外的，其他线程无法访问它，因此就会把此处的加锁去除。</p>
 <h4 id="3-锁粗化">3. 锁粗化</h4>
 <p>频繁地加锁解锁（特别是对循环块内加锁）很耗费性能，JVM会将锁范围扩大</p>
 <h4 id="4-轻量级锁">4. 轻量级锁</h4>
-<p><img src="https://i.loli.net/2020/08/25/d9FoWjvRgzKeaZh.png" alt="image-20200825200521386"></p>
+<p>
+  <img src="https://i.loli.net/2020/08/25/d9FoWjvRgzKeaZh.png" alt="image-20200825200521386">
+
+</p>
 <p>如果对象没有被锁定，虚拟机首先将在当前线程的栈帧中创建一个名为锁记录Lock Record的空间，用于存储锁对象目前的Mark Word拷贝，然后使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针。如果这个更新成功了则获得锁，并且对象的Mark Word会变成轻量级锁。如果更新失败，JVM会检查对象的Mark Word是否指向当前线程的栈帧，如果是，则直接进入同步块继续执行，否则说明这个锁对象已经被其他线程抢占。如果有两条以上的线程争用这个锁，轻量级锁膨胀为重量级锁。</p>
-<p><img src="https://i.loli.net/2020/08/25/Mmp4Oz1qeXt3wks.png" alt="image-20200825195501315"></p>
+<p>
+  <img src="https://i.loli.net/2020/08/25/Mmp4Oz1qeXt3wks.png" alt="image-20200825195501315">
+
+</p>
 <p>解锁过程也是通过CAS操作来进行的，如果对象的Mark Word仍然指向着线程的锁记录，那就用CAS操作把对象的当前Mark Word和线程中复制的Displaced Mark Word替换回来，如果替换成功，整个同步过程就完成了。</p>
 <h4 id="5-偏向锁">5. 偏向锁</h4>
 <p>如果说轻量级锁是在无竞争的情况下使用CAS操作去消除同步使用的互斥量，那偏向锁就是在无竞争的情况下把整个同步都消除掉，连CAS操作都不做。</p>
 <p>当锁对象第一次被线程获取的时候，虚拟机会把对象头中的标志位设为“01”，即偏向模式。同时使用CAS操作把获取到这个锁的线程ID记录在对象的Mark Word之中，如果CAS获取成功，持有偏向锁的线程以后每次进入这个锁相关的同步块时，虚拟机都可以不再进行任何同步操作。</p>
 <p>当有另外线程试图获取这个锁时，偏向锁模式就宣告结束。偏向锁、轻量级锁的状态转化及对象Mark Word的关系如图所示。</p>
-<p><img src="https://i.loli.net/2020/08/25/vSGLlka1Meinxs4.png" alt="image-20200825200504125"></p>
+<p>
+  <img src="https://i.loli.net/2020/08/25/vSGLlka1Meinxs4.png" alt="image-20200825200504125">
+
+</p>
 
 
                 
 
+                
                 <hr>
                 <ul class="pager">
                     
@@ -459,13 +466,31 @@ sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><
                     </li>
                     
                 </ul>
+                
 
                 
-<div id="disqus-comment"></div>
 
 
 
             </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
             
             <div class="
                 col-lg-8 col-lg-offset-2
@@ -489,76 +514,77 @@ sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <ul class="list-inline text-center">
-                   
+                <ul class="list-inline text-center">                  
                     
                     <li>
                         <a href="mailto:is.eric.wu@gmail.com">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-                    
+		           
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
-
+		           
                     
 
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="/img/we_chat.JPG">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     <li>
                         <a target="_blank" href="https://github.com/ericwu0930/">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		            
                     
                     
                     
                     <li>
                         <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
                             <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
                             </span>
                         </a>
                     </li>
-		    
+		           
+                    
                     
                     
                     
                     
                     
             
-                </ul>
+            
+            
+           
+             </ul>
 		<p class="copyright text-muted">
-                    Copyright &copy; Eric&#39;s Blog 2021
+                    Copyright &copy; Eric&#39;s Blog 2022
                     <br>
                     <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
                     <iframe
@@ -576,7 +602,7 @@ sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><
 
 
 <script>
-    function async(u, c) {
+    function loadAsync(u, c) {
       var d = document, t = 'script',
           o = d.createElement(t),
           s = d.getElementsByTagName(t)[0];
@@ -594,7 +620,7 @@ sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><
 <script>
     
     if($('#tag_cloud').length !== 0){
-        async("/js/jquery.tagcloud.js",function(){
+        loadAsync("/js/jquery.tagcloud.js",function(){
             $.fn.tagcloud.defaults = {
                 
                 color: {start: '#bbbbee', end: '#0085a1'},
@@ -606,7 +632,7 @@ sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><
 
 
 <script>
-    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
         var $nav = document.querySelector("nav");
         if($nav) FastClick.attach($nav);
     })
@@ -617,16 +643,65 @@ sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><
 
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-158682233-1', 'auto');
-	
-	ga('send', 'pageview');
-}
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
 
 
 
