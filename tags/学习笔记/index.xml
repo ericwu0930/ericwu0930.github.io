@@ -6,7 +6,16 @@
     <description>Recent content in 学习笔记 on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 11 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 17 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL中文乱码问题</title>
+      <link>https://ericwu0930.github.io/post/code/</link>
+      <pubDate>Sat, 17 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/code/</guid>
+      <description>现象 用户反馈datatalk查询结果中文乱码，如下所示 数据源配置如下： 用户db表为utf8编码，并且也是通过utf-8编码的jdbc连接用户</description>
+    </item>
+    
     <item>
       <title>内核态和用户态</title>
       <link>https://ericwu0930.github.io/post/privilege/</link>

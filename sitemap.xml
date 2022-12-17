@@ -3,16 +3,28 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://ericwu0930.github.io/categories/</loc>
-    <lastmod>2021-01-12T00:00:00+00:00</lastmod>
+    <lastmod>2022-12-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/</loc>
-    <lastmod>2021-01-12T00:00:00+00:00</lastmod>
+    <lastmod>2022-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericwu0930.github.io/categories/mysql/</loc>
+    <lastmod>2022-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericwu0930.github.io/post/code/</loc>
+    <lastmod>2022-12-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/post/</loc>
-    <lastmod>2021-01-12T00:00:00+00:00</lastmod>
+    <lastmod>2022-12-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/tags/</loc>
-    <lastmod>2021-01-12T00:00:00+00:00</lastmod>
+    <lastmod>2022-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
+    <lastmod>2022-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericwu0930.github.io/tags/%E7%BA%BF%E4%B8%8A%E9%97%AE%E9%A2%98/</loc>
+    <lastmod>2022-12-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/tags/trivial/</loc>
     <lastmod>2021-01-12T00:00:00+00:00</lastmod>
@@ -30,9 +42,6 @@
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/post/privilege/</loc>
-    <lastmod>2020-09-11T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2020-09-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/post/expire/</loc>
@@ -57,9 +66,6 @@
     <lastmod>2020-08-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/tags/mysql/</loc>
-    <lastmod>2020-08-11T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericwu0930.github.io/categories/mysql/</loc>
     <lastmod>2020-08-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/tags/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>

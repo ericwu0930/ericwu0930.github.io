@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-	<meta name="generator" content="Hugo 0.108.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,9 +15,9 @@
     
 
     
-    <meta name="title" content="" />
-    <meta property="og:title" content="" />
-    <meta property="twitter:title" content="" />
+    <meta name="title" content="MySQL中文乱码问题" />
+    <meta property="og:title" content="MySQL中文乱码问题" />
+    <meta property="twitter:title" content="MySQL中文乱码问题" />
     
 
     
@@ -35,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>Eric&#39;s Blog | 吴昊的博客 | Eric&#39;s Blog</title>
+    <title>MySQL中文乱码问题 | 吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/">
+    <link rel="canonical" href="/post/code/">
 
     
     
@@ -206,14 +205,45 @@ if (!doNotTrack) {
 
 
 
-<header class="intro-header" style="background-image: url('/img/roof.jpg')">
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>Eric&#39;s Blog </h1>
-                    
-		    <span class="subheading">路在脚下，心向远方</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E7%BA%BF%E4%B8%8A%E9%97%AE%E9%A2%98" title="线上问题">
+                            线上问题
+                        </a>
+                        
+                    </div>
+                    <h1>MySQL中文乱码问题</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                     &#34;erichwu&#34;
+                             
+                            on 
+                            Saturday, December 17, 2022
+                            
+                            
+                            
+                            
+                    </span>
                 </div>
             </div>
         </div>
@@ -222,395 +252,127 @@ if (!doNotTrack) {
 
 
 
-  
-<div data-pagefind-ignore="all" class="container">
-    <div class="row">
-        
-        
-   	    <div class="
-            col-lg-8 col-lg-offset-1
-            col-md-8 col-md-offset-1
-            col-sm-12
-            col-xs-12
-            post-container
-        ">
-            
-<div data-pagefind-ignore="all">
 
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/classinit/">
-        <h2 class="post-title">
-            Java类中数据域初始化顺序
-        </h2>
-	
-        <div class="post-content-preview">
-	
-            坦克大战项目反思
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    
-        Posted by      &#34;Eric&#34; on Wednesday, December 25, 2019
-        
-        
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/polymorphism/">
-        <h2 class="post-title">
-            多态在JVM中的体现
-        </h2>
-	
-        <div class="post-content-preview">
-	
-            整理自《深入理解Java虚拟机》与《Java核心技术卷1》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    
-        Posted by      &#34;Eric&#34; on Thursday, December 19, 2019
-        
-        
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/design/">
-        <h2 class="post-title">
-            设计模式学习笔记
-        </h2>
-	
-        <div class="post-content-preview">
-	
-            总结自《Head First 设计模式》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    
-        Posted by      &#34;Eric&#34; on Wednesday, December 18, 2019
-        
-        
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/method/">
-        <h2 class="post-title">
-            JVM方法调用过程
-        </h2>
-	
-        <div class="post-content-preview">
-	
-            整理自《深入理解Java虚拟机》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    
-        Posted by      &#34;Eric&#34; on Sunday, December 15, 2019
-        
-        
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/classloader/">
-        <h2 class="post-title">
-            类加载器与双亲委派模型
-        </h2>
-	
-        <h3 class="post-subtitle">
-            JVM类加载笔记之二
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            总结自《深入理解java虚拟机》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    
-        Posted by      &#34;Eric&#34; on Tuesday, December 10, 2019
-        
-        
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/mysql/">
-        <h2 class="post-title">
-            数据库入门
-        </h2>
-	
-        <div class="post-content-preview">
-	
-            一、MySQL数据库软件 MySQL的结构 MySQL是一个客户端/服务器的架构，它的服务器程序直接和我们存储的数据打交道，然后可以有好多客户端
-       
-        </div>
-    </a>
-    <p class="post-meta">
-    
-        Posted by      &#34;Eric&#34; on Monday, December 9, 2019
-        
-        
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/classload/">
-        <h2 class="post-title">
-            JVM类加载机制
-        </h2>
-	
-        <h3 class="post-subtitle">
-            JVM类加载笔记之一
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            总结自《深入理解java虚拟机》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    
-        Posted by      &#34;Eric&#34; on Tuesday, December 3, 2019
-        
-        
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/gc_3/">
-        <h2 class="post-title">
-            JVM内存分配策略与GC时机
-        </h2>
-	
-        <h3 class="post-subtitle">
-            GC学习笔记之三
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            总结自《深入理解java虚拟机》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    
-        Posted by      &#34;Eric&#34; on Sunday, December 1, 2019
-        
-        
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/gc_2/">
-        <h2 class="post-title">
-            JVM垃圾收集器
-        </h2>
-	
-        <h3 class="post-subtitle">
-            GC学习笔记之二
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            总结自《深入理解java虚拟机》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    
-        Posted by      &#34;Eric&#34; on Saturday, November 30, 2019
-        
-        
-    
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="https://ericwu0930.github.io/post/gc_1/">
-        <h2 class="post-title">
-            JVM垃圾收集策略
-        </h2>
-	
-        <h3 class="post-subtitle">
-            GC学习笔记之一
-        </h3>
-	
-        <div class="post-content-preview">
-	
-            总结自《深入理解java虚拟机》
-        
-        </div>
-    </a>
-    <p class="post-meta">
-    
-        Posted by      &#34;Eric&#34; on Friday, November 29, 2019
-        
-        
-    
-    </p>
-
-</div>
-<hr>
-
-</div>
+<article>
+    <div class="container">
+        <div class="row">
 
             
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="现象">现象</h2>
+<p>用户反馈datatalk查询结果中文乱码，如下所示</p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h93kw7f6gbj314e0i4wj1.jpg" alt="企业微信截图_16709148686192">
+
+</p>
+<p>数据源配置如下：</p>
+<p>用户db表为utf8编码，并且也是通过utf-8编码的jdbc连接用户db查数，中文无法正常显示。</p>
+<h2 id="排查过程">排查过程</h2>
+<ol>
+<li>
+<p>跟用户索要db账号密码，使用公司db客户端连接，发现查询中文依旧为乱码</p>
+</li>
+<li>
+<p>用户反馈在链接mysql时需加上&ndash;default-character-set=latin1字段才可正常显示中文</p>
+</li>
+<li>
+<p>使用terminal直连用户mysql server，查询结果仍然是中文乱码；此时用户反馈需要在连接server的时候加上<code>--default-character-set=latin1</code>的字段，结果才可以正常显示。查阅相关资料，该命令会影响<code>character_set_client</code>,<code>character_set_connectoin</code>,<code>character_set_server</code>这三个系统变量。</p>
+</li>
+<li>
+<p>如果不指定<code>--default-character-set=latin1</code>，执行以下命令<code>show variables like '%char%'</code> 结果如下</p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h93l3dck10j316a0u00w1.jpg" alt="image-20221214195405258">
+
+</p>
+</li>
+<li>
+<p>加上<code>--default-character-set=latin1</code>，重新执行<code>show variables like '%char%'</code>结果如下</p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h93l4ztq16j30u00uzq61.jpg" alt="image-20221214195538755">
+
+</p>
+</li>
+</ol>
+<h2 id="定位问题">定位问题</h2>
+<p>上述的三个MySQL系统变量与乱码问题息息相关，其分别为:</p>
+<ol>
+<li>character_set_client: server认为客户端的编码格式</li>
+<li>character_set_connection: server真正处理请求时会转为该编码格式</li>
+<li>character_set_results: server返回结果时会将字符集转为该格式</li>
+</ol>
+<p>其关系如下：</p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h93li59x3vj319s0fwtad.jpg" alt="image-20221214200817395">
+
+</p>
+<p>最标准的不显示乱码的样式：</p>
+<p>本机字符集=character_set_client=character_set_connection=character_set_results</p>
+<p>character_set_client，character_set_connection，character_set_results可以通过<code>set names 字符集名</code> 来设置或者在连接时通过<code>--default-character-set=字符集</code>来设置</p>
+<p>本机字符集utf8=character_set_client=character_set_connection=character_set_results不能正常显示中文，但是为latin1的时候却能正常显示，说明用户的数据本身是有问题的。（这里怀疑在&ndash;default-character-set=latin1的环境下添加了数据，中文数据本身就是乱码）</p>
+<h2 id="解决问题">解决问题</h2>
+<p>联系用户自行解决。</p>
+<p>但是这里有个问题，期间联系用户连接数据源时将编码格式转为latin1（前文提到，用户使用<code>--default-character-set=latin1</code>后可以正常显示），但是依然没有得到正确的中文输出。那jdbc连接的编码格式和上面那条指令有什么区别呢？搜索了下，发现这个<a href="https://www.chenjianjx.com/mysql-jbdc-driver%E7%9A%84%E5%AD%97%E7%AC%A6%E9%9B%86%E9%97%AE%E9%A2%98-%E7%A0%94%E7%A9%B6%E7%AC%94%E8%AE%B0/">文档</a>。</p>
+<p>总结一下jdbc url里设置characterEncoding就相当于将character_set_client和character_set_connection设置成characterEncoding，character_set_results设置为NULL（查询出来的具体字段不会从字段的编码转成character_set_results，而是保留了原有的编码）。与<code>--default-character-set=latin1</code>相比，少了一步结果集转到latin1编码格式的转化，自然无法得到正确结果。</p>
 
 
-<ul class="pager" data-pagefind-ignore="all">
-    
-    <li class="previous">
-        <a href="/page/3/">&larr; Newer Posts</a>
-    </li>
-    
-    
-    <li class="next">
-        <a href="/page/5/">Older Posts &rarr;</a>
-    </li>
-    
-</ul>
+                
 
-
-       	</div>
-        
-
-<div class="
-    col-lg-3 col-lg-offset-0
-    col-md-3 col-md-offset-0
-    col-sm-12
-    col-xs-12
-    sidebar-container
-">
-    
-	
-    <section class="visible-md visible-lg">
-	
-        <div class="short-about">
-            
-            <a href="/about">
-               <img src="/img/portrait.jpeg" alt="avatar" style="cursor: pointer" />
-            </a>
-            
-            
-                <p>Software Developer, Photographer and Life Adventurer</p>
-            
-           
-           <ul class="list-inline">
-               
-               <li>
-                   <a href="mailto:is.eric.wu@gmail.com">
-                      <span class="fa-stack fa-lg">
-                          <i class="fa fa-circle fa-stack-2x"></i>
-                          <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
-                      </span>
-                   </a>
-               </li>
-               
-               
-               
-               
-               <li>
-                   <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
-                       <span class="fa-stack fa-lg">
-                           <i class="fas fa-circle fa-stack-2x"></i>
-                           <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-               <li>
-                   <a target="_blank" href="/img/we_chat.JPG">
-                       <span class="fa-stack fa-lg">
-                           <i class="fas fa-circle fa-stack-2x"></i>
-                           <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               <li>
-                   <a target="_blank" href="https://github.com/ericwu0930/">
-                       <span class="fa-stack fa-lg">
-                           <i class="fas fa-circle fa-stack-2x"></i>
-                           <i class="fab fa-github fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-               
-               <li>
-                   <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
-                       <span class="fa-stack fa-lg">
-                           <i class="fas fa-circle fa-stack-2x"></i>
-                           <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
-                       </span>
-                   </a>
-               </li>
-               
-               
-               
-            
-            
-               
-               
-               
-               
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/myuniversity/" data-toggle="tooltip" data-placement="top" title="我的大学（转）">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
                 </ul>
+                
+
+                
+
+
+
             </div>
-    </section>
-	
-    
-    
-    
-    
 
-    
-    
-    
-</div>
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
 
-	</div>
-</div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
 
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
 
 
 
