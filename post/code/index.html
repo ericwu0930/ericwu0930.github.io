@@ -21,9 +21,9 @@
     
 
     
-    <meta name="description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。">
-    <meta property="og:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
-    <meta property="twitter:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    <meta name="description" content="中文乱码问题排查过程以及原理">
+    <meta property="og:description" content="中文乱码问题排查过程以及原理" />
+    <meta property="twitter:description" content="中文乱码问题排查过程以及原理" />
     
 
     
@@ -318,6 +318,26 @@ if (!doNotTrack) {
 <p>联系用户自行解决。</p>
 <p>但是这里有个问题，期间联系用户连接数据源时将编码格式转为latin1（前文提到，用户使用<code>--default-character-set=latin1</code>后可以正常显示），但是依然没有得到正确的中文输出。那jdbc连接的编码格式和上面那条指令有什么区别呢？搜索了下，发现这个<a href="https://www.chenjianjx.com/mysql-jbdc-driver%E7%9A%84%E5%AD%97%E7%AC%A6%E9%9B%86%E9%97%AE%E9%A2%98-%E7%A0%94%E7%A9%B6%E7%AC%94%E8%AE%B0/">文档</a>。</p>
 <p>总结一下jdbc url里设置characterEncoding就相当于将character_set_client和character_set_connection设置成characterEncoding，character_set_results设置为NULL（查询出来的具体字段不会从字段的编码转成character_set_results，而是保留了原有的编码）。与<code>--default-character-set=latin1</code>相比，少了一步结果集转到latin1编码格式的转化，自然无法得到正确结果。</p>
+<h2 id="多聊一嘴unicode和utf-8的关系">多聊一嘴：Unicode和UTF-8的关系</h2>
+<p>计算机世界不论什么东西，都需要转换为01进行存储，对于数字而言，可以将其转为二进制存储，但是对于字符而言，需要通过一种映射将其先转为一个数字，然后在转为二级制存储。</p>
+<p>最熟悉的是ASCII编码，其编码表如下：</p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h97732fb0sj30wi0teq8e.jpg" alt="image-20221217225141684">
+
+</p>
+<p>可见其只是定义了英文字符以及一些特殊标点，对于中文自然无法涵盖，为此Unicode应运而生。</p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h9775det8tj30l407cjrl.jpg" alt="image-20221217225354870">
+
+</p>
+<p>Unicode会使用两个字节表示一个元素（注意是元素，不一定是一个有意义的文字），但是我们该如何对其编码呢？对于ASCII而言，其范围是0~127，那我们同样的用一个字节的二进制就可以对其进行编码。因为字符到数字的映射以及转二进制的方法是唯一的，所以我们就将这两步统称为ASCII编码。</p>
+<p>但是对于Unicode而言，其范围是0~2^32-1，如果我们使用4字节对齐进行编码（该编码为UTF-32），对于同样的d字符而言，所占的容量是ASCII编码的4倍，因此又开发了UTF-16编码和UTF-8编码，UTF-8编码规则如下：</p>
+<p>
+  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h977ja6o1jj30mm06k74j.jpg" alt="image-20221217230713090">
+
+</p>
+<p>其规则是首先将Unicode映射后的数字转为二进制，然后按照上述规则填入二进制编码的格式中。可见UTF-8是一种可变长度的编码格式。</p>
+<p>In a word，Unicode是字符和数字之间的映射规则，utf8，utf16和utf32是具体的编码方式。</p>
 
 
                 
