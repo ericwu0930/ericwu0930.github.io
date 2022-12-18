@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 17 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 18 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java IO类详解</title>
+      <link>https://ericwu0930.github.io/post/java_io/</link>
+      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/java_io/</guid>
+      <description>File类 File类对应于一个目录或者一个文件，注意在使用文件的时候，比如通过流往文件中写入内容，该文件可以不存在，但是其父目录必须是有效的</description>
+    </item>
+    
     <item>
       <title>MySQL中文乱码问题</title>
       <link>https://ericwu0930.github.io/post/code/</link>
