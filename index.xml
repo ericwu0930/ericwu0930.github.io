@@ -17,6 +17,15 @@
     </item>
     
     <item>
+      <title>Spring Bean的生命周期</title>
+      <link>https://ericwu0930.github.io/post/spring_bean/</link>
+      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/spring_bean/</guid>
+      <description>熟悉Spring Bean的生命周期可以加深我们对Spring的理解，对于Spring的一些扩展操作也会有更加清晰的认识。 1. 整体流程 Bean的</description>
+    </item>
+    
+    <item>
       <title>MySQL中文乱码问题</title>
       <link>https://ericwu0930.github.io/post/code/</link>
       <pubDate>Sat, 17 Dec 2022 00:00:00 +0000</pubDate>

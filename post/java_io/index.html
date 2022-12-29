@@ -265,19 +265,19 @@ if (!doNotTrack) {
 <h2 id="java-io类层次">JAVA IO类层次</h2>
 <p>Java的IO类有可以分为两大类，一类是面向字节的流，一类是面向字符的流。每个类又分为输入流和输出流。其下面又分为定义数据来源或去除的流，以及改变流行为的装饰流。注意，输出流和输出流都是以内存为对象的，流入内存的是输入流，从内存流出的是输出流。</p>
 <p>
-  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h97ujjn9d9j30ym0iudhi.jpg" alt="image-20221218122318298">
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180510888.png" alt="image-20221229180510888">
 
 </p>
 <p>具体类如下所示。</p>
 <h3 id="面向字节">面向字节</h3>
 <p>
-  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h97thsuj9pj313o0imwg3.jpg" alt="image-20221218114702273">
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180527474.png" alt="image-20221229180527474">
 
 </p>
 <p>其中FileXXXStream，ByteArrayXXXStream都是用于指明数据的来源或去处，而FilterInputStream的子类则是通过装饰器设计模式来修改流的一些行为。</p>
 <h3 id="面向字符">面向字符</h3>
 <p>
-  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h97ubxp4ttj313o0lsq4h.jpg" alt="image-20221218121558802">
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180542785.png" alt="image-20221229180542785">
 
 </p>
 <p>与面向字节的流相似，FileXXX和CharArrayXXX也是指明了数据的来源；用于改变流行为的装饰器类为BufferedXXX，但是却没有继承自FilterXXX（该类是个抽象类且没有子类，只用于占位）。InputStreamReader和OutputStreamWriter是适配器，可以接收一个字节流转为字符流。</p>
@@ -459,7 +459,7 @@ if (!doNotTrack) {
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/post/code/" data-toggle="tooltip" data-placement="top" title="MySQL中文乱码问题">&larr;
+                        <a href="/post/spring_bean/" data-toggle="tooltip" data-placement="top" title="Spring Bean的生命周期">&larr;
                             Previous Post</a>
                     </li>
                     

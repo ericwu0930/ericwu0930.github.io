@@ -6,18 +6,14 @@
     <description>Recent content in tag1 on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 04 Jun 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://ericwu0930.github.io/tags/tag1/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sun, 18 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/tags/tag1/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>线程池</title>
-      <link>https://ericwu0930.github.io/post/parallel/</link>
-      <pubDate>Mon, 04 Jun 2018 00:00:00 +0000</pubDate>
+      <title>Spring Bean的生命周期</title>
+      <link>https://ericwu0930.github.io/post/spring_bean/</link>
+      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://ericwu0930.github.io/post/parallel/</guid>
-      <description></description>
+      <guid>https://ericwu0930.github.io/post/spring_bean/</guid>
+      <description>熟悉Spring Bean的生命周期可以加深我们对Spring的理解，对于Spring的一些扩展操作也会有更加清晰的认识。 1. 整体流程 Bean的</description>
     </item>
     
   </channel>
