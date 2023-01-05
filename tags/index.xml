@@ -6,7 +6,16 @@
     <description>Recent content in Tags on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 18 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 03 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>学习笔记</title>
+      <link>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Tue, 03 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>tag1</title>
       <link>https://ericwu0930.github.io/tags/tag1/</link>
@@ -22,15 +31,6 @@
       <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/tags/tag2/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>学习笔记</title>
-      <link>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
       <description></description>
     </item>
     

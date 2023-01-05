@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="How Tomcat works笔记" />
+    <meta property="og:title" content="How Tomcat works笔记" />
+    <meta property="twitter:title" content="How Tomcat works笔记" />
+    
+
+    
+    <meta name="description" content="总结自《How Tomcat Works》">
+    <meta property="og:description" content="总结自《How Tomcat Works》" />
+    <meta property="twitter:description" content="总结自《How Tomcat Works》" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>How Tomcat works笔记 | 吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/tomcat/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/java">java</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/jvm">jvm</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/linux">linux</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/mysql">mysql</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/os">os</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/redis">redis</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/spring">spring</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/trivial">trivial</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E7%AE%97%E6%B3%95">算法</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C">计算机网络</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E9%9A%8F%E7%AC%94">随笔</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                    </div>
+                    <h1>How Tomcat works笔记</h1>
+                    <h2 class="subheading">Tomcat源码分析</h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                     &#34;Eric&#34;
+                             
+                            on 
+                            Tuesday, January 3, 2023
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="tomcat总体架构">Tomcat总体架构</h2>
+<!-- raw HTML omitted -->
+<p>作为一个服务器，其最基本的功能就是接收其他计算机发来的请求数据并进行解析，完成相关业务处理，然后把处理结果作为相应返回给计算机，如上图所示。</p>
+<p>但是把请求监听和请求处理放到一起扩展性很差，比如当我们想适配多种网络协议，但是请求处理却相同的时候。于是Tomcat将网络协议和请求处理从概念上进行分离。得到以下结构：</p>
+<!-- raw HTML omitted -->
+<p>Connector负责开启Socket并监听客户端的请求，返回相应数据，完成与网络协议相关的操作；Container负责具体的请求处理。</p>
+<p>以上只是Tomcat非常抽象的分层，具体情况随着了解的深入逐渐细化。</p>
+<h2 id="connector">Connector</h2>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230103171855639.png" alt="image-20230103171855639">
+
+</p>
+<p>Connector和Container是一一对应的，并且Connector知道Container的存在，但是Container不知道Connector的存在；</p>
+<ol>
+<li>
+<p>初始化方法为initialize()，启动方法为start()</p>
+</li>
+<li>
+<p>在初始化方法initialize()中，调用私有方法open得到一个ServerSocket；在该方法中没有使用ServerSocket的构造方法，而是调用了工厂方法，并产生一个ServerSocket类。</p>
+</li>
+<li>
+<p>使用一个Stack维护一组HttpProcessor，一个HttpProcessoor在同一时刻会处理一个请求，每一个都有自己的线程。</p>
+</li>
+<li>
+<p>在初始化方法start()方法中，会启动Connector的主线程，然后创建HttpProcessor到minProcessors；</p>
+</li>
+<li>
+<p>在线程方法中，会使用serverSocket.accept()接收socket，然后使用createProcessor()得到一个HttpProcessor；大多数情况下，都会从Stack中获取HttpProcessor. 如果请求数量多于Stack中HttpProcessor的数量，则会创建新的HttpProcessor直至达到maxProcessors；如果maxProcessors为负数，则会无限创建。如果能得到processor则调用processor.assign方法。</p>
+</li>
+</ol>
+<h3 id="httpprocessor">HttpProcessor</h3>
+<p>HttpProcessor的实体用来读socket的输入流并且解析Http请求。HttpProcessor主要完成以下三个任务：</p>
+<ol>
+<li>解析连接</li>
+<li>解析请求</li>
+<li>解析请求头</li>
+</ol>
+<p>HttpProcessor的assign方法不能等待请求处理完成，需要直接返回。这里使用了一种委派任务模式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">synchronized</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">assign</span><span style="color:#f92672">(</span>Socket socket<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Wait for the processor to get the previous socket
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>available<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            wait<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>InterruptedException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#75715e">// Store the newly available Socket and notify our thread
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">socket</span> <span style="color:#f92672">=</span> socket<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    available <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    notifyAll<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">synchronized</span> Socket <span style="color:#a6e22e">await</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Wait for Connector to provide a new Socket
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">while</span><span style="color:#f92672">(!</span>available<span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            wait<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span><span style="color:#66d9ef">catch</span><span style="color:#f92672">(</span>InterruptedException e<span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Notify the Connector that we have received this Socket
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Socket socket <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">socket</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    available <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    notifyAll<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span><span style="color:#f92672">(</span>socket<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>其中assign和await方法都是HttpProcessor的方法，但是这两个方法在不同的线程上被调用。这两个方法互相唤醒对方。</p>
+<h2 id="container">Container</h2>
+<p>Container对象是为Servlet处理请求并且将response对象返回给web客户端的。Container对象实现org.apache.catalina.Container接口，并且有四种类型: Engine, Host, Context和Wrapper，按照从高到低的层级：</p>
+<ol>
+<li>Engine：表示整个Catalina servlet引擎</li>
+<li>Host：表示一个虚拟主机</li>
+<li>Contex：表示一个web应用（比如Datatalk）</li>
+<li>Wrapper：表示一个独立的servlet（比如Datatalk的一个Controller）</li>
+</ol>
+<p>高一层级可以持有多个低层级的Container。</p>
+<h3 id="pipelining-tasks">Pipelining Tasks</h3>
+<p>在Container中，可以通过配置项来修改container的行为。这是因为Container内部使用了Pipeline的代码设计。</p>
+<p>Container中持有一个Pipeline，pipeline中由持有Valve，如下图所示：</p>
+<!-- raw HTML omitted -->
+<p>Pipeline的接口如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Pipeline</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    * &lt;p&gt;Return the Valve instance that has been distinguished as the basic
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    * Valve for this Pipeline (if any).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Valve <span style="color:#a6e22e">getBasic</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    * &lt;p&gt;Set the Valve instance that has been distinguished as the basic
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    * Valve for this Pipeline (if any).  Prioer to setting the basic Valve,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    * the Valve&#39;s &lt;code&gt;setContainer()&lt;/code&gt; will be called, if it
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    * implements &lt;code&gt;Contained&lt;/code&gt;, with the owning Container as an
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    * argument.  The method may throw an &lt;code&gt;IllegalArgumentException&lt;/code&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    * if this Valve chooses not to be associated with this Container, or
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    * &lt;code&gt;IllegalStateException&lt;/code&gt; if it is already associated with
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    * a different Container.&lt;/p&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    * @param valve Valve to be distinguished as the basic Valve
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setBasic</span><span style="color:#f92672">(</span>Valve valve<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addValve</span><span style="color:#f92672">(</span>Valve valve<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Valve<span style="color:#f92672">[]</span> <span style="color:#a6e22e">getValves</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Request request<span style="color:#f92672">,</span> Response response<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throws</span> IOException<span style="color:#f92672">,</span> ServletException<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">removeValve</span><span style="color:#f92672">(</span>Valve valve<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>可见通过该接口可以配置Valve。另外basic valve是一个特殊的valve，总是在最后执行。</p>
+<p>我们当然可以通过以下代码实现Pipeline中Valve的依次调用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">protected</span> Valve valves<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Valve<span style="color:#f92672">[</span><span style="color:#ae81ff">0</span><span style="color:#f92672">];</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> n<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span><span style="color:#f92672">;</span>n<span style="color:#f92672">&lt;</span>valves<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">;</span>n<span style="color:#f92672">++){</span>
+</span></span><span style="display:flex;"><span>  valve<span style="color:#f92672">[</span>n<span style="color:#f92672">].</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(...);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>但是Tomcat的设计者使用了另外一种方式，引入了一个内部类ValveContext；该内部类可以访问Pipeline类的成员。</p>
+<p>因此在Pipeline的invoke方法中，会首先初始化一个ValveContext，然后调用其invokeNext方法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Request request<span style="color:#f92672">,</span> Response response<span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> SimplePipelineValveContext<span style="color:#f92672">()).</span><span style="color:#a6e22e">invokeNext</span><span style="color:#f92672">(</span>request<span style="color:#f92672">,</span> response<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>ValveContext内部类：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SimplePipelineValveContext</span> <span style="color:#66d9ef">implements</span> ValveContext <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">int</span> stage <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">invokeNext</span><span style="color:#f92672">(</span>Request request<span style="color:#f92672">,</span> Response response<span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> subscript <span style="color:#f92672">=</span> stage<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    stage <span style="color:#f92672">=</span> stage <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>subscript <span style="color:#f92672">&lt;</span> valves<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      valves<span style="color:#f92672">[</span>subscript<span style="color:#f92672">].</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>request<span style="color:#f92672">,</span> response<span style="color:#f92672">,</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span>subscript <span style="color:#f92672">==</span> valves<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">(</span>basic <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      basic<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>request<span style="color:#f92672">,</span> response<span style="color:#f92672">,</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ServletException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;No valve&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span> 
+</span></span></code></pre></div><p>在调用valve的invoke方法时，会把自己传入到valve中，然后选择在合适的时机调用valveContext的invokeNext方法，执行下一个valve的invoke方法。其调用链如下图所示：</p>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230104153135329.png" alt="image-20230104153135329">
+
+</p>
+<p>类如其名，Context持有Pipeline所有的Valve信息，并且自己维护了一个stage变量用于记录调用到了第几个Valve，把它称之为“Valve上下文”再合适不过了。</p>
+<h3 id="wrapper">Wrapper</h3>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230104114545881.png" alt="image-20230104114545881">
+
+</p>
+<p>Wrapper中包含一个Loader，该Loader用于查找并加载Servlet。可见一个Wrapper中也只有一个Servlet。</p>
+<h3 id="context">Context</h3>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230104114819696.png" alt="image-20230104114819696">
+
+</p>
+<p>大部分网络应用需要不止一个Servlet，因此我们这里介绍Context。由于有多个Wrapper，因此我们需要一个Mapper对象帮助我们选择一个子Container去处理指定的请求。</p>
+<p>Mapper接口的格式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Mapper</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 得到与之关联的Container
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">public</span> Container <span style="color:#a6e22e">getContainer</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setContainer</span><span style="color:#f92672">(</span>Container container<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 得到该Mapper负责的prorocol
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getProtocol</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setProtocol</span><span style="color:#f92672">(</span>String protocol<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> Container <span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>Request request<span style="color:#f92672">,</span><span style="color:#66d9ef">boolean</span> update<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>在Context中维护有一个Map&lt;String,Mapper&gt;的k-v对，通过map方法得到一个Mapper，调用其map方法得到与之关联的Container。</p>
+<p>Context要点概括如下：</p>
+<ol>
+<li>
+<p>Context包含多个Wrapper</p>
+</li>
+<li>
+<p>Context中有多个Mapper，Mapper与Wraper一一对应，通过选择某个Mapper将请求映射到Wrapper中</p>
+</li>
+<li>
+<p>Loader和Pipeline都与Continer绑定，当Context调用invoke方法时，最后会调用BasicValve的invoke方法，该方法会调用Container的map方法选择调用某一个Wrapper的invokde方法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>Wrapper wrapper <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  wrapper <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Wrapper<span style="color:#f92672">)</span>context<span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>request<span style="color:#f92672">,</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// if a wrapper is found,its invoke method is called.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>request<span style="color:#f92672">,</span>response<span style="color:#f92672">);</span>
+</span></span></code></pre></div><p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230104160420588.png" alt="image-20230104160420588">
+
+</p>
+</li>
+<li>
+<p>Wrapper的invokde方法会调用Context的Loader加载Servlet</p>
+</li>
+</ol>
+<h2 id="lifecycle">Lifecycle</h2>
+<p>在Catalina中，允许一个组件可以包含另外一个组件，例如一个Container类可以包含Loader类或者Manager类。由此可以形成父子结构，父结构有义务负责子结构的生命周期，例如启动或者结束。通过这样的机制，可以实现启动类的一键启动。</p>
+<p>与这一机制相关的有两个接口两个类，分别为Lifecycle，LifecycleEvent，LifecycleListener以及LifecycleSupport。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Lifecycle</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 定义的事件名称
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String START_EVENT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;start&#34;</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String BEFORE_START_EVENT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;before_start&#34;</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String AFTER_START_EVENT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;after_start&#34;</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String STOP_EVENT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;stop&#34;</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String BEFORE_STOP_EVENT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;before_stop&#34;</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String AFTER_STOP_EVENT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;after_stop&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addLifecycleListener</span><span style="color:#f92672">(</span>LifecycleListener listener<span style="color:#f92672">);</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> LifecycleListener<span style="color:#f92672">[]</span> <span style="color:#a6e22e">findLifecycleListeners</span><span style="color:#f92672">();</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">removeLifecycleListener</span><span style="color:#f92672">(</span>LifecycleListener listener<span style="color:#f92672">);</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">start</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> LifecycleException<span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">stop</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> LifecycleException<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 生命周期事件封装类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LifecycleEvent</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span> Object data<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span> Lifecycle lifecycle<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span> String type<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 生命周期的监听者
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">LifecycleListener</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">lifecycleEvent</span><span style="color:#f92672">(</span>LifecycleEvent event<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Lifecycle实现类的辅助类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 每一个Lifecycle类需要持有其lifecycle事件的监听者，当有具体的生命周期事件发生时触发监听者，并且也需要管理维护监听者数组
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Catalina把这些动作进行封装，抽象到LifecycleSupport中
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LifecycleSupport</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span> Lifecycle lifecycle<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span> LifecycleListener listeners<span style="color:#f92672">[];</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addLifecycleListener</span><span style="color:#f92672">(</span>LifecycleListener listener<span style="color:#f92672">){...}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> LifecycleListener<span style="color:#f92672">[]</span> <span style="color:#a6e22e">findLifecycleListeners</span><span style="color:#f92672">(){...}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fireLifecycleEvent</span><span style="color:#f92672">(</span>String type<span style="color:#f92672">,</span> Object data<span style="color:#f92672">){...}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>以SimpleContext为例，解释生命周期、生命周期事件以及生命周期监听者（只列出与之相关的成员变量以及方法）</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SimpleContext</span> <span style="color:#66d9ef">implements</span> Context<span style="color:#f92672">,</span> Pipeline<span style="color:#f92672">,</span> Lifecycle<span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">protected</span> LifecycleSupport lifecycle <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> LifecycleSupport<span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">synchronized</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">start</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>started<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> LifecycleException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;SimpleContext has already started&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 触发启动前生命周期事件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    lifecycle<span style="color:#f92672">.</span><span style="color:#a6e22e">fireLifecycleEvent</span><span style="color:#f92672">(</span>BEFORE_START_EVENT<span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    started <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 调用loader的start
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span>loader <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">(</span>loader <span style="color:#66d9ef">instanceof</span> Lifecycle<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">((</span>Lifecycle<span style="color:#f92672">)</span> loader<span style="color:#f92672">).</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 调用子container的start
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Container children<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> findChildren<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> children<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>children<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#66d9ef">instanceof</span> Lifecycle<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">((</span>Lifecycle<span style="color:#f92672">)</span> children<span style="color:#f92672">[</span>i<span style="color:#f92672">]).</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 调用pipeline的start
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>pipeline <span style="color:#66d9ef">instanceof</span> Lifecycle<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">((</span>Lifecycle<span style="color:#f92672">)</span> pipeline<span style="color:#f92672">).</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 触发启动生命周期事件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    lifecycle<span style="color:#f92672">.</span><span style="color:#a6e22e">fireLifecycleEvent</span><span style="color:#f92672">(</span>START_EVENT<span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 触发启动后生命周期事件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    lifecycle<span style="color:#f92672">.</span><span style="color:#a6e22e">fireLifecycleEvent</span><span style="color:#f92672">(</span>AFTER_START_EVENT<span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">stop</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> LifecycleException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>started<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> LifecycleException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;SimpleContext has not been started&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 触发停止前生命周期事件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    lifecycle<span style="color:#f92672">.</span><span style="color:#a6e22e">fireLifecycleEvent</span><span style="color:#f92672">(</span>BEFORE_STOP_EVENT<span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 触发停止生命周期事件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    lifecycle<span style="color:#f92672">.</span><span style="color:#a6e22e">fireLifecycleEvent</span><span style="color:#f92672">(</span>STOP_EVENT<span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    started <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 调用pipeline的stop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>pipeline <span style="color:#66d9ef">instanceof</span> Lifecycle<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">((</span>Lifecycle<span style="color:#f92672">)</span> pipeline<span style="color:#f92672">).</span><span style="color:#a6e22e">stop</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 调用子container的stop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Container children<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> findChildren<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> children<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>children<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#66d9ef">instanceof</span> Lifecycle<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">((</span>Lifecycle<span style="color:#f92672">)</span> children<span style="color:#f92672">[</span>i<span style="color:#f92672">]).</span><span style="color:#a6e22e">stop</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 调用loader的stop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span>loader <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">(</span>loader <span style="color:#66d9ef">instanceof</span> Lifecycle<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">((</span>Lifecycle<span style="color:#f92672">)</span> loader<span style="color:#f92672">).</span><span style="color:#a6e22e">stop</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 触发停止后生命周期事件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    lifecycle<span style="color:#f92672">.</span><span style="color:#a6e22e">fireLifecycleEvent</span><span style="color:#f92672">(</span>AFTER_STOP_EVENT<span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="loader">Loader</h2>
+<h3 id="为什么tomcat需要自己的类加载器">为什么Tomcat需要自己的类加载器</h3>
+<p>如果我们使用系统的类加载器去加载servlets以及其他这些servlets所需要的类，那么servlet就能够访问所有的类，包括在JVM的CLASSPATH指明的路径下的所有类和库，这是非常危险的。servlet应该只允许载入WEB-INF/classes目录及其子目录下的类，和部署到WEB-INF/lib下的类。这就是为什么Tomcat也设计自己的类加载器。</p>
+<h3 id="java类加载机制">Java类加载机制</h3>
+<p>JVM使用类加载器把类加载到内存中。Java中有三个类加载器：bootstrap类加载器，extension类加载器以及system类加载器。</p>
+<ul>
+<li>
+<p>bootstrap类加载器用于加载所有的核心代码，比如java.lang以及java.io包下的类。</p>
+</li>
+<li>
+<p>extension类加载器用于加载标准扩展路径下的类，比如/jdk/jre/lib/ext路径下的类。</p>
+</li>
+<li>
+<p>application类加载器用于加载CLASSPATH路径下的类，该加载器是由<code>sun.misc.Launcher$AppClassLoader</code>实现，该类加载器负责加载用户类路径上所指定的类库。开发者可通过ClassLoader.getSystemClassLoader()方法直接获取，故又称为系统类加载器。当应用程序没有自定义类加载器时，默认采用该类加载器。。</p>
+</li>
+</ul>
+<p>这三个层级的类加载器又具有父子关系，通过双亲委派的模式去加载类，即首先委派自己的父类去加载相关类，如果没有加载成功则尝试自己去加载类。</p>
+<blockquote>
+<p>为什么要通过类加载器去加载类，而不是直接new对象出来？因为在代码中可能需要动态的产生新的对象，使用new的方式只能写死产生什么样的对象。</p>
+</blockquote>
+<h3 id="loader接口">Loader接口</h3>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Loader</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> ClassLoader <span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">();</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> Container <span style="color:#a6e22e">getContainer</span><span style="color:#f92672">();</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setContainer</span><span style="color:#f92672">(</span>Container container<span style="color:#f92672">);</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> DefaultContext <span style="color:#a6e22e">getDefaultContext</span><span style="color:#f92672">();</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setDefaultContext</span><span style="color:#f92672">(</span>DefaultContext defaultContext<span style="color:#f92672">);</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">getDelegate</span><span style="color:#f92672">();</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setDelegate</span><span style="color:#f92672">(</span><span style="color:#66d9ef">boolean</span> delegate<span style="color:#f92672">);</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getInfo</span><span style="color:#f92672">();</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">getReloadable</span><span style="color:#f92672">();</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setReloadable</span><span style="color:#f92672">(</span><span style="color:#66d9ef">boolean</span> reloadable<span style="color:#f92672">);</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addPropertyChangeListener</span><span style="color:#f92672">(</span>PropertyChangeListener listener<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addRepository</span><span style="color:#f92672">(</span>String repository<span style="color:#f92672">);</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> String<span style="color:#f92672">[]</span> <span style="color:#a6e22e">findRepositories</span><span style="color:#f92672">();</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">modified</span><span style="color:#f92672">();</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">removePropertyChangeListener</span><span style="color:#f92672">(</span>PropertyChangeListener listener<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Tomcat Loader接口指的是一个web应用loader而不是一个class loader。class loader只是web loader的一个组成部分。可以通过getClassLoader来得到Loader所持有的class loader。</p>
+<p>Loader通常与一个Context绑定在一起，可以通过setContainer和getContainer来构成这种联系。无论何时container需要一个servlet类的时候，即其invoke方法被调用时，container会首先请求loader的getClassLoader方法得到一个类加载器，然后会调用loadClass方法去加载Servlet类。</p>
+<p>当Context中一个或多个类被修改时，Loader可以支持重加载，即不重启Tomcat的情况下重新加载一个类。为了实现这一机制，Loader接口有modified方法，如果它所持有的资源中当有一个或多个类被修改时，会被重新加载。但是它不会自己去重加载，而是通过调用Context接口的reload方法去进行。setReloadable方法和getReloadable方法用于决定Loader是否支持重加载。</p>
+<p>以WebappLoader为例，其启动方法中会执行以下操作：</p>
+<ul>
+<li>创建一个class loader</li>
+<li>设置仓库</li>
+<li>设置class path</li>
+<li>设置权限许可</li>
+<li>为自动重加载开启一个线程</li>
+</ul>
+<p>如果Loader支持自动重加载，会开启一个线程，每间隔一段时间就去检查一下其持有的资源是否修改了，如果修改了就通知context去重加载:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">run</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">// Loop until the termination semaphore is set
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#66d9ef">while</span> <span style="color:#f92672">(!</span>threadDone<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#75715e">// Wait for our check interval
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>     threadSleep<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>started<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#75715e">// Perform our modification check
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>       <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>classLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">modified</span><span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">continue</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>       log<span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;webappLoader.failModifiedCheck&#34;</span><span style="color:#f92672">),</span> e<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">continue</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#75715e">// Handle a need for reloading
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>     notifyContext<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="classloader">ClassLoader</h3>
+<p>在WebappClassLoader中有一个triggers和packageTriggers用于禁止加载某类以及某目录下得了类。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String<span style="color:#f92672">[]</span> triggers <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;javax.servlet.Servlet&#34;</span>                     <span style="color:#75715e">// Servlet API
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">};</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String<span style="color:#f92672">[]</span> packageTriggers <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;javax&#34;</span><span style="color:#f92672">,</span>                                     <span style="color:#75715e">// Java extensions
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;org.xml.sax&#34;</span><span style="color:#f92672">,</span>                               <span style="color:#75715e">// SAX 1 &amp; 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;org.w3c.dom&#34;</span><span style="color:#f92672">,</span>                               <span style="color:#75715e">// DOM 1 &amp; 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;org.apache.xerces&#34;</span><span style="color:#f92672">,</span>                         <span style="color:#75715e">// Xerces 1 &amp; 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#e6db74">&#34;org.apache.xalan&#34;</span>                           <span style="color:#75715e">// Xalan
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">};</span>
+</span></span></code></pre></div><p>为了更好的性能，会将加载过的类以及没有找到加载的类分别放到两个Map中。加载过的类会用ResourceEntry进行封装。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ResourceEntry</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">long</span> lastModifled <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Binary content of the resource.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> binaryContent <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> Class loadedClass <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// URL source from where the object was loaded.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">public</span> URL source <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// URL of the codebase from where the object was loaded. 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">public</span> URL CodeBase <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> Manifest manifest <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> Certificate<span style="color:#f92672">[]</span> certificates <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>WebappClassLoader类加载过程分为以下几步：</p>
+<ol>
+<li>首先检查类中的cache，检查是否被缓存</li>
+<li>如果没有则检查ClassLoader的缓存</li>
+<li>如果也没有找到，则拿到application类加载器，防止web应用覆盖jdk中的基础类</li>
+<li>如果开启了SecurityManager，则检查路径是否合法</li>
+<li>如果delegate标志位为true，即开启了双亲委派模型，或者所寻找的类包路径在禁止加载路径中，则执行双亲委派模型（这里一般是false，所以tomcat也就违反了双亲委派模型）</li>
+<li>在当前的repositories中寻找类，repositories是在Context初始化的时候被设置的，因此WebappClassLoader其实实现了Context级别的类隔离</li>
+<li>如果delegate为false（即第6步没有执行），则通过双亲委派模型去执行</li>
+<li>如果类还没找到，则报错</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> Class <span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">,</span> <span style="color:#66d9ef">boolean</span> resolve<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">throws</span> ClassNotFoundException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  Class clazz <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Don&#39;t load classes if class loader is stopped
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>started<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    log<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Lifecycle error : CL stopped&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ClassNotFoundException<span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// (0) Check our previously loaded local class cache
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  clazz <span style="color:#f92672">=</span> findLoadedClass0<span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>clazz <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>resolve<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      resolveClass<span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// (0.1) Check our previously loaded class cache
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  clazz <span style="color:#f92672">=</span> findLoadedClass<span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>clazz <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>resolve<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      resolveClass<span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// (0.2) Try loading the class with the system class loader, to prevent
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">//       the webapp from overriding J2SE classes
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//通过系统的来加载器加载此类，这里防止应用写的类覆盖了J2SE的类,这句代码非常关键，如果不写的话
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//就会造成你自己写的类有可能会把J2SE的类给替换调，另外假如你写了一个javax.servlet.Servlet类，放在当前应用的WEB-INF/class中
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//如果没有此句代码的保证，那么你自己写的类就会替换到Tomcat容器Lib中包含的类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    clazz <span style="color:#f92672">=</span> system<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>clazz <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>resolve<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        resolveClass<span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>ClassNotFoundException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Ignore
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// (0.5) Permission to access this class when using a SecurityManager
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>securityManager <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> name<span style="color:#f92672">.</span><span style="color:#a6e22e">lastIndexOf</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;.&#39;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>i <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        securityManager<span style="color:#f92672">.</span><span style="color:#a6e22e">checkPackageAccess</span><span style="color:#f92672">(</span>name<span style="color:#f92672">.</span><span style="color:#a6e22e">substring</span><span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">,</span>i<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>SecurityException se<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        String error <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Security Violation, attempt to use &#34;</span> <span style="color:#f92672">+</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;Restricted Class: &#34;</span> <span style="color:#f92672">+</span> name<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>error<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        se<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        log<span style="color:#f92672">(</span>error<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ClassNotFoundException<span style="color:#f92672">(</span>error<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">boolean</span> delegateLoad <span style="color:#f92672">=</span> delegate <span style="color:#f92672">||</span> filter<span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// (1) Delegate to our parent if requested
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>delegateLoad<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>debug <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      log<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;  Delegating to parent classloader&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    ClassLoader loader <span style="color:#f92672">=</span> parent<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>loader <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      loader <span style="color:#f92672">=</span> system<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      clazz <span style="color:#f92672">=</span> loader<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>clazz <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>debug <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>          log<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;  Loading class from parent&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>resolve<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>          resolveClass<span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>ClassNotFoundException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// (2) Search local repositories
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//调用findClass方法在webapp级别进行加载
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>debug <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    log<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;  Searching local repositories&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    clazz <span style="color:#f92672">=</span> findClass<span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>clazz <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>debug <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        log<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;  Loading class from local repository&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>resolve<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        resolveClass<span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>ClassNotFoundException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// (3) Delegate to parent unconditionally
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">//如果还是没有加载到类，并且不采用委托机制的话，则通过父类加载器去加载。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>delegateLoad<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>debug <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      log<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;  Delegating to parent classloader&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    ClassLoader loader <span style="color:#f92672">=</span> parent<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>loader <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      loader <span style="color:#f92672">=</span> system<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      clazz <span style="color:#f92672">=</span> loader<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>clazz <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>debug <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>          log<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;  Loading class from parent&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>resolve<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>          resolveClass<span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>ClassNotFoundException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// This class was not found
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ClassNotFoundException<span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div>
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/java_io/" data-toggle="tooltip" data-placement="top" title="Java IO类详解">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+
+		            
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2023
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

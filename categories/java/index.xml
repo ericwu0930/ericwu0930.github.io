@@ -6,7 +6,16 @@
     <description>Recent content in Java on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 18 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/java/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 03 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/java/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How Tomcat works笔记</title>
+      <link>https://ericwu0930.github.io/post/tomcat/</link>
+      <pubDate>Tue, 03 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/tomcat/</guid>
+      <description>Tomcat总体架构 作为一个服务器，其最基本的功能就是接收其他计算机发来的请求数据并进行解析，完成相关业务处理，然后把处理结果作为相应返回给</description>
+    </item>
+    
     <item>
       <title>Java IO类详解</title>
       <link>https://ericwu0930.github.io/post/java_io/</link>

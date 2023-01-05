@@ -3,18 +3,27 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://ericwu0930.github.io/categories/</loc>
-    <lastmod>2022-12-18T00:00:00+00:00</lastmod>
+    <lastmod>2023-01-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/</loc>
-    <lastmod>2022-12-18T00:00:00+00:00</lastmod>
+    <lastmod>2023-01-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericwu0930.github.io/post/tomcat/</loc>
+    <lastmod>2023-01-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/categories/java/</loc>
-    <lastmod>2022-12-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericwu0930.github.io/post/java_io/</loc>
-    <lastmod>2022-12-18T00:00:00+00:00</lastmod>
+    <lastmod>2023-01-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/post/</loc>
+    <lastmod>2023-01-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericwu0930.github.io/tags/</loc>
+    <lastmod>2023-01-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
+    <lastmod>2023-01-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericwu0930.github.io/post/java_io/</loc>
     <lastmod>2022-12-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/categories/spring/</loc>
@@ -27,12 +36,6 @@
     <lastmod>2022-12-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/tags/tag2/</loc>
-    <lastmod>2022-12-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericwu0930.github.io/tags/</loc>
-    <lastmod>2022-12-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2022-12-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericwu0930.github.io/categories/mysql/</loc>
