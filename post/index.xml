@@ -6,14 +6,32 @@
     <description>Recent content in Posts on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 03 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 17 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shell命令入门</title>
+      <link>https://ericwu0930.github.io/post/shell/</link>
+      <pubDate>Tue, 17 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/shell/</guid>
+      <description>1.变量 1.1 定义变量 1.1.1 普通变量 变量名=变量值：变量值必须是一个整体，中间没有特殊字符 变量名=&amp;lsquo;变量值&amp;rsquo;：单引号中的内容</description>
+    </item>
+    
+    <item>
+      <title>异常堆栈信息丢失问题定位</title>
+      <link>https://ericwu0930.github.io/post/omit_exception_stack/</link>
+      <pubDate>Tue, 17 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/omit_exception_stack/</guid>
+      <description>1. 现象 在完成DataTalk推送队列化改造后，为了测试全局限流措施的有效性，设置信号量为20，使用python脚本在同一时间触发Beacon</description>
+    </item>
+    
     <item>
       <title>How Tomcat works笔记</title>
       <link>https://ericwu0930.github.io/post/tomcat/</link>
       <pubDate>Tue, 03 Jan 2023 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/post/tomcat/</guid>
-      <description>Tomcat总体架构 作为一个服务器，其最基本的功能就是接收其他计算机发来的请求数据并进行解析，完成相关业务处理，然后把处理结果作为相应返回给</description>
+      <description>1. Tomcat总体架构 作为一个服务器，其最基本的功能就是接收其他计算机发来的请求数据并进行解析，完成相关业务处理，然后把处理结果作为相应返回</description>
     </item>
     
     <item>

@@ -260,14 +260,14 @@ if (!doNotTrack) {
                 post-container">
 
                 
-                <h2 id="tomcat总体架构">Tomcat总体架构</h2>
+                <h2 id="1-tomcat总体架构">1. Tomcat总体架构</h2>
 <!-- raw HTML omitted -->
 <p>作为一个服务器，其最基本的功能就是接收其他计算机发来的请求数据并进行解析，完成相关业务处理，然后把处理结果作为相应返回给计算机，如上图所示。</p>
 <p>但是把请求监听和请求处理放到一起扩展性很差，比如当我们想适配多种网络协议，但是请求处理却相同的时候。于是Tomcat将网络协议和请求处理从概念上进行分离。得到以下结构：</p>
 <!-- raw HTML omitted -->
 <p>Connector负责开启Socket并监听客户端的请求，返回相应数据，完成与网络协议相关的操作；Container负责具体的请求处理。</p>
 <p>以上只是Tomcat非常抽象的分层，具体情况随着了解的深入逐渐细化。</p>
-<h2 id="connector">Connector</h2>
+<h2 id="2-connector">2. Connector</h2>
 <p>
   <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230103171855639.png" alt="image-20230103171855639">
 
@@ -290,7 +290,7 @@ if (!doNotTrack) {
 <p>在线程方法中，会使用serverSocket.accept()接收socket，然后使用createProcessor()得到一个HttpProcessor；大多数情况下，都会从Stack中获取HttpProcessor. 如果请求数量多于Stack中HttpProcessor的数量，则会创建新的HttpProcessor直至达到maxProcessors；如果maxProcessors为负数，则会无限创建。如果能得到processor则调用processor.assign方法。</p>
 </li>
 </ol>
-<h3 id="httpprocessor">HttpProcessor</h3>
+<h3 id="21-httpprocessor">2.1 HttpProcessor</h3>
 <p>HttpProcessor的实体用来读socket的输入流并且解析Http请求。HttpProcessor主要完成以下三个任务：</p>
 <ol>
 <li>解析连接</li>
@@ -327,7 +327,7 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span><span style="color:#f92672">(</span>socket<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
 </span></span></code></pre></div><p>其中assign和await方法都是HttpProcessor的方法，但是这两个方法在不同的线程上被调用。这两个方法互相唤醒对方。</p>
-<h2 id="container">Container</h2>
+<h2 id="3-container">3. Container</h2>
 <p>Container对象是为Servlet处理请求并且将response对象返回给web客户端的。Container对象实现org.apache.catalina.Container接口，并且有四种类型: Engine, Host, Context和Wrapper，按照从高到低的层级：</p>
 <ol>
 <li>Engine：表示整个Catalina servlet引擎</li>
@@ -336,7 +336,7 @@ if (!doNotTrack) {
 <li>Wrapper：表示一个独立的servlet（比如Datatalk的一个Controller）</li>
 </ol>
 <p>高一层级可以持有多个低层级的Container。</p>
-<h3 id="pipelining-tasks">Pipelining Tasks</h3>
+<h3 id="31-pipelining-tasks">3.1 Pipelining Tasks</h3>
 <p>在Container中，可以通过配置项来修改container的行为。这是因为Container内部使用了Pipeline的代码设计。</p>
 <p>Container中持有一个Pipeline，pipeline中由持有Valve，如下图所示：</p>
 <!-- raw HTML omitted -->
@@ -409,13 +409,13 @@ if (!doNotTrack) {
 
 </p>
 <p>类如其名，Context持有Pipeline所有的Valve信息，并且自己维护了一个stage变量用于记录调用到了第几个Valve，把它称之为“Valve上下文”再合适不过了。</p>
-<h3 id="wrapper">Wrapper</h3>
+<h3 id="32-wrapper">3.2 Wrapper</h3>
 <p>
   <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230104114545881.png" alt="image-20230104114545881">
 
 </p>
 <p>Wrapper中包含一个Loader，该Loader用于查找并加载Servlet。可见一个Wrapper中也只有一个Servlet。</p>
-<h3 id="context">Context</h3>
+<h3 id="33-context">3.3 Context</h3>
 <p>
   <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230104114819696.png" alt="image-20230104114819696">
 
@@ -457,7 +457,7 @@ if (!doNotTrack) {
 <p>Wrapper的invokde方法会调用Context的Loader加载Servlet</p>
 </li>
 </ol>
-<h2 id="lifecycle">Lifecycle</h2>
+<h2 id="4-lifecycle">4. Lifecycle</h2>
 <p>在Catalina中，允许一个组件可以包含另外一个组件，例如一个Container类可以包含Loader类或者Manager类。由此可以形成父子结构，父结构有义务负责子结构的生命周期，例如启动或者结束。通过这样的机制，可以实现启动类的一键启动。</p>
 <p>与这一机制相关的有两个接口两个类，分别为Lifecycle，LifecycleEvent，LifecycleListener以及LifecycleSupport。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Lifecycle</span><span style="color:#f92672">{</span>
@@ -559,10 +559,10 @@ if (!doNotTrack) {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    lifecycle<span style="color:#f92672">.</span><span style="color:#a6e22e">fireLifecycleEvent</span><span style="color:#f92672">(</span>AFTER_STOP_EVENT<span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span></code></pre></div><h2 id="loader">Loader</h2>
-<h3 id="为什么tomcat需要自己的类加载器">为什么Tomcat需要自己的类加载器</h3>
+</span></span></code></pre></div><h2 id="5-loader">5. Loader</h2>
+<h3 id="51-为什么tomcat需要自己的类加载器">5.1 为什么Tomcat需要自己的类加载器</h3>
 <p>如果我们使用系统的类加载器去加载servlets以及其他这些servlets所需要的类，那么servlet就能够访问所有的类，包括在JVM的CLASSPATH指明的路径下的所有类和库，这是非常危险的。servlet应该只允许载入WEB-INF/classes目录及其子目录下的类，和部署到WEB-INF/lib下的类。这就是为什么Tomcat也设计自己的类加载器。</p>
-<h3 id="java类加载机制">Java类加载机制</h3>
+<h3 id="52-java类加载机制">5.2 Java类加载机制</h3>
 <p>JVM使用类加载器把类加载到内存中。Java中有三个类加载器：bootstrap类加载器，extension类加载器以及system类加载器。</p>
 <ul>
 <li>
@@ -579,7 +579,7 @@ if (!doNotTrack) {
 <blockquote>
 <p>为什么要通过类加载器去加载类，而不是直接new对象出来？因为在代码中可能需要动态的产生新的对象，使用new的方式只能写死产生什么样的对象。</p>
 </blockquote>
-<h3 id="loader接口">Loader接口</h3>
+<h3 id="53-loader接口">5.3 Loader接口</h3>
 <!-- raw HTML omitted -->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Loader</span> <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>  
@@ -635,7 +635,7 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>   <span style="color:#f92672">}</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span> <span style="color:#f92672">}</span>
-</span></span></code></pre></div><h3 id="classloader">ClassLoader</h3>
+</span></span></code></pre></div><h3 id="55-classloader">5.5 ClassLoader</h3>
 <p>在WebappClassLoader中有一个triggers和packageTriggers用于禁止加载某类以及某目录下得了类。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String<span style="color:#f92672">[]</span> triggers <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;javax.servlet.Servlet&#34;</span>                     <span style="color:#75715e">// Servlet API
@@ -797,7 +797,521 @@ if (!doNotTrack) {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ClassNotFoundException<span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span></code></pre></div>
+</span></span></code></pre></div><h2 id="6-会话管理session-management">6. 会话管理（Session Management）</h2>
+<p>Catalina通过Manager对象来管理Session，Manager对象总是与一个Context相关联。</p>
+<p>Servlet对象通过请求HttpServletRequest接口的getSession方法得到Session对象，如下所示</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> HttpSession <span style="color:#a6e22e">getSession</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>getSession<span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> HttpSession <span style="color:#a6e22e">getSession</span><span style="color:#f92672">(</span><span style="color:#66d9ef">boolean</span> create<span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> doGetSession<span style="color:#f92672">(</span>create<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> HttpSession <span style="color:#a6e22e">doGetSession</span><span style="color:#f92672">(</span><span style="color:#66d9ef">boolean</span> create<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// There cannot be a session if no context has been assigned yet
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>context <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Return the current session if it exists and is valid
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span>session <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span>session<span style="color:#f92672">.</span><span style="color:#a6e22e">isValid</span><span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>    session <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>session <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>session<span style="color:#f92672">.</span><span style="color:#a6e22e">getSession</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Return the requested session if it exists and is valid
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  Manager manager <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>context <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    manager <span style="color:#f92672">=</span> context<span style="color:#f92672">.</span><span style="color:#a6e22e">getManager</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>manager <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>      <span style="color:#75715e">// Sessions are not supported
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>requestedSessionId <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      session <span style="color:#f92672">=</span> manager<span style="color:#f92672">.</span><span style="color:#a6e22e">findSession</span><span style="color:#f92672">(</span>requestedSessionId<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      session <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span>session <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span>session<span style="color:#f92672">.</span><span style="color:#a6e22e">isValid</span><span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>      session <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>session <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>session<span style="color:#f92672">.</span><span style="color:#a6e22e">getSession</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Create a new session if requested and the response is not committed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>create<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span>context <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">(</span>response <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>      context<span style="color:#f92672">.</span><span style="color:#a6e22e">getCookies</span><span style="color:#f92672">()</span> <span style="color:#f92672">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>      response<span style="color:#f92672">.</span><span style="color:#a6e22e">getResponse</span><span style="color:#f92672">().</span><span style="color:#a6e22e">isCommitted</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> IllegalStateException
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;httpRequestBase.createCommitted&#34;</span><span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  session <span style="color:#f92672">=</span> manager<span style="color:#f92672">.</span><span style="color:#a6e22e">createSession</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>session <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>session<span style="color:#f92672">.</span><span style="color:#a6e22e">getSession</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>可见每一个request都持有一个session成员变量。如果session为空时，会通过其持有的Context对象拿到Manager，然后通过Manager生产得到Session对象。</p>
+<h3 id="61-sessions">6.1 Sessions</h3>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230106113955240.png" alt="image-20230106113955240">
+
+</p>
+<ol>
+<li>Session对象一定是被包含在一个Manager中</li>
+<li>出于安全考虑，Manager返回的Session对象是StandardSessionFacade（通过门面模式，防止Request对象通过Manager得到Session后向下转型，使用StandardSession的公有方法）</li>
+<li>Session接口中有个expire方法，用于被Manager对象调用，标明该Session已过期</li>
+</ol>
+<h3 id="62-manager">6.2 Manager</h3>
+<!-- raw HTML omitted -->
+<p>在Manager对象中，通过一个map来管理Session对象，key时Session对象唯一的id，value是Session对象本身。</p>
+<h4 id="621-standardmanager">6.2.1 StandardManager</h4>
+<p>StandardManager实现了Lifecycle接口，当执行stop方法的时候会调用unload方法序列化所有的有效Session到SESSIONS.ser文件中。</p>
+<p>StandardManager同时实现了Runnable方法，它会启动一个线程定时清理过期Session</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">run</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span> <span style="color:#75715e">// Loop until the termination semaphore is set 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">while</span> <span style="color:#f92672">(!</span>threadDone<span style="color:#f92672">)</span> <span style="color:#f92672">{</span> 
+</span></span><span style="display:flex;"><span>    threadSleep<span style="color:#f92672">();</span> 
+</span></span><span style="display:flex;"><span>    processExpires<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span> 
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>在processExpires方法中，StandardManager会遍历每一个Session对象，比较lastAccessedTime与当前时间是否超过maxInactiveInterval，然后调用Session的expire方法去过期Session实例。</p>
+<h4 id="622-persistentmanagerbase">6.2.2 PersistentManagerBase</h4>
+<p>与StandardManager不同的是，PersistentManagerBase持有一个Store对象，可以将管理的Session保存到第二个位置，即Store对象所表示的地方。</p>
+<p>在PersistentManagerBase也实现了Runnable接口，可以使用一个独立的线程周期性的扫出或者交换活跃Session。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">run</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Loop until the termination semaphore is set 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">while</span> <span style="color:#f92672">(!</span>threadDone<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  	threadSleep<span style="color:#f92672">();</span>	
+</span></span><span style="display:flex;"><span>    processExpires<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    processPersistenceChecks<span style="color:#f92672">();</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>与StandardManager相比，PersistentManagerBase的独立线程多了一个processPersistenceChecks()方法。在该方法中会调用三个其他方法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processPersistenceChecks</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>  processMaxIdleSwaps<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>  processMaxActiveSwaps<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>  processMaxIdleBackups<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Session被换出（swap out）或者因为活跃的session数已经超过了maxActiveSessions的数目（processMaxActiveSwaps），或者因为session已经闲置了太久(processMaxIdleSwaps)。</p>
+<p>因为存在swap-out的机制，session可能存在与内存中或者store中，因此findSession函数会先在自己的内存map中寻找session，如果没有，则到store中寻找。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> Session <span style="color:#a6e22e">findSession</span><span style="color:#f92672">(</span>String id<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IOException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Session session <span style="color:#f92672">=</span> <span style="color:#66d9ef">super</span><span style="color:#f92672">.</span><span style="color:#a6e22e">findSession</span><span style="color:#f92672">(</span>id<span style="color:#f92672">);</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>session <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>session<span style="color:#f92672">);</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// not found in memory, see if the Session is in the 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  Store session <span style="color:#f92672">=</span> swapIn<span style="color:#f92672">(</span>id<span style="color:#f92672">);</span> <span style="color:#75715e">// swapIn returns an active session in the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>session<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h4 id="623-distributedmanager">6.2.3 DistributedManager</h4>
+<p>DistributedManager用于集群环境中，在创建或者删除一个Session对象的时候都会通过HTTP请求通知集群中的其他节点。</p>
+<p>借助ClusterSender去给其他节点发送通知，使用ClusterReceiver来接收其他节点的通知。</p>
+<h3 id="63-store">6.3 Store</h3>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230106175114065.png" alt="image-20230106175114065">
+
+</p>
+<p>根据存储的目的地分类两类，一类是FileStore，一类是JDBCStore。</p>
+<h2 id="7-standardwrapper">7. StandardWrapper</h2>
+<p>对于每一个调来的HTTP请求，Tomcat处理流程如下：</p>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230109105150344.png" alt="image-20230109105150344">
+
+</p>
+<ul>
+<li>
+<p>connector首先委托processor，通过传入的socket生成request和response对象</p>
+</li>
+<li>
+<p>connector请求StandardContext对象的invoke方法</p>
+</li>
+<li>
+<p>StandardContext的invoke方法其Pipeline的invoke方法，最终会调用该Pipeline的Basic方法——StandardContextValve</p>
+</li>
+<li>
+<p>StandardContextValve的invoke方法会调用Context对象的map方法得到合适的wrapper来处理request并且调用wrapper的invoke方法</p>
+</li>
+<li>
+<p>StandardWrapper是wrapper的标准实现。StandardWrapper实例调用它自己的pipeline的invoke方法</p>
+</li>
+<li>
+<p>StandardWrapperValve是StandardWrapper的流水线的basic valve。因此，StandardWrapperValve的invoke方法被调用。StandardWrapperValve调用wrapper的allocate方法去获得servlet的实例</p>
+</li>
+<li>
+<p>如果servlet需要被加载，allocate方法请求load方法去加载servlet</p>
+</li>
+<li>
+<p>StandardWrapperValve调用servlet的service方法</p>
+</li>
+</ul>
+<h3 id="71-singlethreadmodel">7.1 SingleThreadModel</h3>
+<p>SingleThreadModel是一个接口，实现了该接口Servlet必须保证同一时间只能处理一个request。但是注意，该接口并不能阻止多个Servlet实例同时访问静态字段导致的同步问题。</p>
+<p>为了提高效率，通常对Servlet对象进行池化处理，对于不同的请求分配不同的Servlet对象。</p>
+<h3 id="72-standardwrapper的allocate和loadservlet方法">7.2 StandardWrapper的allocate和loadServlet方法</h3>
+<p>StandardWrapper的主要职责是加载与其关联的servlet并分配一个实例，但是它并不调用servlet的service方法。该工作由StandardWrapperValve对象去完成。</p>
+<p>StandardWrapperValve对象会调用StandardWrapper的allocate方法，在该方法中，如果servlet被第一次调用则会首先加载该servlet。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span> <span style="color:#66d9ef">public</span> Servlet <span style="color:#a6e22e">allocate</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> ServletException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">// If we are currently unloading this servlet, throw an exception
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>unloading<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ServletException
+</span></span><span style="display:flex;"><span>     <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.unloading&#34;</span><span style="color:#f92672">,</span> getName<span style="color:#f92672">()));</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">// If not SingleThreadedModel, return the same instance every time
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#75715e">// singleThreadModel是一个成员变量用于标示与之关联的servlet是否是STM，其初始值为false，但是loadServlet方法在加载Servlet时会根据Servlet是否实现了SingleThreadModel接口而改变这个成员属性
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>singleThreadModel<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#75715e">// Load and initialize our instance if necessary
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>     <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>instance <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">synchronized</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>instance <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>             instance <span style="color:#f92672">=</span> loadServlet<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>ServletException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#66d9ef">throw</span> e<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Throwable e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ServletException
+</span></span><span style="display:flex;"><span>               <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.allocate&#34;</span><span style="color:#f92672">),</span> e<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#75715e">// 因为在执行完loadServlet后singleThreadModel可能会改变，因此需要重新判断
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>     <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>singleThreadModel<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>debug <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>         log<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;  Returning non-STM instance&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#75715e">// countAllocated是一个成员变量，用于记录当前正活跃的allocate请求
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>       countAllocated<span style="color:#f92672">++;</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>instance<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">// nInstances:当前Servlet对象数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#75715e">// maxInstances:Servlet最大数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#75715e">// instancePool:使用Stack来维护一组Servlet对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   <span style="color:#66d9ef">synchronized</span> <span style="color:#f92672">(</span>instancePool<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>countAllocated <span style="color:#f92672">&gt;=</span> nInstances<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#75715e">// Allocate a new instance if possible, or else wait
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>       <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>nInstances <span style="color:#f92672">&lt;</span> maxInstances<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>           instancePool<span style="color:#f92672">.</span><span style="color:#a6e22e">push</span><span style="color:#f92672">(</span>loadServlet<span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>           nInstances<span style="color:#f92672">++;</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>ServletException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#66d9ef">throw</span> e<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Throwable e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ServletException
+</span></span><span style="display:flex;"><span>             <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.allocate&#34;</span><span style="color:#f92672">),</span> e<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>           instancePool<span style="color:#f92672">.</span><span style="color:#a6e22e">wait</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>InterruptedException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>debug <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>       log<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;  Returning allocated STM instance&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>     countAllocated<span style="color:#f92672">++;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>Servlet<span style="color:#f92672">)</span> instancePool<span style="color:#f92672">.</span><span style="color:#a6e22e">pop</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">synchronized</span> Servlet <span style="color:#a6e22e">loadServlet</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> ServletException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Nothing to do if we already have an instance or an instance pool
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>singleThreadModel <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">(</span>instance <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> instance<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  PrintStream out <span style="color:#f92672">=</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>  SystemLogHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">startCapture</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>  Servlet servlet <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 首先解析Servlet的名字
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// If this &#34;servlet&#34; is really a JSP file, get the right class.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// HOLD YOUR NOSE - this is a kludge that avoids having to do special
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// case Catalina-specific code in Jasper - it also requires that the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// servlet path be replaced by the &lt;jsp-file&gt; element content in
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// order to be completely effective
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// JSP也是一种Servlet
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    String actualClass <span style="color:#f92672">=</span> servletClass<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span>actualClass <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">(</span>jspFile <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      Wrapper jspWrapper <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Wrapper<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">((</span>Context<span style="color:#f92672">)</span> getParent<span style="color:#f92672">()).</span><span style="color:#a6e22e">findChild</span><span style="color:#f92672">(</span>Constants<span style="color:#f92672">.</span><span style="color:#a6e22e">JSP_SERVLET_NAME</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>jspWrapper <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        actualClass <span style="color:#f92672">=</span> jspWrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">getServletClass</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Complain if no servlet class has been specified
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>actualClass <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      unavailable<span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ServletException
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.notClass&#34;</span><span style="color:#f92672">,</span> getName<span style="color:#f92672">()));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Acquire an instance of the class loader to be used
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Loader loader <span style="color:#f92672">=</span> getLoader<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>loader <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      unavailable<span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ServletException
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.missingLoader&#34;</span><span style="color:#f92672">,</span> getName<span style="color:#f92672">()));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ClassLoader classLoader <span style="color:#f92672">=</span> loader<span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Special case class loader for a container provided servlet
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>isContainerProvidedServlet<span style="color:#f92672">(</span>actualClass<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      classLoader <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>      log<span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.containerServlet&#34;</span><span style="color:#f92672">,</span> getName<span style="color:#f92672">()));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Load the specified servlet class from the appropriate class loader
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 加载对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Class classClass <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>classLoader <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Using classLoader.loadClass&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        classClass <span style="color:#f92672">=</span> classLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">loadClass</span><span style="color:#f92672">(</span>actualClass<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Using forName&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        classClass <span style="color:#f92672">=</span> Class<span style="color:#f92672">.</span><span style="color:#a6e22e">forName</span><span style="color:#f92672">(</span>actualClass<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>ClassNotFoundException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      unavailable<span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ServletException
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.missingClass&#34;</span><span style="color:#f92672">,</span> actualClass<span style="color:#f92672">),</span>
+</span></span><span style="display:flex;"><span>         e<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>classClass <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      unavailable<span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ServletException
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.missingClass&#34;</span><span style="color:#f92672">,</span> actualClass<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Instantiate and initialize an instance of the servlet class itself
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 初始化对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      servlet <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Servlet<span style="color:#f92672">)</span> classClass<span style="color:#f92672">.</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>ClassCastException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      unavailable<span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// Restore the context ClassLoader
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ServletException
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.notServlet&#34;</span><span style="color:#f92672">,</span> actualClass<span style="color:#f92672">),</span> e<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Throwable e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      unavailable<span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// Restore the context ClassLoader
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ServletException
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.instantiate&#34;</span><span style="color:#f92672">,</span> actualClass<span style="color:#f92672">),</span> e<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Check if loading the servlet in this web application should be allowed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>isServletAllowed<span style="color:#f92672">(</span>servlet<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> SecurityException
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.privilegedServlet&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                      actualClass<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Special handling for ContainerServlet instances
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span>servlet <span style="color:#66d9ef">instanceof</span> ContainerServlet<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>        isContainerProvidedServlet<span style="color:#f92672">(</span>actualClass<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;calling setWrapper&#34;</span><span style="color:#f92672">);</span>                  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">((</span>ContainerServlet<span style="color:#f92672">)</span> servlet<span style="color:#f92672">).</span><span style="color:#a6e22e">setWrapper</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;after calling setWrapper&#34;</span><span style="color:#f92672">);</span>                  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Call the initialization method of this servlet
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      instanceSupport<span style="color:#f92672">.</span><span style="color:#a6e22e">fireInstanceEvent</span><span style="color:#f92672">(</span>InstanceEvent<span style="color:#f92672">.</span><span style="color:#a6e22e">BEFORE_INIT_EVENT</span><span style="color:#f92672">,</span>servlet<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// 传入一个ServletConfig对象，facade实际上就是StandardWrapper的封装对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      servlet<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">(</span>facade<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// Invoke jspInit on JSP pages
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span>loadOnStartup <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">(</span>jspFile <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Invoking jspInit
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        HttpRequestBase req <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HttpRequestBase<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        HttpResponseBase res <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HttpResponseBase<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        req<span style="color:#f92672">.</span><span style="color:#a6e22e">setServletPath</span><span style="color:#f92672">(</span>jspFile<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        req<span style="color:#f92672">.</span><span style="color:#a6e22e">setQueryString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;jsp_precompile=true&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        servlet<span style="color:#f92672">.</span><span style="color:#a6e22e">service</span><span style="color:#f92672">(</span>req<span style="color:#f92672">,</span> res<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>      instanceSupport<span style="color:#f92672">.</span><span style="color:#a6e22e">fireInstanceEvent</span><span style="color:#f92672">(</span>InstanceEvent<span style="color:#f92672">.</span><span style="color:#a6e22e">AFTER_INIT_EVENT</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                                        servlet<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>UnavailableException f<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      instanceSupport<span style="color:#f92672">.</span><span style="color:#a6e22e">fireInstanceEvent</span><span style="color:#f92672">(</span>InstanceEvent<span style="color:#f92672">.</span><span style="color:#a6e22e">AFTER_INIT_EVENT</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                                        servlet<span style="color:#f92672">,</span> f<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      unavailable<span style="color:#f92672">(</span>f<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">throw</span> f<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>ServletException f<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      instanceSupport<span style="color:#f92672">.</span><span style="color:#a6e22e">fireInstanceEvent</span><span style="color:#f92672">(</span>InstanceEvent<span style="color:#f92672">.</span><span style="color:#a6e22e">AFTER_INIT_EVENT</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                                        servlet<span style="color:#f92672">,</span> f<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// If the servlet wanted to be unavailable it would have
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#75715e">// said so, so do not call unavailable(null).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#66d9ef">throw</span> f<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Throwable f<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      instanceSupport<span style="color:#f92672">.</span><span style="color:#a6e22e">fireInstanceEvent</span><span style="color:#f92672">(</span>InstanceEvent<span style="color:#f92672">.</span><span style="color:#a6e22e">AFTER_INIT_EVENT</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                                        servlet<span style="color:#f92672">,</span> f<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// If the servlet wanted to be unavailable it would have
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#75715e">// said so, so do not call unavailable(null).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ServletException
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">(</span>sm<span style="color:#f92672">.</span><span style="color:#a6e22e">getString</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;standardWrapper.initException&#34;</span><span style="color:#f92672">,</span> getName<span style="color:#f92672">()),</span> f<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Register our newly initialized instance
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 判断servlet是否实现了SingleThreadModel接口，改变Wrapper的SingleThreadModel
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    singleThreadModel <span style="color:#f92672">=</span> servlet <span style="color:#66d9ef">instanceof</span> SingleThreadModel<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>singleThreadModel<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>instancePool <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        instancePool <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Stack<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    fireContainerEvent<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;load&#34;</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    String log <span style="color:#f92672">=</span> SystemLogHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">stopCapture</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>log <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">&amp;&amp;</span> log<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">()</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>getServletContext<span style="color:#f92672">()</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        getServletContext<span style="color:#f92672">().</span><span style="color:#a6e22e">log</span><span style="color:#f92672">(</span>log<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        out<span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>log<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> servlet<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="73-standardwrappervavle">7.3 StandardWrapperVavle</h3>
+<p>StandardWrapperValve执行的操作：</p>
+<ol>
+<li>
+<p>通过调用StandardWrapper的allocate方法得到StandardWrapper相关联的servlet</p>
+</li>
+<li>
+<p>通过调用createFilterChain私有方法创建与servlet相关联的filter chain</p>
+</li>
+<li>
+<p>调用filter chain的doFilter方法，这包括调用servlet的service方法</p>
+</li>
+<li>
+<p>释放filter chain</p>
+</li>
+<li>
+<p>调用wrapper的deallocate方法</p>
+</li>
+<li>
+<p>如果servlet永久性不可用，调用wrapper的unload方法</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Request request<span style="color:#f92672">,</span>Response response<span style="color:#f92672">,</span>ValveContext valveContext<span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Allocate a servlet instance to process this request
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>unavailable<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    servlet <span style="color:#f92672">=</span> wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">allocate</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Acknowlege the request
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  response<span style="color:#f92672">.</span><span style="color:#a6e22e">sendAcknowledgement</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Create the filter chain for this request
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  ApplicationFilterChain filterChain <span style="color:#f92672">=</span> createFilterChain<span style="color:#f92672">(</span>request<span style="color:#f92672">,</span> servlet<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Call the filter chain for this request
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// NOTE: This also calls the servlet&#39;s service() method
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  filterChain<span style="color:#f92672">.</span><span style="color:#a6e22e">doFilter</span><span style="color:#f92672">(</span>sreq<span style="color:#f92672">,</span> sres<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Deallocate the allocated servlet instance
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>servlet <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">deallocate</span><span style="color:#f92672">(</span>servlet<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// If this servlet has been marked permanently unavailable, 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// unload it and release this instance
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span>servlet <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">(</span>wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">getAvailable</span><span style="color:#f92672">()</span> <span style="color:#f92672">==</span> Long<span style="color:#f92672">.</span><span style="color:#a6e22e">MAX_VALUE</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">unload</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>以上代码的核心是<code>ApplicationFilterChain filterChain = createFilterChain(request,servlet)</code>方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> ApplicationFilterChain <span style="color:#a6e22e">createFilterChain</span><span style="color:#f92672">(</span>Request request<span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                                                     Servlet servlet<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// If there is no servlet to execute, return null
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>servlet <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Create and initialize a filter chain object
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        ApplicationFilterChain filterChain <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">new</span> ApplicationFilterChain<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        filterChain<span style="color:#f92672">.</span><span style="color:#a6e22e">setServlet</span><span style="color:#f92672">(</span>servlet<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        StandardWrapper wrapper <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>StandardWrapper<span style="color:#f92672">)</span> getContainer<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        filterChain<span style="color:#f92672">.</span><span style="color:#a6e22e">setSupport</span><span style="color:#f92672">(</span>wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">getInstanceSupport</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Acquire the filter mappings for this Context
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        StandardContext context <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>StandardContext<span style="color:#f92672">)</span> wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">getParent</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// filterMaps和filterConfigs都是在Context中维护的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        FilterMap filterMaps<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> context<span style="color:#f92672">.</span><span style="color:#a6e22e">findFilterMaps</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// If there are no filter mappings, we are done
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">((</span>filterMaps <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">||</span> <span style="color:#f92672">(</span>filterMaps<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>filterChain<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Acquire the information we will need to match filter mappings
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        String requestPath <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>request <span style="color:#66d9ef">instanceof</span> HttpRequest<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            HttpServletRequest hreq <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">(</span>HttpServletRequest<span style="color:#f92672">)</span> request<span style="color:#f92672">.</span><span style="color:#a6e22e">getRequest</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            String contextPath <span style="color:#f92672">=</span> hreq<span style="color:#f92672">.</span><span style="color:#a6e22e">getContextPath</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>contextPath <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                contextPath <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>            String requestURI <span style="color:#f92672">=</span> <span style="color:#f92672">((</span>HttpRequest<span style="color:#f92672">)</span> request<span style="color:#f92672">).</span><span style="color:#a6e22e">getDecodedRequestURI</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>requestURI<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">()</span> <span style="color:#f92672">&gt;=</span> contextPath<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>                requestPath <span style="color:#f92672">=</span> requestURI<span style="color:#f92672">.</span><span style="color:#a6e22e">substring</span><span style="color:#f92672">(</span>contextPath<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        String servletName <span style="color:#f92672">=</span> wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Add the relevant path-mapped filters to this filter chain
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      	<span style="color:#75715e">// 选出符合当前请求path的filterMap，filterMap与filterName一一对应
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// 然后再通过filterName找到ApplicationFilterConfig，添加到filterChain中
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> filterMaps<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>matchFiltersURL<span style="color:#f92672">(</span>filterMaps<span style="color:#f92672">[</span>i<span style="color:#f92672">],</span> requestPath<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>            ApplicationFilterConfig filterConfig <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>ApplicationFilterConfig<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                context<span style="color:#f92672">.</span><span style="color:#a6e22e">findFilterConfig</span><span style="color:#f92672">(</span>filterMaps<span style="color:#f92672">[</span>i<span style="color:#f92672">].</span><span style="color:#a6e22e">getFilterName</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>filterConfig <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            filterChain<span style="color:#f92672">.</span><span style="color:#a6e22e">addFilter</span><span style="color:#f92672">(</span>filterConfig<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            n<span style="color:#f92672">++;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Add filters that match on servlet name second
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// 通过servletName进行筛选过滤器，添加到filterChain中
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> filterMaps<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>matchFiltersServlet<span style="color:#f92672">(</span>filterMaps<span style="color:#f92672">[</span>i<span style="color:#f92672">],</span> servletName<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>            ApplicationFilterConfig filterConfig <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>ApplicationFilterConfig<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                context<span style="color:#f92672">.</span><span style="color:#a6e22e">findFilterConfig</span><span style="color:#f92672">(</span>filterMaps<span style="color:#f92672">[</span>i<span style="color:#f92672">].</span><span style="color:#a6e22e">getFilterName</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>filterConfig <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            filterChain<span style="color:#f92672">.</span><span style="color:#a6e22e">addFilter</span><span style="color:#f92672">(</span>filterConfig<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            n<span style="color:#f92672">++;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>filterChain<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="8-standardcontext">8. StandardContext</h2>
+
 
                 
 
@@ -810,6 +1324,11 @@ if (!doNotTrack) {
                             Previous Post</a>
                     </li>
                     
+                    
+                    <li class="next">
+                        <a href="/post/omit_exception_stack/" data-toggle="tooltip" data-placement="top" title="异常堆栈信息丢失问题定位">Next
+                            Post &rarr;</a>
+                    </li>
                     
                 </ul>
                 

@@ -6,7 +6,16 @@
     <description>Recent content in Linux on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 06 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 17 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shell命令入门</title>
+      <link>https://ericwu0930.github.io/post/shell/</link>
+      <pubDate>Tue, 17 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/shell/</guid>
+      <description>1.变量 1.1 定义变量 1.1.1 普通变量 变量名=变量值：变量值必须是一个整体，中间没有特殊字符 变量名=&amp;lsquo;变量值&amp;rsquo;：单引号中的内容</description>
+    </item>
+    
     <item>
       <title>select与epoll比较</title>
       <link>https://ericwu0930.github.io/post/epoll/</link>

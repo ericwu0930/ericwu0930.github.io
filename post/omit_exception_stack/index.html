@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="异常堆栈信息丢失问题定位" />
+    <meta property="og:title" content="异常堆栈信息丢失问题定位" />
+    <meta property="twitter:title" content="异常堆栈信息丢失问题定位" />
+    
+
+    
+    <meta name="description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。">
+    <meta property="og:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    <meta property="twitter:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>异常堆栈信息丢失问题定位 | 吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/omit_exception_stack/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/java">java</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/jvm">jvm</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/linux">linux</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/mysql">mysql</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/os">os</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/redis">redis</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/spring">spring</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/trivial">trivial</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E7%AE%97%E6%B3%95">算法</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C">计算机网络</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E9%9A%8F%E7%AC%94">随笔</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93" title="工作总结">
+                            工作总结
+                        </a>
+                        
+                    </div>
+                    <h1>异常堆栈信息丢失问题定位</h1>
+                    <h2 class="subheading">JIT即时编译概述以及问题解决办法</h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                     &#34;Eric&#34;
+                             
+                            on 
+                            Tuesday, January 17, 2023
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h1 id="1-现象">1. 现象</h1>
+<p>在完成DataTalk推送队列化改造后，为了测试全局限流措施的有效性，设置信号量为20，使用python脚本在同一时间触发BeaconJob任务触发接口40次，模拟高峰时期推送任务的情况，期望得到的结果是推送任务分2批完成。</p>
+<p>经过观察结果符合预期，但是发现推送任务都显示推送失败。如果不经过BeaconJob触发，而是在DT界面点击立即推送触发则可以可以正常推送发出。</p>
+<p>通过DT立即推送触发推送任务没有走推送队列化的逻辑，因此怀疑还是队列化改造把那里改出了问题。</p>
+<p>看了下后台日志，发现果然有错误的log日志，如下图所示:</p>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/WeChatWorkScreenshot_2fad0921-3f89-43e5-a06e-eccf6c45e492.png" alt="WeChatWorkScreenshot_2fad0921-3f89-43e5-a06e-eccf6c45e492">
+
+</p>
+<p>但是发现错误日志中没有堆栈信息。</p>
+<p>根据log位置可以判断出错误信息抛出位置为：</p>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/WeChatWorkScreenshot_cf0a1f04-23ae-427d-ad6d-d7fc9c1f2df1.png" alt="WeChatWorkScreenshot_cf0a1f04-23ae-427d-ad6d-d7fc9c1f2df1">
+
+</p>
+<p>为了进一步确认，分别在preProcess方法，prepareSendContent方法以及push方法里使用try-catch进行包裹，然后再次触发推送任务，结果如下图所示</p>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/WeChatWorkScreenshot_d9b0ae5e-4d34-459c-8212-feebea423dbd.png" alt="WeChatWorkScreenshot_d9b0ae5e-4d34-459c-8212-feebea423dbd">
+
+</p>
+<p>可见异常的堆栈信息被成功打印出来。根据该堆栈信息，也成功定位到了问题，并做出了修正。</p>
+<p>但是为什么在内层使用try-catch可以把异常的堆栈信息成功捕获，而在外层则不行？Exception如果在内层没有被捕获，会一直保持原样往上抛出，这样的解释显然不合理，于是在网上搜索了相关资料得到了答案。</p>
+<h1 id="2-jit即时编译">2. JIT即时编译</h1>
+<p>Java程序在运行初期是通过解释器来执行，当发现某块代码运行特别频繁，就会将之判定为热点代码(Hot Spot Code), 虚拟机会将这部分代码编译成本地机器码，并对这些代码进行优化。这件事就是即时编译(Just In Time, JIT)优化, 做这件事的就是即时编译器。</p>
+<h2 id="21-解释器与编译器">2.1 解释器与编译器</h2>
+<p>目前主流虚拟机都采用解释器、编译器并存的架构。</p>
+<p>解释器：程序执行初期，解释器执行的方式可以省去编译过程，节省时间</p>
+<p>编译器：在渡过初期后，编译器把更多的代码编译成本地代码，提升执行效率，以空间换时间</p>
+<p>因为编译器存在过度优化，基于假设优化等可能失败的优化结果，通过逆优化(Deoptimization)的方式，将程序的执行主动权从编译器交给解释器执行。可以把解释器看成是一个保守派，编译器是一个激进派，在JVM执行体系里，两者相辅相成，互相配合。</p>
+<h2 id="22-编译器种类">2.2 编译器种类</h2>
+<p>一般虚拟机都内置了两个或三个即时编译器，历史比较久远的C1, C2, 以及在JDK10才出现的Graal</p>
+<p>C1：客户端编译器(Client Complier)，执行时间较短，启动程序的时间较快。在一些物联网小型设备上可指定这种编译器，通过-client参数强制指定</p>
+<p>C2：服务端编译器(Server Complier)，执行时间较长，启动时间较长但可编译高度优化的代码，峰值性能更高。可通过-server参数强制指定</p>
+<p>Graal：是一个实验性质的即时编译器，其最大的特点是该编译器用Java语言编写，更加模块化，也更容易开发与维护。充分预热后Java代码编译成二进制码后其执行性能并不亚于由C++编写的C2。可以通过参数 -XX:+UnlockExperimentalVMOptions -XX:+UseJVMCICompiler 启用，并替换 C2</p>
+<h2 id="23-分层编译优化">2.3 分层编译优化</h2>
+<p>虽然可以通过-Xint参数强制虚拟机处于&quot;解释模式&quot;此时编译器不工作，可以通过-Xcomp参数强制虚拟机处于&quot;编译模式&quot;此时解释器不工作，可以通过-client参数使C2不工作，也可以通过-server参数使C1不工作，但是并不推荐这样做，因为有分层编译优化这一特性。</p>
+<p>编译器在编译代码的时候会占用程序运行时间，优化程度越高的代码编译时间会越长，甚至会需要解释器负责收集程序运行监控信息提供给编译器来编译优化程度更高的代码。所以为了在更短的时间内编译优化程度更高的代码，需要编译器之间的配合，也就是所谓的分层编译优化。一共有五层，分别是：</p>
+<p>纯解释执行，解释器不开启收集程序运行监控信息</p>
+<p>使用C1编译器进行简单可靠的优化，解释器不开启收集程序运行监控信息</p>
+<p>仍然使用C1编译器优化，但是会针对方法调用次数和回边次数(循环代码调用次数)相关的统计</p>
+<p>仍然使用C1编译器优化，统计信息才上一层的基础上会加上分支跳转、虚方法调用等全部统计信息，解释器火力全开</p>
+<p>使用C2编译器优化，相比C1，C2会开启更多耗时更长的优化，还会根据解释器提供的程序运行信息进行一些更为激进的优化</p>
+<p>在开启编译优化后，热点代码可能会被重复编译，C1编译器编译得更快，C2编译器编译质量更高，第0层模式解释器执行的时候也不用收集监控信息，第4层模式C2在进行耗时较长的编译较为忙碌时候，C1也能为C2承担一部分编译工作，交互关系如下图：</p>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230117153517227.png" alt="image-20230117153517227">
+
+</p>
+<ul>
+<li>
+<p>common是针对大部分代码的编译情况，trival method针对执行次数较少的代码</p>
+</li>
+<li>
+<p>trival method很少被执行所以没有被C2编译的必要，通过第4层模式的优化就足够了</p>
+</li>
+<li>
+<p>在C1忙碌的时候，会直接由C2编译；C2忙碌的时候，在C1编译的路径也会更长</p>
+</li>
+</ul>
+<h2 id="24-编译触发条件">2.4 编译触发条件</h2>
+<p>上面提到即使编译是针对热点代码进行编译优化，那么什么是热点代码？</p>
+<p>被多次调用的方法</p>
+<p>被多次执行的循环代码体</p>
+<p>这里的多次如何知道具体有多少次？有两种方法可以知道</p>
+<p>基于采样的热点探测(Sample Based Hot Spot Code Detection): 虚拟机周期性地检查各个线程的调用栈顶，如果发现某个方法经常出现在栈顶，那么这个方法就是热点方法，这种方法简单高效但是精确度不高</p>
+<p>基于计数器的热点探测(Counter Based Hot Spot Code Dection): 虚拟机为每个方法建立计数器，计数器超过一定阈值就是热点方法</p>
+<p>目前HotSpot虚拟机使用的是第二种方法，虚拟机为每个方法都准备了两类计数器，方法调用计数器以及回边计数器(回边的意思是在循环的末尾边界往回跳转，可以理解为循环代码的一次执行)，而异常堆栈丢失就是JIT优化的一个案例。</p>
+<p>在ORACLE官方文档中有这样一段描述</p>
+<blockquote>
+<p>The compiler in the server VM now provides correct stack backtraces for all &ldquo;cold&rdquo; built-in exceptions. For performance purposes, when such an exception is thrown a few times, the method may be recompiled. After recompilation, the compiler may choose a faster tactic using preallocated exceptions that do not provide a stack trace. To disable completely the use of preallocated exceptions, use this new flag: -XX:-OmitStackTraceInFastThrow.</p>
+</blockquote>
+<p>即对于经常反复抛出的内置异常，JVM会进行重编译，通过不提供堆栈信息来提高抛出速度。</p>
+<h1 id="问题解决办法">问题解决办法</h1>
+<p>正如官方文档里的描述，可以使用<code>-XX:OmitStackTraceFastThrow</code>来禁用fast throw。</p>
+<p>在我进行推送压测的时候，一次性触发了40次推送任务，这40次推送任务因为代码逻辑，都会在相同的位置报错，因此触发了JIT优化，在我使用<code>tail -f</code>命令看后台日志的时候是从后往前看的，因此我看到的是被优化后没有堆栈信息的报错。</p>
+<p>当我对内层方法进行try-catch后，触发了一次推送任务，并马上查看了后台日志，此时异常报错并没有被JIT优化，自然就看到了异常的堆栈信息。</p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/tomcat/" data-toggle="tooltip" data-placement="top" title="How Tomcat works笔记">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/post/shell/" data-toggle="tooltip" data-placement="top" title="Shell命令入门">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+
+		            
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2023
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

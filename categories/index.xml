@@ -6,7 +6,25 @@
     <description>Recent content in Categories on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 03 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 17 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>JVM</title>
+      <link>https://ericwu0930.github.io/categories/jvm/</link>
+      <pubDate>Tue, 17 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/categories/jvm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Linux</title>
+      <link>https://ericwu0930.github.io/categories/linux/</link>
+      <pubDate>Tue, 17 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/categories/linux/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Java</title>
       <link>https://ericwu0930.github.io/categories/java/</link>
@@ -62,15 +80,6 @@
     </item>
     
     <item>
-      <title>Linux</title>
-      <link>https://ericwu0930.github.io/categories/linux/</link>
-      <pubDate>Sun, 06 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/categories/linux/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>随笔</title>
       <link>https://ericwu0930.github.io/categories/%E9%9A%8F%E7%AC%94/</link>
       <pubDate>Thu, 09 Apr 2020 00:00:00 +0000</pubDate>
@@ -85,15 +94,6 @@
       <pubDate>Tue, 31 Mar 2020 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>JVM</title>
-      <link>https://ericwu0930.github.io/categories/jvm/</link>
-      <pubDate>Wed, 11 Mar 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/categories/jvm/</guid>
       <description></description>
     </item>
     

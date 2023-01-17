@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>工作总结 on Eric&#39;s Blog</title>
+    <link>https://ericwu0930.github.io/tags/%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/</link>
+    <description>Recent content in 工作总结 on Eric&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 17 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/tags/%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>异常堆栈信息丢失问题定位</title>
+      <link>https://ericwu0930.github.io/post/omit_exception_stack/</link>
+      <pubDate>Tue, 17 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/omit_exception_stack/</guid>
+      <description>1. 现象 在完成DataTalk推送队列化改造后，为了测试全局限流措施的有效性，设置信号量为20，使用python脚本在同一时间触发Beacon</description>
+    </item>
+    
+  </channel>
+</rss>
