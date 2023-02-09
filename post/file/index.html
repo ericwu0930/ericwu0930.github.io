@@ -15,15 +15,15 @@
     
 
     
-    <meta name="title" content="MySQL中文乱码问题" />
-    <meta property="og:title" content="MySQL中文乱码问题" />
-    <meta property="twitter:title" content="MySQL中文乱码问题" />
+    <meta name="title" content="Java File常用操作总结" />
+    <meta property="og:title" content="Java File常用操作总结" />
+    <meta property="twitter:title" content="Java File常用操作总结" />
     
 
     
-    <meta name="description" content="中文乱码问题排查过程以及原理">
-    <meta property="og:description" content="中文乱码问题排查过程以及原理" />
-    <meta property="twitter:description" content="中文乱码问题排查过程以及原理" />
+    <meta name="description" content="总结Java File相关操作">
+    <meta property="og:description" content="总结Java File相关操作" />
+    <meta property="twitter:description" content="总结Java File相关操作" />
     
 
     
@@ -34,9 +34,9 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>MySQL中文乱码问题 | 吴昊的博客 | Eric&#39;s Blog</title>
+    <title>Java File常用操作总结 | 吴昊的博客 | Eric&#39;s Blog</title>
 
-    <link rel="canonical" href="/post/code/">
+    <link rel="canonical" href="/post/file/">
 
     
     
@@ -224,21 +224,17 @@ if (!doNotTrack) {
                             学习笔记
                         </a>
                         
-                        <a class="tag" href="/tags/%E7%BA%BF%E4%B8%8A%E9%97%AE%E9%A2%98" title="线上问题">
-                            线上问题
-                        </a>
-                        
                     </div>
-                    <h1>MySQL中文乱码问题</h1>
+                    <h1>Java File常用操作总结</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         
                             Posted by 
                             
-                                     &#34;erichwu&#34;
+                                     &#34;&#34;
                              
                             on 
-                            Saturday, December 17, 2022
+                            Tuesday, February 8, 2022
                             
                             
                             
@@ -264,80 +260,82 @@ if (!doNotTrack) {
                 post-container">
 
                 
-                <h2 id="现象">现象</h2>
-<p>用户反馈datatalk查询结果中文乱码，如下所示</p>
-<p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180201248.png" alt="image-20221229180201248">
-
-</p>
-<p>数据源配置如下：</p>
-<p>用户db表为utf8编码，并且也是通过utf-8编码的jdbc连接用户db查数，中文无法正常显示。</p>
-<h2 id="排查过程">排查过程</h2>
-<ol>
-<li>
-<p>跟用户索要db账号密码，使用公司db客户端连接，发现查询中文依旧为乱码</p>
-</li>
-<li>
-<p>用户反馈在链接mysql时需加上&ndash;default-character-set=latin1字段才可正常显示中文</p>
-</li>
-<li>
-<p>使用terminal直连用户mysql server，查询结果仍然是中文乱码；此时用户反馈需要在连接server的时候加上<code>--default-character-set=latin1</code>的字段，结果才可以正常显示。查阅相关资料，该命令会影响<code>character_set_client</code>,<code>character_set_connectoin</code>,<code>character_set_server</code>这三个系统变量。</p>
-</li>
-<li>
-<p>如果不指定<code>--default-character-set=latin1</code>，执行以下命令<code>show variables like '%char%'</code> 结果如下</p>
-<p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180225237.png" alt="image-20221229180225237">
-
-</p>
-</li>
-<li>
-<p>加上<code>--default-character-set=latin1</code>，重新执行<code>show variables like '%char%'</code>结果如下</p>
-<p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180239856.png" alt="image-20221229180239856">
-
-</p>
-</li>
-</ol>
-<h2 id="定位问题">定位问题</h2>
-<p>上述的三个MySQL系统变量与乱码问题息息相关，其分别为:</p>
-<ol>
-<li>character_set_client: server认为客户端的编码格式</li>
-<li>character_set_connection: server真正处理请求时会转为该编码格式</li>
-<li>character_set_results: server返回结果时会将字符集转为该格式</li>
-</ol>
-<p>其关系如下：</p>
-<p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180313346.png" alt="image-20221229180313346">
-
-</p>
-<p>最标准的不显示乱码的样式：</p>
-<p>本机字符集=character_set_client=character_set_connection=character_set_results</p>
-<p>character_set_client，character_set_connection，character_set_results可以通过<code>set names 字符集名</code> 来设置或者在连接时通过<code>--default-character-set=字符集</code>来设置</p>
-<p>本机字符集utf8=character_set_client=character_set_connection=character_set_results不能正常显示中文，但是为latin1的时候却能正常显示，说明用户的数据本身是有问题的。（这里怀疑在&ndash;default-character-set=latin1的环境下添加了数据，中文数据本身就是乱码）</p>
-<h2 id="解决问题">解决问题</h2>
-<p>联系用户自行解决。</p>
-<p>但是这里有个问题，期间联系用户连接数据源时将编码格式转为latin1（前文提到，用户使用<code>--default-character-set=latin1</code>后可以正常显示），但是依然没有得到正确的中文输出。那jdbc连接的编码格式和上面那条指令有什么区别呢？搜索了下，发现这个<a href="https://www.chenjianjx.com/mysql-jbdc-driver%E7%9A%84%E5%AD%97%E7%AC%A6%E9%9B%86%E9%97%AE%E9%A2%98-%E7%A0%94%E7%A9%B6%E7%AC%94%E8%AE%B0/">文档</a>。</p>
-<p>总结一下jdbc url里设置characterEncoding就相当于将character_set_client和character_set_connection设置成characterEncoding，character_set_results设置为NULL（查询出来的具体字段不会从字段的编码转成character_set_results，而是保留了原有的编码）。与<code>--default-character-set=latin1</code>相比，少了一步结果集转到latin1编码格式的转化，自然无法得到正确结果。</p>
-<h2 id="多聊一嘴unicode和utf-8的关系">多聊一嘴：Unicode和UTF-8的关系</h2>
-<p>计算机世界不论什么东西，都需要转换为01进行存储，对于数字而言，可以将其转为二进制存储，但是对于字符而言，需要通过一种映射将其先转为一个数字，然后在转为二级制存储。</p>
-<p>最熟悉的是ASCII编码，其编码表如下：</p>
-<p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180340954.png" alt="image-20221229180340954">
-
-</p>
-<p>可见其只是定义了英文字符以及一些特殊标点，对于中文自然无法涵盖，为此Unicode应运而生。</p>
-<p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180354557.png" alt="image-20221229180354557">
-
-</p>
-<p>Unicode会使用两个字节表示一个元素（注意是元素，不一定是一个有意义的文字），但是我们该如何对其编码呢？对于ASCII而言，其范围是0~127，那我们同样的用一个字节的二进制就可以对其进行编码。因为字符到数字的映射以及转二进制的方法是唯一的，所以我们就将这两步统称为ASCII编码。</p>
-<p>但是对于Unicode而言，其范围是0~2^32-1，如果我们使用4字节对齐进行编码（该编码为UTF-32），对于同样的d字符而言，所占的容量是ASCII编码的4倍，因此又开发了UTF-16编码和UTF-8编码，UTF-8编码规则如下：</p>
-<p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180410299.png" alt="image-20221229180410299">
-
-</p>
-<p>其规则是首先将Unicode映射后的数字转为二进制，然后按照上述规则填入二进制编码的格式中。可见UTF-8是一种可变长度的编码格式。</p>
-<p>In a word，从字符到二级制包含两个过程，我们把第一个过程成为字符集的映射，第二个过程是字符编码。Unicode是字符和数字之间的映射规则，utf8，utf16和utf32是具体的编码方式。</p>
+                <h1 id="1-file对象">1. File对象</h1>
+<p>Java File是文件对象的抽象，对应于一个目录或一个文件。</p>
+<p>当使用pathname创建一个File对象的时，该目录可以不存在，但在对该对象进行一些操作，比如创建一个FileOutputStream时，如果文件目录不存在，则可能会报错。</p>
+<h2 id="2-file对象的操作">2. File对象的操作</h2>
+<h3 id="21-移动文件复制文件">2.1 移动文件(复制文件)</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 复制文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 方法一: 使用文件流
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param source 源文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param dest   目标文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">copyFileUsingFileStreams</span><span style="color:#f92672">(</span>File source<span style="color:#f92672">,</span> File dest<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throws</span> IOException <span style="color:#f92672">{</span>    
+</span></span><span style="display:flex;"><span>    InputStream input <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>    
+</span></span><span style="display:flex;"><span>    OutputStream output <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>           input <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileInputStream<span style="color:#f92672">(</span>source<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>           output <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileOutputStream<span style="color:#f92672">(</span>dest<span style="color:#f92672">);</span>        
+</span></span><span style="display:flex;"><span>           <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> buf <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span><span style="color:#ae81ff">1024</span><span style="color:#f92672">];</span>        
+</span></span><span style="display:flex;"><span>           <span style="color:#66d9ef">int</span> bytesRead<span style="color:#f92672">;</span>        
+</span></span><span style="display:flex;"><span>           <span style="color:#66d9ef">while</span> <span style="color:#f92672">((</span>bytesRead <span style="color:#f92672">=</span> input<span style="color:#f92672">.</span><span style="color:#a6e22e">read</span><span style="color:#f92672">(</span>buf<span style="color:#f92672">))</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>               output<span style="color:#f92672">.</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>buf<span style="color:#f92672">,</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">,</span> bytesRead<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        input<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        output<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 复制文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 方法二: 使用FileChannel复制
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param source 源文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param dest   目标文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">copyFileUsingFileChannels</span><span style="color:#f92672">(</span>File source<span style="color:#f92672">,</span> File dest<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IOException <span style="color:#f92672">{</span>    
+</span></span><span style="display:flex;"><span>        FileChannel inputChannel <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>    
+</span></span><span style="display:flex;"><span>        FileChannel outputChannel <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        inputChannel <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileInputStream<span style="color:#f92672">(</span>source<span style="color:#f92672">).</span><span style="color:#a6e22e">getChannel</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        outputChannel <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileOutputStream<span style="color:#f92672">(</span>dest<span style="color:#f92672">).</span><span style="color:#a6e22e">getChannel</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        outputChannel<span style="color:#f92672">.</span><span style="color:#a6e22e">transferFrom</span><span style="color:#f92672">(</span>inputChannel<span style="color:#f92672">,</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">,</span> inputChannel<span style="color:#f92672">.</span><span style="color:#a6e22e">size</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        inputChannel<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        outputChannel<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 复制文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 方法三: 使用Apache Commons IO提供的工具类进行复制，这个类主要使用了Java NIO Channel
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param source 源文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param dest   目标文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">copyFileUsingApacheCommonsIO</span><span style="color:#f92672">(</span>File source<span style="color:#f92672">,</span> File dest<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throws</span> IOException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    FileUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">copyFile</span><span style="color:#f92672">(</span>source<span style="color:#f92672">,</span> dest<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 复制文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 方法四: 使用Java7的Files类复制
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param source 源文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param dest   目标文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">copyFileUsingJava7Files</span><span style="color:#f92672">(</span>File source<span style="color:#f92672">,</span> File dest<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throws</span> IOException <span style="color:#f92672">{</span>    
+</span></span><span style="display:flex;"><span>        Files<span style="color:#f92672">.</span><span style="color:#a6e22e">copy</span><span style="color:#f92672">(</span>source<span style="color:#f92672">.</span><span style="color:#a6e22e">toPath</span><span style="color:#f92672">(),</span> dest<span style="color:#f92672">.</span><span style="color:#a6e22e">toPath</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="22-查找文件">2.2 查找文件</h3>
+<h3 id="23-删除文件">2.3 删除文件</h3>
+<h3 id="24-压缩文件">2.4 压缩文件</h3>
 
 
                 
@@ -347,13 +345,13 @@ if (!doNotTrack) {
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/post/file/" data-toggle="tooltip" data-placement="top" title="Java File常用操作总结">&larr;
+                        <a href="/post/myuniversity/" data-toggle="tooltip" data-placement="top" title="我的大学（转）">&larr;
                             Previous Post</a>
                     </li>
                     
                     
                     <li class="next">
-                        <a href="/post/spring_bean/" data-toggle="tooltip" data-placement="top" title="Spring Bean的生命周期">Next
+                        <a href="/post/code/" data-toggle="tooltip" data-placement="top" title="MySQL中文乱码问题">Next
                             Post &rarr;</a>
                     </li>
                     

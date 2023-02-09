@@ -261,10 +261,16 @@ if (!doNotTrack) {
 
                 
                 <h2 id="1-tomcat总体架构">1. Tomcat总体架构</h2>
-<!-- raw HTML omitted -->
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230103163951012.png" alt="image-20230103171855639">
+
+</p>
 <p>作为一个服务器，其最基本的功能就是接收其他计算机发来的请求数据并进行解析，完成相关业务处理，然后把处理结果作为相应返回给计算机，如上图所示。</p>
 <p>但是把请求监听和请求处理放到一起扩展性很差，比如当我们想适配多种网络协议，但是请求处理却相同的时候。于是Tomcat将网络协议和请求处理从概念上进行分离。得到以下结构：</p>
-<!-- raw HTML omitted -->
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20230103170936486.png" alt="image-20230103171855639">
+
+</p>
 <p>Connector负责开启Socket并监听客户端的请求，返回相应数据，完成与网络协议相关的操作；Container负责具体的请求处理。</p>
 <p>以上只是Tomcat非常抽象的分层，具体情况随着了解的深入逐渐细化。</p>
 <h2 id="2-connector">2. Connector</h2>

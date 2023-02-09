@@ -26,6 +26,15 @@
     </item>
     
     <item>
+      <title>Java File常用操作总结</title>
+      <link>https://ericwu0930.github.io/post/file/</link>
+      <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/file/</guid>
+      <description>1. File对象 Java File是文件对象的抽象，对应于一个目录或一个文件。 当使用pathname创建一个File对象的时，该目录可以不存在，但在对</description>
+    </item>
+    
+    <item>
       <title>线程池浅谈</title>
       <link>https://ericwu0930.github.io/post/threadpool/</link>
       <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
