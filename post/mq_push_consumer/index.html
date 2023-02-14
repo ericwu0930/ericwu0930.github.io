@@ -599,7 +599,7 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>      <span style="color:#f92672">...</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span></code></pre></div><p>整个DefaultMQPushConsumer的启动以及消费流程课件下图所示，各类具体的源码课件下面的章节</p>
+</span></span></code></pre></div><p>整个DefaultMQPushConsumer的启动以及消费流程课件下图所示，</p>
 <p>
   <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/20200814230940226.png" alt="7">
 
@@ -611,10 +611,11 @@ if (!doNotTrack) {
 <li>然后将拉取到的消息提交到消费组内部的线程池，并立即返回，并将 PullRequest 对象放入到 pullRequestQueue 中，然后取出下一个 PullRequest 对象继续重复消息拉取的流程，从这里可以看出，消息拉取与消息消费是不同的线程。</li>
 <li>消息消费组线程池处理完一条消息后，会将消息从 ProccessQueue 中，然后会向 Broker 汇报消息消费进度，以便下次重启时能从上一次消费的位置开始消费。</li>
 </ol>
-<h3 id="231-mqclientinstance类">2.3.1 MQClientInstance类</h3>
+<p>在了解完DefaultMQPushConsumer整体的消费流程后，下面分析各个类的源码。</p>
+<h3 id="24-mqclientinstance类">2.4 MQClientInstance类</h3>
 <p>在初始化MQClientInstance对象的时候，在其构造方法中会构建PullMessageService类和RebalanceService类。</p>
 <p>PullMessageService类和RebalanceService类都可以视为后台线程类，在MQClientInstance对象的start方法中也都会分别新建线程去运行这两个类的run方法。RebalanceService暂且不表，下面先介绍下跟消费者主流程有关的PullMessageService。</p>
-<h3 id="232-pullmessageservice">2.3.2 PullMessageService</h3>
+<h3 id="25-pullmessageservice">2.5 PullMessageService</h3>
 <p>PullMessageService的run方法如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">run</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>
@@ -870,7 +871,7 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>    log<span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;pullKernelImpl exception&#34;</span><span style="color:#f92672">,</span> e<span style="color:#f92672">);</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">executePullRequestLater</span><span style="color:#f92672">(</span>pullRequest<span style="color:#f92672">,</span> pullTimeDelayMillsWhenException<span style="color:#f92672">);</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span></code></pre></div><h3 id="233-consumemessageservice">2.3.3 ConsumeMessageService</h3>
+</span></span></code></pre></div><h3 id="26-consumemessageservice">2.6 ConsumeMessageService</h3>
 <p>在客户端启动过程中，会根据注册的Listener的类型，选择初始化ConsumeMessageConcurrentlyService或者ConsumeMessageOrderlyService，然后执行其start方法。</p>
 <p>以ConsumeMessageConcurrentlyService为例，其在start方法只是定期清理过期消息，不是很重要。核心逻辑在其构造方法中，可见初始化了三个线程池。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">ConsumeMessageConcurrentlyService</span><span style="color:#f92672">(</span>DefaultMQPushConsumerImpl defaultMQPushConsumerImpl<span style="color:#f92672">,</span>MessageListenerConcurrently messageListener<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
