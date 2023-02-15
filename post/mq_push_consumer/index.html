@@ -346,6 +346,8 @@ if (!doNotTrack) {
   <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/20200814230847619.png" alt="20200814230847619">
 
 </p>
+<p>举例，订阅dw_test这个topic的order_topic_activity_consumer消费组的消费情况如下：该topic有四个队列，其中0号队列消费到了2,1号队列消费到了0,2号队列消费到了0,3号队列消费到了3。</p>
+<p>可见，topic和消费组唯一的确定一个消费进度。</p>
 <h3 id="15-consumemessageservice">1.5 ConsumeMessageService</h3>
 <p>ConsumeMessageService维护有多个线程池，与具体的消息消费有关。</p>
 <h3 id="16-servicethread">1.6 ServiceThread</h3>
