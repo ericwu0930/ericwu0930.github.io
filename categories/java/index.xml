@@ -6,7 +6,16 @@
     <description>Recent content in Java on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 12 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/java/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 17 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/java/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java SPI发现机制</title>
+      <link>https://ericwu0930.github.io/post/java_spi/</link>
+      <pubDate>Fri, 17 Feb 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/java_spi/</guid>
+      <description>阅读本篇文章前默认已经掌握了Java的双亲委派模型。 最近在看Tomcat的自定义类加载器，在Tomat中一个JVM环境可能运行多个web ap</description>
+    </item>
+    
     <item>
       <title>RocketMQ源码分析（一）—— DefaultPushConsumer</title>
       <link>https://ericwu0930.github.io/post/mq_push_consumer/</link>
