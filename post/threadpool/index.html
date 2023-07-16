@@ -144,6 +144,10 @@ if (!doNotTrack) {
                         </li>
                         
                         <li>
+                            <a href="/categories/trival">trival</a>
+                        </li>
+                        
+                        <li>
                             <a href="/categories/trivial">trivial</a>
                         </li>
                         
@@ -336,7 +340,7 @@ if (!doNotTrack) {
 </span></span></code></pre></div><p>get方法的行为取决于任务的状态（尚未开始，正在运行，已完成）如果任务已经完成，那么get会立即返回或者抛出一个Exception，否则将阻塞并直到任务完成。可以通过许多方法创建一个Future来描述任务，ExecutorService中的所有submit方法都将返回一个Future</p>
 <h2 id="三threadpoolexecutor线程池">三、ThreadPoolExecutor线程池</h2>
 <p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229181300585.png" alt="image-20221229181300585">
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfeui48cwtj30a90dgglx.jpg" alt="image-20200601131724510">
 
 </p>
 <p>线程池实现了ExecutorService接口，也即拥有ExecutorService的功能。有两种方法创建一个线程池，使用Executors这一线程池工厂类创建默认的几种线程池，或者自定义线程池。自定义一个线程池需要定义7个参数，默认的线程池无非是在这8个参数中赋上了一定的值。</p>
@@ -367,13 +371,13 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>                              RejectedExecutionHandler handler<span style="color:#f92672">)</span>
 </span></span></code></pre></div><p>线程池中维护着两个队列，线程队列和任务队列，运行顺序是当任务来临时，先调用核心线程去执行，如果核心线程数不够，则将任务放入任务队列中，如果任务队列已满，且线程数小于最大线程池大小，则开启新的非核心线程，这类线程在空闲时间达到keepAliveTime之后会自动释放掉，如果任务队列已满且线程数也达到了最大线程池大小，则执行拒绝策略</p>
 <p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229181313000.png" alt="image-20221229181313000">
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfeui2wiqbj30mw0fi0u3.jpg" alt="image-20200601132530613">
 
 </p>
 <h3 id="设置线程池的大小">设置线程池的大小</h3>
 <p>如果线程池过大，大量的线程在相对很少的CPU和内存资源上发生竞争，导致更高的内存使用量以及CPU切换开销；如果线程池过小，将会导致许多空闲的处理器无法执行工作，从而降低吞吐量。如何合理的设置线程数，这里有一个公式：</p>
 <p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229181321816.png" alt="image-20221229181321816">
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfeui3pxs6j30e404st8u.jpg" alt="image-20200602101250873">
 
 </p>
 <p>举一个例子可以更好的理解这个公式，有一个八核的cpu，处理http一个请求需要消耗cpu时间20ms，进行io相关操作需要消耗180ms，请问需要开多少线程。可以这样想，如果想让cpu使用率最大化，那么应该在处理io请求，cpu处于空闲状态时再开一个线程处理其他的cpu请求，那么在180ms的时间里可以处理多少个cpu请求呢？答案是9个，加上最初的一个线程，在处理一个http请求的200ms的周期中，10个线程就可以让cpu的一个核心全速运行，那么8个核心一共需要开启80个线程。</p>

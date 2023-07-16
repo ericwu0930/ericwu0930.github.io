@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>TRIVAL on Eric&#39;s Blog</title>
+    <link>https://ericwu0930.github.io/categories/trival/</link>
+    <description>Recent content in TRIVAL on Eric&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 15 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/trival/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mockito原理解析</title>
+      <link>https://ericwu0930.github.io/post/mockito/</link>
+      <pubDate>Sat, 15 Jul 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/mockito/</guid>
+      <description>前言 Mockito是一款Java主流的单元测试框架，上手简单，mockito官网：http://mockito.org，API文档：http</description>
+    </item>
+    
+  </channel>
+</rss>

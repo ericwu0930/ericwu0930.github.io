@@ -6,16 +6,7 @@
     <description>Recent content in Spring on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 18 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/spring/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Spring Bean的生命周期</title>
-      <link>https://ericwu0930.github.io/post/spring_bean/</link>
-      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/post/spring_bean/</guid>
-      <description>熟悉Spring Bean的生命周期可以加深我们对Spring的理解，对于Spring的一些扩展操作也会有更加清晰的认识。 1. 整体流程 Bean的</description>
-    </item>
-    
+    <lastBuildDate>Sat, 23 May 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/spring/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>[转]Spring IOC</title>
       <link>https://ericwu0930.github.io/post/springioc/</link>

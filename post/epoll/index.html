@@ -144,6 +144,10 @@ if (!doNotTrack) {
                         </li>
                         
                         <li>
+                            <a href="/categories/trival">trival</a>
+                        </li>
+                        
+                        <li>
                             <a href="/categories/trivial">trivial</a>
                         </li>
                         
@@ -269,7 +273,7 @@ if (!doNotTrack) {
 <h2 id="2-基于进程的并发编程">2. 基于进程的并发编程</h2>
 <p>我们可以为每个连接开启一个新的线程，也就是accpet到新的连接后，开启一个新的线程完成对用户指令的回显。但是当连接数过多的时候，线程之间的上下文切换将极大的消耗cpu资源。</p>
 <p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180900009.png" alt="image-20221229180900009">
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gihuw9n78ej30xk0jytax.jpg" alt="image-20200907090821189">
 
 </p>
 <h2 id="3-select多路复用">3. select多路复用</h2>
@@ -329,7 +333,7 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">struct</span> list_head rellist;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180915555.png" alt="image-20221229180915555">
+  <img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gihuwb7a6hj30n80k2jt7.jpg" alt="image-20200907094854837">
 
 </p>
 <p>当我们使用epoll_ctl添加监听事件的时候，会向红黑树中添加新的节点，并且会与设备驱动建立回调关系，当相应的事件发生时，会把该事件放到rdllist双向链表中，当调用epoll_wait时，只需要将rdllist复制到用户内存空间即可，因此epoll_wait的效率非常高。</p>
@@ -355,7 +359,7 @@ if (!doNotTrack) {
                     
                     
                     <li class="next">
-                        <a href="/post/privilege/" data-toggle="tooltip" data-placement="top" title="内核态和用户态">Next
+                        <a href="/post/expire/" data-toggle="tooltip" data-placement="top" title="键的过期策略">Next
                             Post &rarr;</a>
                     </li>
                     

@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Eric&#39;s Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://ericwu0930.github.io/img/roof.jpg">
+    <meta property="twitter:image" content="https://ericwu0930.github.io/img/roof.jpg" />
+    
+
+    
+    <meta name="title" content="Mockito原理解析" />
+    <meta property="og:title" content="Mockito原理解析" />
+    <meta property="twitter:title" content="Mockito原理解析" />
+    
+
+    
+    <meta name="description" content="单元测试框架Mockito原理解析">
+    <meta property="og:description" content="单元测试框架Mockito原理解析" />
+    <meta property="twitter:description" content="单元测试框架Mockito原理解析" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Mockito原理解析 | 吴昊的博客 | Eric&#39;s Blog</title>
+
+    <link rel="canonical" href="/post/mockito/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-158682233-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Eric&#39;s Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/java">java</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/jvm">jvm</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/linux">linux</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/mysql">mysql</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/os">os</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/redis">redis</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/spring">spring</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/trival">trival</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/trivial">trivial</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E7%AE%97%E6%B3%95">算法</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C">计算机网络</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/%E9%9A%8F%E7%AC%94">随笔</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/roof.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" title="学习笔记">
+                            学习笔记
+                        </a>
+                        
+                    </div>
+                    <h1>Mockito原理解析</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                Eric
+                             
+                            on 
+                            Saturday, July 15, 2023
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="前言">前言</h2>
+<p>Mockito是一款Java主流的单元测试框架，上手简单，mockito官网：<a href="https://link.zhihu.com/?target=http%3A//mockito.org/">http://mockito.org</a>，API文档：<a href="https://link.zhihu.com/?target=http%3A//docs.mockito.googlecode.com/hg/org/mockito/Mockito.html">http://docs.mockito.googlecode.com/hg/org/mockito/Mockito.html</a>，项目源码：<a href="https://link.zhihu.com/?target=https%3A//github.com/mockito/mockito">https://github.com/mockito/mockito</a>。</p>
+<p>在我们写单元测试时，经常遇到待测试类依赖于多个类，从而形成一个大的依赖树，要在单元测试中完整的构建这一依赖是一件非常困难的事情。Mockito通过<code>mock</code>方法和<code>stub</code>方法，可以构建一个mock对象，然后对mock对象的行为进行打桩，让我们把单元测试聚焦于待测试类上。</p>
+<p>然而，Mockito是如何实现这一功能的呢？本文就<code>when</code>方法和<code>stub</code>方法对其进行介绍。</p>
+<h2 id="单测环境">单测环境</h2>
+<p>Maven包的引入：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">mockito</span><span style="color:#f92672">&lt;/</span>groupId<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>mockito<span style="color:#f92672">-</span>core<span style="color:#f92672">&lt;/</span>artifactId<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span>version<span style="color:#f92672">&gt;</span><span style="color:#ae81ff">3.0.0</span><span style="color:#f92672">&lt;/</span>version<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/</span>dependency<span style="color:#f92672">&gt;</span>
+</span></span></code></pre></div><p>被测试类A:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">aMethod</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;hello world!&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>单侧类：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ATest</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Test</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">testA</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>        A mock <span style="color:#f92672">=</span> Mockito<span style="color:#f92672">.</span><span style="color:#a6e22e">mock</span><span style="color:#f92672">(</span>A<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        Mockito<span style="color:#f92672">.</span><span style="color:#a6e22e">when</span><span style="color:#f92672">(</span>mock<span style="color:#f92672">.</span><span style="color:#a6e22e">aMethod</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">thenReturn</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;ABC&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="mock对象的生成">mock对象的生成</h2>
+<p>mock对象的基本原理是生成一个被mock对象的代理类，然后对该类的方法进行拦截、代理增强。</p>
+<p>mock对象的核心代码如下所示:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// org.mockito.internal.util.MockUtil
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> T <span style="color:#a6e22e">createMock</span><span style="color:#f92672">(</span>MockCreationSettings<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> settings<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    MockHandler mockHandler <span style="color:#f92672">=</span>  createMockHandler<span style="color:#f92672">(</span>settings<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    T mock <span style="color:#f92672">=</span> mockMaker<span style="color:#f92672">.</span><span style="color:#a6e22e">createMock</span><span style="color:#f92672">(</span>settings<span style="color:#f92672">,</span> mockHandler<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    Object spiedInstance <span style="color:#f92672">=</span> settings<span style="color:#f92672">.</span><span style="color:#a6e22e">getSpiedInstance</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>spiedInstance <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">new</span> LenientCopyTool<span style="color:#f92672">().</span><span style="color:#a6e22e">copyToMock</span><span style="color:#f92672">(</span>spiedInstance<span style="color:#f92672">,</span> mock<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> mock<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>总结起来流程如下：</p>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/202307152219035.png" alt="image-20230715221937978">
+
+</p>
+<p>Mockito中mock对象的生成使用ByteBuddy技术。</p>
+<p>我们以Object类为例，通过重写它的toString方法，用来返回“Hello World!”来讲解Byte Buddy的使用方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>Class<span style="color:#f92672">&lt;?&gt;</span> dynamicType <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ByteBuddy<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">.</span><span style="color:#a6e22e">subclass</span><span style="color:#f92672">(</span>Object<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">.</span><span style="color:#a6e22e">method</span><span style="color:#f92672">(</span>ElementMatchers<span style="color:#f92672">.</span><span style="color:#a6e22e">named</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;toString&#34;</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">.</span><span style="color:#a6e22e">intercept</span><span style="color:#f92672">(</span>FixedValue<span style="color:#f92672">.</span><span style="color:#a6e22e">value</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Hello World!&#34;</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">.</span><span style="color:#a6e22e">make</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">.</span><span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>Object<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">(),</span> ClassLoadingStrategy<span style="color:#f92672">.</span><span style="color:#a6e22e">Default</span><span style="color:#f92672">.</span><span style="color:#a6e22e">WRAPPER</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">.</span><span style="color:#a6e22e">getLoaded</span><span style="color:#f92672">();</span>
+</span></span></code></pre></div><p>比如我们想看下上述示例中生成的动态类到底长什么样子，可以调用方法 <code>net.bytebuddy.dynamic.DynamicType#saveIn</code> 来将生成的class保存成class文件（可在debug时再watcher中调用saveIn方法），然后在IDEA中进行查看，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Object$ByteBuddy$F6rbnunr</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">toString</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Hello World!&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Object$ByteBuddy$F6rbnunr</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>在Mockito中，动态生成代理类class对应的方法如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// org.mockito.internal.creation.bytebuddy.SubclassBytecodeGenerator
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> Class<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">extends</span> T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">mockClass</span><span style="color:#f92672">(</span>MockFeatures<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> features<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>				<span style="color:#75715e">// Byte Buddy动态生成类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        DynamicType<span style="color:#f92672">.</span><span style="color:#a6e22e">Builder</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> builder <span style="color:#f92672">=</span> byteBuddy<span style="color:#f92672">.</span><span style="color:#a6e22e">subclass</span><span style="color:#f92672">(</span>features<span style="color:#f92672">.</span><span style="color:#a6e22e">mockedType</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">name</span><span style="color:#f92672">(</span>name<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">ignoreAlso</span><span style="color:#f92672">(</span>isGroovyMethod<span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">annotateType</span><span style="color:#f92672">(</span>features<span style="color:#f92672">.</span><span style="color:#a6e22e">stripAnnotations</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">?</span> <span style="color:#66d9ef">new</span> Annotation<span style="color:#f92672">[</span><span style="color:#ae81ff">0</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">:</span> features<span style="color:#f92672">.</span><span style="color:#a6e22e">mockedType</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getAnnotations</span><span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">implement</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span>Type<span style="color:#f92672">&gt;(</span>features<span style="color:#f92672">.</span><span style="color:#a6e22e">interfaces</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">method</span><span style="color:#f92672">(</span>matcher<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">intercept</span><span style="color:#f92672">(</span>dispatcher<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">transform</span><span style="color:#f92672">(</span>withModifiers<span style="color:#f92672">(</span>SynchronizationState<span style="color:#f92672">.</span><span style="color:#a6e22e">PLAIN</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">attribute</span><span style="color:#f92672">(</span>features<span style="color:#f92672">.</span><span style="color:#a6e22e">stripAnnotations</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">?</span> MethodAttributeAppender<span style="color:#f92672">.</span><span style="color:#a6e22e">NoOp</span><span style="color:#f92672">.</span><span style="color:#a6e22e">INSTANCE</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">:</span> INCLUDING_RECEIVER<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">method</span><span style="color:#f92672">(</span>isHashCode<span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">intercept</span><span style="color:#f92672">(</span>hashCode<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">method</span><span style="color:#f92672">(</span>isEquals<span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">intercept</span><span style="color:#f92672">(</span>equals<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">serialVersionUid</span><span style="color:#f92672">(</span><span style="color:#ae81ff">42L</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">defineField</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mockitoInterceptor&#34;</span><span style="color:#f92672">,</span> MockMethodInterceptor<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> PRIVATE<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">implement</span><span style="color:#f92672">(</span>MockAccess<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">intercept</span><span style="color:#f92672">(</span>FieldAccessor<span style="color:#f92672">.</span><span style="color:#a6e22e">ofBeanProperty</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>  			<span style="color:#75715e">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> builder<span style="color:#f92672">.</span><span style="color:#a6e22e">make</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>classLoader<span style="color:#f92672">,</span> loader<span style="color:#f92672">.</span><span style="color:#a6e22e">resolveStrategy</span><span style="color:#f92672">(</span>features<span style="color:#f92672">.</span><span style="color:#a6e22e">mockedType</span><span style="color:#f92672">,</span> classLoader<span style="color:#f92672">,</span> localMock<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">getLoaded</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>这个方法看上去比较复杂，其实和bytebuddy示例代码原理一样，其最终会生成A的代理类如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A$MockitoMock$883113934</span> <span style="color:#66d9ef">extends</span> A <span style="color:#66d9ef">implements</span> MockAccess <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">long</span> serialVersionUID <span style="color:#f92672">=</span> <span style="color:#ae81ff">42L</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> MockMethodInterceptor mockitoInterceptor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>Object var1<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ForEquals<span style="color:#f92672">.</span><span style="color:#a6e22e">doIdentityEquals</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">,</span> var1<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">toString</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>String<span style="color:#f92672">)</span>DispatcherDefaultingToRealMethod<span style="color:#f92672">.</span><span style="color:#a6e22e">interceptSuperCallable</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">mockitoInterceptor</span><span style="color:#f92672">,</span> cachedValue$9GiAqxT8$4cscpe1<span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> Object<span style="color:#f92672">[</span><span style="color:#ae81ff">0</span><span style="color:#f92672">],</span> <span style="color:#66d9ef">new</span> A$MockitoMock$883113934$auxiliary$kDQsaeNa<span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">hashCode</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ForHashCode<span style="color:#f92672">.</span><span style="color:#a6e22e">doIdentityHashCode</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> Object <span style="color:#a6e22e">clone</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> CloneNotSupportedException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> DispatcherDefaultingToRealMethod<span style="color:#f92672">.</span><span style="color:#a6e22e">interceptSuperCallable</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">mockitoInterceptor</span><span style="color:#f92672">,</span> cachedValue$9GiAqxT8$7m9oaq0<span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> Object<span style="color:#f92672">[</span><span style="color:#ae81ff">0</span><span style="color:#f92672">],</span> <span style="color:#66d9ef">new</span> A$MockitoMock$883113934$auxiliary$RfEBiKk5<span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">aMethod</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>String<span style="color:#f92672">)</span>DispatcherDefaultingToRealMethod<span style="color:#f92672">.</span><span style="color:#a6e22e">interceptSuperCallable</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">mockitoInterceptor</span><span style="color:#f92672">,</span> cachedValue$9GiAqxT8$cqor5a0<span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> Object<span style="color:#f92672">[</span><span style="color:#ae81ff">0</span><span style="color:#f92672">],</span> <span style="color:#66d9ef">new</span> A$MockitoMock$883113934$auxiliary$Av33OzJ6<span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setMockitoInterceptor</span><span style="color:#f92672">(</span>MockMethodInterceptor var1<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">mockitoInterceptor</span> <span style="color:#f92672">=</span> var1<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> MockMethodInterceptor <span style="color:#a6e22e">getMockitoInterceptor</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">mockitoInterceptor</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">A$MockitoMock$883113934</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>可以看到<code>aMethod</code>方法被改写成了调用方法分发器<code>DispatcherDefaultingToRealMethod</code>，我们看下它的<code>interceptSuperCallable</code>方法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// DispatcherDefaultingToRealMethod
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">@RuntimeType</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@BindingPriority</span><span style="color:#f92672">(</span>BindingPriority<span style="color:#f92672">.</span><span style="color:#a6e22e">DEFAULT</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Object <span style="color:#a6e22e">interceptSuperCallable</span><span style="color:#f92672">(</span><span style="color:#a6e22e">@This</span> Object mock<span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                                            <span style="color:#a6e22e">@FieldValue</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mockitoInterceptor&#34;</span><span style="color:#f92672">)</span> MockMethodInterceptor interceptor<span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                                            <span style="color:#a6e22e">@Origin</span> Method invokedMethod<span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                                            <span style="color:#a6e22e">@AllArguments</span> Object<span style="color:#f92672">[]</span> arguments<span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                                            <span style="color:#a6e22e">@SuperCall</span><span style="color:#f92672">(</span>serializableProxy <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">)</span> Callable<span style="color:#f92672">&lt;?&gt;</span> superCall<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Throwable <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>interceptor <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> superCall<span style="color:#f92672">.</span><span style="color:#a6e22e">call</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> interceptor<span style="color:#f92672">.</span><span style="color:#a6e22e">doIntercept</span><span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>        mock<span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>        invokedMethod<span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>        arguments<span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">new</span> RealMethod<span style="color:#f92672">.</span><span style="color:#a6e22e">FromCallable</span><span style="color:#f92672">(</span>superCall<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                                  <span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>可见其主要是调用了<code>interceptor.doIntercept</code>方法，interceptor是mockA中的MockMethodInterceptor对象。MockMethodInterceptor对象中持有MockHandler对象，而<code>MockMethodInterceptor#doIntercept</code>实际上就是调用了<code>MockHandler#handle</code>。简言之，被mock对象的公有方法都被MockHandler类拦截了(其实是被<code>MockMethodInterceptor</code>拦截，然后交由<code>MockHandler</code>处理)。</p>
+<p>此外，在mock对象生成后，也会生成<code>MockingProgress</code>对象，该对象被保存在ThreadLocal中</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// org.mockito.internal.MockCore
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> T <span style="color:#a6e22e">mock</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> typeToMock<span style="color:#f92672">,</span> MockSettings settings<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>    T mock <span style="color:#f92672">=</span> createMock<span style="color:#f92672">(</span>creationSettings<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    mockingProgress<span style="color:#f92672">().</span><span style="color:#a6e22e">mockingStarted</span><span style="color:#f92672">(</span>mock<span style="color:#f92672">,</span> creationSettings<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> mock<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>该对象用于存储在mockito代码执行过程中各种信息，将在stub过程中起到很重要的作用。</p>
+<h2 id="对象如何打桩stub">对象如何打桩stub</h2>
+<p>一种最常见的打桩语句如下所示</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// mock为A类的mock对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>Mockito<span style="color:#f92672">.</span><span style="color:#a6e22e">when</span><span style="color:#f92672">(</span>mock<span style="color:#f92672">.</span><span style="color:#a6e22e">aMethod</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">thenReturn</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;ABC&#34;</span><span style="color:#f92672">);</span>
+</span></span></code></pre></div><p>以上语句可以分为三步：</p>
+<ol>
+<li><code>mock.aMethod()</code>方法调用</li>
+<li><code>Mockito.when()</code>静态方法调用</li>
+<li><code>.thenReturn()</code>打桩</li>
+</ol>
+<h3 id="打桩前的方法调用">打桩前的方法调用</h3>
+<p>在上文中我们已经知道，mock对象的方法被<code>MockMethodInterceptor</code>所拦截，然后调用了<code>MockHandler#handle</code>方法。</p>
+<p>MockHandler结构如下图所示</p>
+<p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/202307161115394.png" alt="image-20230716111548358">
+
+</p>
+<p>其中</p>
+<ul>
+<li>Invocation:用来描述一次方法的调用</li>
+<li>ArgumentMatcher:用来描述方法调用中参数的匹配方法</li>
+<li>Answer:用来描述打桩行为，thenReturn即一种Answer</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// org.mockito.internal.handler.MockHanlderImpl#handle
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">handle</span><span style="color:#f92672">(</span>Invocation invocation<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Throwable <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  	<span style="color:#75715e">// 这个分支是处理doAnswer(xx).when(mock).methodXX()的打桩方式
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 这是一种给void返回类型方法打桩的方式
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 1. 执行doAnswer后会返回一个Stubber对象，其中持有List&lt;Answer&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 2. 执行.when方法后，会将List&lt;Answer&gt;拷贝到doAnswerStyleStubbing中
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>invocationContainer<span style="color:#f92672">.</span><span style="color:#a6e22e">hasAnswersForStubbing</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// stubbing voids with doThrow() or doAnswer() style
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        InvocationMatcher invocationMatcher <span style="color:#f92672">=</span> matchersBinder<span style="color:#f92672">.</span><span style="color:#a6e22e">bindMatchers</span><span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>                mockingProgress<span style="color:#f92672">().</span><span style="color:#a6e22e">getArgumentMatcherStorage</span><span style="color:#f92672">(),</span>
+</span></span><span style="display:flex;"><span>                invocation
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        invocationContainer<span style="color:#f92672">.</span><span style="color:#a6e22e">setMethodForStubbing</span><span style="color:#f92672">(</span>invocationMatcher<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    VerificationMode verificationMode <span style="color:#f92672">=</span> mockingProgress<span style="color:#f92672">().</span><span style="color:#a6e22e">pullVerificationMode</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    InvocationMatcher invocationMatcher <span style="color:#f92672">=</span> matchersBinder<span style="color:#f92672">.</span><span style="color:#a6e22e">bindMatchers</span><span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>            mockingProgress<span style="color:#f92672">().</span><span style="color:#a6e22e">getArgumentMatcherStorage</span><span style="color:#f92672">(),</span>
+</span></span><span style="display:flex;"><span>            invocation
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    mockingProgress<span style="color:#f92672">().</span><span style="color:#a6e22e">validateState</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// if verificationMode is not null then someone is doing verify()
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>verificationMode <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// We need to check if verification was started on the correct mock
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// - see VerifyingWithAnExtraCallToADifferentMockTest (bug 138)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(((</span>MockAwareVerificationMode<span style="color:#f92672">)</span> verificationMode<span style="color:#f92672">).</span><span style="color:#a6e22e">getMock</span><span style="color:#f92672">()</span> <span style="color:#f92672">==</span> invocation<span style="color:#f92672">.</span><span style="color:#a6e22e">getMock</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            VerificationDataImpl data <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> VerificationDataImpl<span style="color:#f92672">(</span>invocationContainer<span style="color:#f92672">,</span> invocationMatcher<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            verificationMode<span style="color:#f92672">.</span><span style="color:#a6e22e">verify</span><span style="color:#f92672">(</span>data<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// this means there is an invocation on a different mock. Re-adding verification mode
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">// - see VerifyingWithAnExtraCallToADifferentMockTest (bug 138)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            mockingProgress<span style="color:#f92672">().</span><span style="color:#a6e22e">verificationStarted</span><span style="color:#f92672">(</span>verificationMode<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// prepare invocation for stubbing
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 在when中方法被第一次调用，会进入到这个逻辑
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 将本次调用放入到invocationForStubbing中, 并添添加到registeredInvocations中
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 生成OngoingStubbing对象，并将其存放到mockingProgess中
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    invocationContainer<span style="color:#f92672">.</span><span style="color:#a6e22e">setInvocationForPotentialStubbing</span><span style="color:#f92672">(</span>invocationMatcher<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    OngoingStubbingImpl<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> ongoingStubbing <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> OngoingStubbingImpl<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;(</span>invocationContainer<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    mockingProgress<span style="color:#f92672">().</span><span style="color:#a6e22e">reportOngoingStubbing</span><span style="color:#f92672">(</span>ongoingStubbing<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// look for existing answer for this invocation
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 如果已经打好桩，则会在此处匹配到stub
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    StubbedInvocationMatcher stubbing <span style="color:#f92672">=</span> invocationContainer<span style="color:#f92672">.</span><span style="color:#a6e22e">findAnswerFor</span><span style="color:#f92672">(</span>invocation<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// TODO #793 - when completed, we should be able to get rid of the casting below
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    notifyStubbedAnswerLookup<span style="color:#f92672">(</span>invocation<span style="color:#f92672">,</span> stubbing<span style="color:#f92672">,</span> invocationContainer<span style="color:#f92672">.</span><span style="color:#a6e22e">getStubbingsAscending</span><span style="color:#f92672">(),</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#f92672">(</span>CreationSettings<span style="color:#f92672">)</span> mockSettings<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>stubbing <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        stubbing<span style="color:#f92672">.</span><span style="color:#a6e22e">captureArgumentsFrom</span><span style="color:#f92672">(</span>invocation<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#75715e">// 执行打桩的逻辑
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> stubbing<span style="color:#f92672">.</span><span style="color:#a6e22e">answer</span><span style="color:#f92672">(</span>invocation<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//Needed so that we correctly isolate stubbings in some scenarios
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">//see MockitoStubbedCallInAnswerTest or issue #1279
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            mockingProgress<span style="color:#f92672">().</span><span style="color:#a6e22e">reportOngoingStubbing</span><span style="color:#f92672">(</span>ongoingStubbing<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        Object ret <span style="color:#f92672">=</span> mockSettings<span style="color:#f92672">.</span><span style="color:#a6e22e">getDefaultAnswer</span><span style="color:#f92672">().</span><span style="color:#a6e22e">answer</span><span style="color:#f92672">(</span>invocation<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        DefaultAnswerValidator<span style="color:#f92672">.</span><span style="color:#a6e22e">validateReturnValueFor</span><span style="color:#f92672">(</span>invocation<span style="color:#f92672">,</span> ret<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//Mockito uses it to redo setting invocation for potential stubbing in case of partial mocks / spies.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//Without it, the real method inside &#39;when&#39; might have delegated to other self method
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//and overwrite the intended stubbed method with a different one.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//This means we would be stubbing a wrong method.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//Typically this would led to runtime exception that validates return type with stubbed method signature.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        invocationContainer<span style="color:#f92672">.</span><span style="color:#a6e22e">resetInvocationForPotentialStubbing</span><span style="color:#f92672">(</span>invocationMatcher<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ret<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="mockitowhen静态方法">Mockito.when静态方法</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// org.mockito.internal.MockitoCore
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> OngoingStubbing<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">when</span><span style="color:#f92672">(</span>T methodCall<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    MockingProgress mockingProgress <span style="color:#f92672">=</span> mockingProgress<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    mockingProgress<span style="color:#f92672">.</span><span style="color:#a6e22e">stubbingStarted</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@SuppressWarnings</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;unchecked&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    OngoingStubbing<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> stubbing <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>OngoingStubbing<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;)</span> mockingProgress<span style="color:#f92672">.</span><span style="color:#a6e22e">pullOngoingStubbing</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>stubbing <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        mockingProgress<span style="color:#f92672">.</span><span style="color:#a6e22e">reset</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> missingMethodInvocation<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> stubbing<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>可见该方法即从<code>mockingProgress</code>中拿到mock方法第一次调用时放入其中的<code>OngoingStubbing</code>对象，然后返回。</p>
+<h3 id="ongoingstubbingthenreturn打桩">OngoingStubbing#thenReturn打桩</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// org.mockito.internal.stubbing.BaseStubbing
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> OngoingStubbing<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">thenReturn</span><span style="color:#f92672">(</span>T value<span style="color:#f92672">,</span> T<span style="color:#f92672">...</span> values<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 会调用OngoingStubbingImpl#thenAnswer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    OngoingStubbing<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> stubbing <span style="color:#f92672">=</span> thenReturn<span style="color:#f92672">(</span>value<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>values <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// For no good reason we&#39;re configuring null answer here
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// This has been like that since forever, so let&#39;s keep it for compatibility (unless users complain)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> stubbing<span style="color:#f92672">.</span><span style="color:#a6e22e">thenReturn</span><span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>T v <span style="color:#f92672">:</span> values<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        stubbing <span style="color:#f92672">=</span> stubbing<span style="color:#f92672">.</span><span style="color:#a6e22e">thenReturn</span><span style="color:#f92672">(</span>v<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> stubbing<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// org.mockito.internal.stubbing.OngoingStubbingImpl
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> OngoingStubbing<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">thenAnswer</span><span style="color:#f92672">(</span>Answer<span style="color:#f92672">&lt;?&gt;</span> answer<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 判断收否存在待打桩的调用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span><span style="color:#f92672">(!</span>invocationContainer<span style="color:#f92672">.</span><span style="color:#a6e22e">hasInvocationForPotentialStubbing</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> incorrectUseOfApi<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 往stubbed中添加打桩行为
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    invocationContainer<span style="color:#f92672">.</span><span style="color:#a6e22e">addAnswer</span><span style="color:#f92672">(</span>answer<span style="color:#f92672">,</span> strictness<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ConsecutiveStubbing<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;(</span>invocationContainer<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/202307161109467.png" alt="image-20230716110958425">
+
+</p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/post/code/" data-toggle="tooltip" data-placement="top" title="MySQL中文乱码问题">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:is.eric.wu@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/1965461781/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+
+		            
+                    
+                    <li>
+                        <a target="_blank" href="/img/we_chat.JPG">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-weixin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ericwu0930/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/hao-wu-5566a416a">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Eric&#39;s Blog 2023
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>
