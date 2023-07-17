@@ -144,10 +144,6 @@ if (!doNotTrack) {
                         </li>
                         
                         <li>
-                            <a href="/categories/trival">trival</a>
-                        </li>
-                        
-                        <li>
                             <a href="/categories/trivial">trivial</a>
                         </li>
                         
@@ -412,7 +408,20 @@ if (!doNotTrack) {
 </span></span></code></pre></div><p>在GameModel中先给成员变量myTank赋值为null，那么在创建GamModel对象时就不会创建Tank对象。待GameModel对象创建完成后，再使用init()函数，让myTank=new Tank( ).创建Tank对象，此时GameModel对象已经创建完成（单例），在Tank的构造方法中调用GameModel.getInstance.add(this)就不会报空指针异常了。</p>
 <h2 id="总结">总结：</h2>
 <p>总结起来，不要把创建对象和类加载混为一谈，创建对象时会首先检查类是否被加载，如果没有则触发类加载的一系列行动。类加载时会涉及静态变量的初始化操作，而创建对象会涉及成员变量的初始化。</p>
-<p>稍微拓展一下，成员变量中能否持有自身类的对象，比如</p>
+<p>当在java程序中创建一个对象实例时:</p>
+<ol>
+<li>先查看类有没有被加载，如果没有的话首先完成加载类: a. 加载类文件; b. 给所有static属性分配空间; c. 按照源文件中静态代码块顺序进行初始化</li>
+<li>当类的加载完成后: a. 给所有非static属性分配空间，设置默认值; b. 按照书写代码块顺序进行初始化; c. 进行构造器初始化</li>
+</ol>
+<p>在对java对象初始化时，Java对向前引用做了限制，允许在定义一个字段前为它赋值，不允许在定义一个字段前读取或者修改它。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 非法的向前引用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> a <span style="color:#f92672">=</span> b<span style="color:#f92672">;</span> <span style="color:#75715e">// 在进行指定初始化的时候，b已经分配了内存为0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> b <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 合法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>b <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> b<span style="color:#f92672">;</span>
+</span></span></code></pre></div><p>稍微拓展一下，成员变量中能否持有自身类的对象，比如</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span><span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> A a<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> A<span style="color:#f92672">();</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>

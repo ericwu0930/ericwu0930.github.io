@@ -144,10 +144,6 @@ if (!doNotTrack) {
                         </li>
                         
                         <li>
-                            <a href="/categories/trival">trival</a>
-                        </li>
-                        
-                        <li>
                             <a href="/categories/trivial">trivial</a>
                         </li>
                         
@@ -271,7 +267,7 @@ if (!doNotTrack) {
                 <h2 id="现象">现象</h2>
 <p>用户反馈datatalk查询结果中文乱码，如下所示</p>
 <p>
-  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h93kw7f6gbj314e0i4wj1.jpg" alt="企业微信截图_16709148686192">
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180201248.png" alt="image-20221229180201248">
 
 </p>
 <p>数据源配置如下：</p>
@@ -290,14 +286,14 @@ if (!doNotTrack) {
 <li>
 <p>如果不指定<code>--default-character-set=latin1</code>，执行以下命令<code>show variables like '%char%'</code> 结果如下</p>
 <p>
-  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h93l3dck10j316a0u00w1.jpg" alt="image-20221214195405258">
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180225237.png" alt="image-20221229180225237">
 
 </p>
 </li>
 <li>
 <p>加上<code>--default-character-set=latin1</code>，重新执行<code>show variables like '%char%'</code>结果如下</p>
 <p>
-  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h93l4ztq16j30u00uzq61.jpg" alt="image-20221214195538755">
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180239856.png" alt="image-20221229180239856">
 
 </p>
 </li>
@@ -311,7 +307,7 @@ if (!doNotTrack) {
 </ol>
 <p>其关系如下：</p>
 <p>
-  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h93li59x3vj319s0fwtad.jpg" alt="image-20221214200817395">
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180313346.png" alt="image-20221229180313346">
 
 </p>
 <p>最标准的不显示乱码的样式：</p>
@@ -326,22 +322,22 @@ if (!doNotTrack) {
 <p>计算机世界不论什么东西，都需要转换为01进行存储，对于数字而言，可以将其转为二进制存储，但是对于字符而言，需要通过一种映射将其先转为一个数字，然后在转为二级制存储。</p>
 <p>最熟悉的是ASCII编码，其编码表如下：</p>
 <p>
-  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h97732fb0sj30wi0teq8e.jpg" alt="image-20221217225141684">
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180340954.png" alt="image-20221229180340954">
 
 </p>
 <p>可见其只是定义了英文字符以及一些特殊标点，对于中文自然无法涵盖，为此Unicode应运而生。</p>
 <p>
-  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h9775det8tj30l407cjrl.jpg" alt="image-20221217225354870">
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180354557.png" alt="image-20221229180354557">
 
 </p>
 <p>Unicode会使用两个字节表示一个元素（注意是元素，不一定是一个有意义的文字），但是我们该如何对其编码呢？对于ASCII而言，其范围是0~127，那我们同样的用一个字节的二进制就可以对其进行编码。因为字符到数字的映射以及转二进制的方法是唯一的，所以我们就将这两步统称为ASCII编码。</p>
 <p>但是对于Unicode而言，其范围是0~2^32-1，如果我们使用4字节对齐进行编码（该编码为UTF-32），对于同样的d字符而言，所占的容量是ASCII编码的4倍，因此又开发了UTF-16编码和UTF-8编码，UTF-8编码规则如下：</p>
 <p>
-  <img src="https://tva1.sinaimg.cn/large/008vxvgGgy1h977ja6o1jj30mm06k74j.jpg" alt="image-20221217230713090">
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/image-20221229180410299.png" alt="image-20221229180410299">
 
 </p>
 <p>其规则是首先将Unicode映射后的数字转为二进制，然后按照上述规则填入二进制编码的格式中。可见UTF-8是一种可变长度的编码格式。</p>
-<p>In a word，Unicode是字符和数字之间的映射规则，utf8，utf16和utf32是具体的编码方式。</p>
+<p>In a word，从字符到二级制包含两个过程，我们把第一个过程成为字符集的映射，第二个过程是字符编码。Unicode是字符和数字之间的映射规则，utf8，utf16和utf32是具体的编码方式。</p>
 
 
                 
@@ -357,7 +353,7 @@ if (!doNotTrack) {
                     
                     
                     <li class="next">
-                        <a href="/post/mockito/" data-toggle="tooltip" data-placement="top" title="Mockito原理解析">Next
+                        <a href="/post/spring_bean/" data-toggle="tooltip" data-placement="top" title="Spring Bean的生命周期">Next
                             Post &rarr;</a>
                     </li>
                     

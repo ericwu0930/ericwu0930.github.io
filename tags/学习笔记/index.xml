@@ -6,14 +6,59 @@
     <description>Recent content in 学习笔记 on Eric&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 15 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 17 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Mockito原理解析</title>
-      <link>https://ericwu0930.github.io/post/mockito/</link>
-      <pubDate>Sat, 15 Jul 2023 00:00:00 +0000</pubDate>
+      <title>Java SPI发现机制</title>
+      <link>https://ericwu0930.github.io/post/java_spi/</link>
+      <pubDate>Fri, 17 Feb 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://ericwu0930.github.io/post/mockito/</guid>
-      <description>前言 Mockito是一款Java主流的单元测试框架，上手简单，mockito官网：http://mockito.org，API文档：http</description>
+      <guid>https://ericwu0930.github.io/post/java_spi/</guid>
+      <description>阅读本篇文章前默认已经掌握了Java的双亲委派模型。 最近在看Tomcat的自定义类加载器，在Tomat中一个JVM环境可能运行多个web ap</description>
+    </item>
+    
+    <item>
+      <title>Java File常用操作总结</title>
+      <link>https://ericwu0930.github.io/post/file/</link>
+      <pubDate>Wed, 08 Feb 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/file/</guid>
+      <description>1. File对象 Java File是文件对象的抽象，对应于一个目录或一个文件。 当使用pathname创建一个File对象的时，该目录可以不存在，但在对</description>
+    </item>
+    
+    <item>
+      <title>Shell命令入门</title>
+      <link>https://ericwu0930.github.io/post/shell/</link>
+      <pubDate>Tue, 17 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/shell/</guid>
+      <description>1.变量 1.1 定义变量 1.1.1 普通变量 变量名=变量值：变量值必须是一个整体，中间没有特殊字符 变量名=&amp;lsquo;变量值&amp;rsquo;：单引号中的内容</description>
+    </item>
+    
+    <item>
+      <title>异常堆栈信息丢失问题定位</title>
+      <link>https://ericwu0930.github.io/post/omit_exception_stack/</link>
+      <pubDate>Tue, 17 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/omit_exception_stack/</guid>
+      <description>1. 现象 在完成DataTalk推送队列化改造后，为了测试全局限流措施的有效性，设置信号量为20，使用python脚本在同一时间触发Beacon</description>
+    </item>
+    
+    <item>
+      <title>How Tomcat works笔记</title>
+      <link>https://ericwu0930.github.io/post/tomcat/</link>
+      <pubDate>Tue, 03 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/tomcat/</guid>
+      <description>1. Tomcat总体架构 作为一个服务器，其最基本的功能就是接收其他计算机发来的请求数据并进行解析，完成相关业务处理，然后把处理结果作为相应返回</description>
+    </item>
+    
+    <item>
+      <title>Java IO类详解</title>
+      <link>https://ericwu0930.github.io/post/java_io/</link>
+      <pubDate>Sun, 18 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/java_io/</guid>
+      <description>File类 File类对应于一个目录或者一个文件，注意在使用文件的时候，比如通过流往文件中写入内容，该文件可以不存在，但是其父目录必须是有效的</description>
     </item>
     
     <item>
@@ -26,21 +71,21 @@
     </item>
     
     <item>
+      <title>Redis数据库</title>
+      <link>https://ericwu0930.github.io/post/expire/</link>
+      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/expire/</guid>
+      <description>1.服务器中数据库结构 在redis服务器中，服务器的各种状态由redis.h/redisServer所维护，其中db字段指向redis.h/</description>
+    </item>
+    
+    <item>
       <title>内核态和用户态</title>
       <link>https://ericwu0930.github.io/post/privilege/</link>
       <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/post/privilege/</guid>
       <description>之前看操作系统相关的书籍，都会提到用户态和内核态，由于没有针对特定的操作系统，所以讲解的比较笼统，理解起来也没有很深刻，今天偶然在铜哥桌子上</description>
-    </item>
-    
-    <item>
-      <title>键的过期策略</title>
-      <link>https://ericwu0930.github.io/post/expire/</link>
-      <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericwu0930.github.io/post/expire/</guid>
-      <description>1. 设置键的生存时间或过期时间 在Redis中，可以对任意键设置一个生存时间，有以下四个命令，他们之间的关系如下，其中以P开头的表明时间单位为毫</description>
     </item>
     
     <item>
