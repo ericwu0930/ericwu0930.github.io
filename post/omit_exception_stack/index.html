@@ -21,9 +21,9 @@
     
 
     
-    <meta name="description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。">
-    <meta property="og:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
-    <meta property="twitter:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    <meta name="description" content="JIT即时编译概述以及问题解决办法">
+    <meta property="og:description" content="JIT即时编译概述以及问题解决办法" />
+    <meta property="twitter:description" content="JIT即时编译概述以及问题解决办法" />
     
 
     
@@ -144,6 +144,10 @@ if (!doNotTrack) {
                         </li>
                         
                         <li>
+                            <a href="/categories/trival">trival</a>
+                        </li>
+                        
+                        <li>
                             <a href="/categories/trivial">trivial</a>
                         </li>
                         
@@ -230,7 +234,7 @@ if (!doNotTrack) {
                         
                     </div>
                     <h1>异常堆栈信息丢失问题定位</h1>
-                    <h2 class="subheading">JIT即时编译概述以及问题解决办法</h2>
+                    <h2 class="subheading"></h2>
                     <span class="meta">
                         
                             Posted by 
@@ -312,39 +316,25 @@ if (!doNotTrack) {
 
 </p>
 <ul>
-<li>
-<p>common是针对大部分代码的编译情况，trival method针对执行次数较少的代码</p>
-</li>
-<li>
-<p>trival method很少被执行所以没有被C2编译的必要，通过第4层模式的优化就足够了</p>
-</li>
-<li>
-<p>在C1忙碌的时候，会直接由C2编译；C2忙碌的时候，在C1编译的路径也会更长</p>
-</li>
+<li>common是针对大部分代码的编译情况，trival method针对执行次数较少的代码</li>
+<li>trival method很少被执行所以没有被C2编译的必要，通过第4层模式的优化就足够了</li>
+<li>在C1忙碌的时候，会直接由C2编译；C2忙碌的时候，在C1编译的路径也会更长</li>
 </ul>
 <h2 id="24-编译触发条件">2.4 编译触发条件</h2>
 <p>上面提到即使编译是针对热点代码进行编译优化，那么什么是热点代码？</p>
 <ul>
-<li>
-<p>被多次调用的方法</p>
-</li>
-<li>
-<p>被多次执行的循环代码体</p>
-</li>
+<li>被多次调用的方法</li>
+<li>被多次执行的循环代码体</li>
 </ul>
 <p>这里的多次如何知道具体有多少次？有两种方法可以知道</p>
 <ol>
-<li>
-<p>基于采样的热点探测(Sample Based Hot Spot Code Detection): 虚拟机周期性地检查各个线程的调用栈顶，如果发现某个方法经常出现在栈顶，那么这个方法就是热点方法，这种方法简单高效但是精确度不高</p>
-</li>
-<li>
-<p>基于计数器的热点探测(Counter Based Hot Spot Code Dection): 虚拟机为每个方法建立计数器，计数器超过一定阈值就是热点方法</p>
-</li>
+<li>基于采样的热点探测(Sample Based Hot Spot Code Detection): 虚拟机周期性地检查各个线程的调用栈顶，如果发现某个方法经常出现在栈顶，那么这个方法就是热点方法，这种方法简单高效但是精确度不高</li>
+<li>基于计数器的热点探测(Counter Based Hot Spot Code Dection): 虚拟机为每个方法建立计数器，计数器超过一定阈值就是热点方法</li>
 </ol>
 <p>目前HotSpot虚拟机使用的是第二种方法，虚拟机为每个方法都准备了两类计数器，方法调用计数器以及回边计数器(回边的意思是在循环的末尾边界往回跳转，可以理解为循环代码的一次执行)，而异常堆栈丢失就是JIT优化的一个案例。</p>
 <p>在ORACLE官方文档中有这样一段描述</p>
 <blockquote>
-<p>The compiler in the server VM now provides correct stack backtraces for all &ldquo;cold&rdquo; built-in exceptions. For performance purposes, when such an exception is thrown a few times, the method may be recompiled. After recompilation, the compiler may choose a faster tactic using preallocated exceptions that do not provide a stack trace. To disable completely the use of preallocated exceptions, use this new flag: -XX:-OmitStackTraceInFastThrow.</p>
+<p>The compiler in the server VM now provides correct stack backtraces for all “cold” built-in exceptions. For performance purposes, when such an exception is thrown a few times, the method may be recompiled. After recompilation, the compiler may choose a faster tactic using preallocated exceptions that do not provide a stack trace. To disable completely the use of preallocated exceptions, use this new flag: -XX:-OmitStackTraceInFastThrow.</p>
 </blockquote>
 <p>即对于经常反复抛出的内置异常，JVM会进行重编译，通过不提供堆栈信息来提高抛出速度。</p>
 <h1 id="问题解决办法">问题解决办法</h1>
@@ -360,7 +350,7 @@ if (!doNotTrack) {
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/post/tomcat/" data-toggle="tooltip" data-placement="top" title="How Tomcat works笔记">&larr;
+                        <a href="/post/tomcat/" data-toggle="tooltip" data-placement="top" title="How Tomcat Works笔记">&larr;
                             Previous Post</a>
                     </li>
                     

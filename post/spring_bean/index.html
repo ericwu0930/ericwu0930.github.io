@@ -144,6 +144,10 @@ if (!doNotTrack) {
                         </li>
                         
                         <li>
+                            <a href="/categories/trival">trival</a>
+                        </li>
+                        
+                        <li>
                             <a href="/categories/trivial">trivial</a>
                         </li>
                         
@@ -613,22 +617,14 @@ if (!doNotTrack) {
 <li>销毁（Destruction）</li>
 </ol>
 <p>
-  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/1704860a4de235aa%7Etplv-t2oaga2asx-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.png" alt="img">
+  <img src="https://raw.githubusercontent.com/ericwu0930/picture_host/main/1704860a4de235aa~tplv-t2oaga2asx-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.png" alt="img">
 
 </p>
 <ol>
-<li>
-<p>实例化：第 1 步，实例化一个 bean 对象；</p>
-</li>
-<li>
-<p>属性赋值：第 2 步，为 bean 设置相关属性和依赖；</p>
-</li>
-<li>
-<p>初始化：第 3~7 步，步骤较多，其中第 5、6 步为初始化操作，第 3、4 步为在初始化前执行，第 7 步在初始化后执行，该阶段结束，才能被用户使用；</p>
-</li>
-<li>
-<p>销毁：第 8~10步，第8步不是真正意义上的销毁（还没使用呢），而是先在使用前注册了销毁的相关调用接口，为了后面第9、10步真正销毁 bean 时再执行相应的方法。</p>
-</li>
+<li>实例化：第 1 步，实例化一个 bean 对象；</li>
+<li>属性赋值：第 2 步，为 bean 设置相关属性和依赖；</li>
+<li>初始化：第 3~7 步，步骤较多，其中第 5、6 步为初始化操作，第 3、4 步为在初始化前执行，第 7 步在初始化后执行，该阶段结束，才能被用户使用；</li>
+<li>销毁：第 8~10步，第8步不是真正意义上的销毁（还没使用呢），而是先在使用前注册了销毁的相关调用接口，为了后面第9、10步真正销毁 bean 时再执行相应的方法。</li>
 </ol>
 <p>下面我们结合代码来直观的看下，在 doCreateBean() 方法中能看到依次执行了这 4 个阶段：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// AbstractAutowireCapableBeanFactory.java

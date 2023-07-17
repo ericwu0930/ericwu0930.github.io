@@ -8,12 +8,12 @@
     <language>en-us</language>
     <lastBuildDate>Fri, 11 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://ericwu0930.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Redis数据库</title>
+      <title>键的过期策略</title>
       <link>https://ericwu0930.github.io/post/expire/</link>
       <pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://ericwu0930.github.io/post/expire/</guid>
-      <description>1.服务器中数据库结构 在redis服务器中，服务器的各种状态由redis.h/redisServer所维护，其中db字段指向redis.h/</description>
+      <description>1. 设置键的生存时间或过期时间 在Redis中，可以对任意键设置一个生存时间，有以下四个命令，他们之间的关系如下，其中以P开头的表明时间单位为毫</description>
     </item>
     
     <item>

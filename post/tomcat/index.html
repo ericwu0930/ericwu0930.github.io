@@ -15,15 +15,15 @@
     
 
     
-    <meta name="title" content="How Tomcat works笔记" />
-    <meta property="og:title" content="How Tomcat works笔记" />
-    <meta property="twitter:title" content="How Tomcat works笔记" />
+    <meta name="title" content="How Tomcat Works笔记" />
+    <meta property="og:title" content="How Tomcat Works笔记" />
+    <meta property="twitter:title" content="How Tomcat Works笔记" />
     
 
     
-    <meta name="description" content="总结自《How Tomcat Works》">
-    <meta property="og:description" content="总结自《How Tomcat Works》" />
-    <meta property="twitter:description" content="总结自《How Tomcat Works》" />
+    <meta name="description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。">
+    <meta property="og:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
+    <meta property="twitter:description" content="吴昊，学生, 东川路男子职业学院，矛盾体 | 这里是 吴昊 的博客，与你一起发现更大的世界。" />
     
 
     
@@ -34,7 +34,7 @@
     <meta name="keyword"  content="吴昊, Eric Wu, 吴昊的博客, Eric&#39;s Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务, Microservice">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>How Tomcat works笔记 | 吴昊的博客 | Eric&#39;s Blog</title>
+    <title>How Tomcat Works笔记 | 吴昊的博客 | Eric&#39;s Blog</title>
 
     <link rel="canonical" href="/post/tomcat/">
 
@@ -144,6 +144,10 @@ if (!doNotTrack) {
                         </li>
                         
                         <li>
+                            <a href="/categories/trival">trival</a>
+                        </li>
+                        
+                        <li>
                             <a href="/categories/trivial">trivial</a>
                         </li>
                         
@@ -225,7 +229,7 @@ if (!doNotTrack) {
                         </a>
                         
                     </div>
-                    <h1>How Tomcat works笔记</h1>
+                    <h1>How Tomcat Works笔记</h1>
                     <h2 class="subheading">Tomcat源码分析</h2>
                     <span class="meta">
                         
@@ -280,21 +284,11 @@ if (!doNotTrack) {
 </p>
 <p>Connector和Container是一一对应的，并且Connector知道Container的存在，但是Container不知道Connector的存在；</p>
 <ol>
-<li>
-<p>初始化方法为initialize()，启动方法为start()</p>
-</li>
-<li>
-<p>在初始化方法initialize()中，调用私有方法open得到一个ServerSocket；在该方法中没有使用ServerSocket的构造方法，而是调用了工厂方法，并产生一个ServerSocket类。</p>
-</li>
-<li>
-<p>使用一个Stack维护一组HttpProcessor，一个HttpProcessoor在同一时刻会处理一个请求，每一个都有自己的线程。</p>
-</li>
-<li>
-<p>在初始化方法start()方法中，会启动Connector的主线程，然后创建HttpProcessor到minProcessors；</p>
-</li>
-<li>
-<p>在线程方法中，会使用serverSocket.accept()接收socket，然后使用createProcessor()得到一个HttpProcessor；大多数情况下，都会从Stack中获取HttpProcessor. 如果请求数量多于Stack中HttpProcessor的数量，则会创建新的HttpProcessor直至达到maxProcessors；如果maxProcessors为负数，则会无限创建。如果能得到processor则调用processor.assign方法。</p>
-</li>
+<li>初始化方法为initialize()，启动方法为start()</li>
+<li>在初始化方法initialize()中，调用私有方法open得到一个ServerSocket；在该方法中没有使用ServerSocket的构造方法，而是调用了工厂方法，并产生一个ServerSocket类。</li>
+<li>使用一个Stack维护一组HttpProcessor，一个HttpProcessoor在同一时刻会处理一个请求，每一个都有自己的线程。</li>
+<li>在初始化方法start()方法中，会启动Connector的主线程，然后创建HttpProcessor到minProcessors；</li>
+<li>在线程方法中，会使用serverSocket.accept()接收socket，然后使用createProcessor()得到一个HttpProcessor；大多数情况下，都会从Stack中获取HttpProcessor. 如果请求数量多于Stack中HttpProcessor的数量，则会创建新的HttpProcessor直至达到maxProcessors；如果maxProcessors为负数，则会无限创建。如果能得到processor则调用processor.assign方法。</li>
 </ol>
 <h3 id="21-httpprocessor">2.1 HttpProcessor</h3>
 <p>HttpProcessor的实体用来读socket的输入流并且解析Http请求。HttpProcessor主要完成以下三个任务：</p>
@@ -345,7 +339,6 @@ if (!doNotTrack) {
 <h3 id="31-pipelining-tasks">3.1 Pipelining Tasks</h3>
 <p>在Container中，可以通过配置项来修改container的行为。这是因为Container内部使用了Pipeline的代码设计。</p>
 <p>Container中持有一个Pipeline，pipeline中由持有Valve，如下图所示：</p>
-<!-- raw HTML omitted -->
 <p>Pipeline的接口如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Pipeline</span> <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>
@@ -571,22 +564,15 @@ if (!doNotTrack) {
 <h3 id="52-java类加载机制">5.2 Java类加载机制</h3>
 <p>JVM使用类加载器把类加载到内存中。Java中有三个类加载器：bootstrap类加载器，extension类加载器以及system类加载器。</p>
 <ul>
-<li>
-<p>bootstrap类加载器用于加载所有的核心代码，比如java.lang以及java.io包下的类。</p>
-</li>
-<li>
-<p>extension类加载器用于加载标准扩展路径下的类，比如/jdk/jre/lib/ext路径下的类。</p>
-</li>
-<li>
-<p>application类加载器用于加载CLASSPATH路径下的类，该加载器是由<code>sun.misc.Launcher$AppClassLoader</code>实现，该类加载器负责加载用户类路径上所指定的类库。开发者可通过ClassLoader.getSystemClassLoader()方法直接获取，故又称为系统类加载器。当应用程序没有自定义类加载器时，默认采用该类加载器。。</p>
-</li>
+<li>bootstrap类加载器用于加载所有的核心代码，比如java.lang以及java.io包下的类。</li>
+<li>extension类加载器用于加载标准扩展路径下的类，比如/jdk/jre/lib/ext路径下的类。</li>
+<li>application类加载器用于加载CLASSPATH路径下的类，该加载器是由<code>sun.misc.Launcher$AppClassLoader</code>实现，该类加载器负责加载用户类路径上所指定的类库。开发者可通过ClassLoader.getSystemClassLoader()方法直接获取，故又称为系统类加载器。当应用程序没有自定义类加载器时，默认采用该类加载器。。</li>
 </ul>
 <p>这三个层级的类加载器又具有父子关系，通过双亲委派的模式去加载类，即首先委派自己的父类去加载相关类，如果没有加载成功则尝试自己去加载类。</p>
 <blockquote>
 <p>为什么要通过类加载器去加载类，而不是直接new对象出来？因为在代码中可能需要动态的产生新的对象，使用new的方式只能写死产生什么样的对象。</p>
 </blockquote>
 <h3 id="53-loader接口">5.3 Loader接口</h3>
-<!-- raw HTML omitted -->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Loader</span> <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> ClassLoader <span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">();</span> 
@@ -877,7 +863,6 @@ if (!doNotTrack) {
 <li>Session接口中有个expire方法，用于被Manager对象调用，标明该Session已过期</li>
 </ol>
 <h3 id="62-manager">6.2 Manager</h3>
-<!-- raw HTML omitted -->
 <p>在Manager对象中，通过一个map来管理Session对象，key时Session对象唯一的id，value是Session对象本身。</p>
 <h4 id="621-standardmanager">6.2.1 StandardManager</h4>
 <p>StandardManager实现了Lifecycle接口，当执行stop方法的时候会调用unload方法序列化所有的有效Session到SESSIONS.ser文件中。</p>
@@ -933,30 +918,14 @@ if (!doNotTrack) {
 
 </p>
 <ul>
-<li>
-<p>connector首先委托processor，通过传入的socket生成request和response对象</p>
-</li>
-<li>
-<p>connector请求StandardContext对象的invoke方法</p>
-</li>
-<li>
-<p>StandardContext的invoke方法其Pipeline的invoke方法，最终会调用该Pipeline的Basic方法——StandardContextValve</p>
-</li>
-<li>
-<p>StandardContextValve的invoke方法会调用Context对象的map方法得到合适的wrapper来处理request并且调用wrapper的invoke方法</p>
-</li>
-<li>
-<p>StandardWrapper是wrapper的标准实现。StandardWrapper实例调用它自己的pipeline的invoke方法</p>
-</li>
-<li>
-<p>StandardWrapperValve是StandardWrapper的流水线的basic valve。因此，StandardWrapperValve的invoke方法被调用。StandardWrapperValve调用wrapper的allocate方法去获得servlet的实例</p>
-</li>
-<li>
-<p>如果servlet需要被加载，allocate方法请求load方法去加载servlet</p>
-</li>
-<li>
-<p>StandardWrapperValve调用servlet的service方法</p>
-</li>
+<li>connector首先委托processor，通过传入的socket生成request和response对象</li>
+<li>connector请求StandardContext对象的invoke方法</li>
+<li>StandardContext的invoke方法其Pipeline的invoke方法，最终会调用该Pipeline的Basic方法——StandardContextValve</li>
+<li>StandardContextValve的invoke方法会调用Context对象的map方法得到合适的wrapper来处理request并且调用wrapper的invoke方法</li>
+<li>StandardWrapper是wrapper的标准实现。StandardWrapper实例调用它自己的pipeline的invoke方法</li>
+<li>StandardWrapperValve是StandardWrapper的流水线的basic valve。因此，StandardWrapperValve的invoke方法被调用。StandardWrapperValve调用wrapper的allocate方法去获得servlet的实例</li>
+<li>如果servlet需要被加载，allocate方法请求load方法去加载servlet</li>
+<li>StandardWrapperValve调用servlet的service方法</li>
 </ul>
 <h3 id="71-singlethreadmodel">7.1 SingleThreadModel</h3>
 <p>SingleThreadModel是一个接口，实现了该接口Servlet必须保证同一时间只能处理一个request。但是注意，该接口并不能阻止多个Servlet实例同时访问静态字段导致的同步问题。</p>
@@ -1032,7 +1001,7 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>   <span style="color:#f92672">}</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span> <span style="color:#f92672">}</span>
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">synchronized</span> Servlet <span style="color:#a6e22e">loadServlet</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> ServletException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">synchronized</span> Servlet <span style="color:#a6e22e">loadServlet</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> ServletException <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Nothing to do if we already have an instance or an instance pool
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>singleThreadModel <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">(</span>instance <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">))</span>
@@ -1196,24 +1165,12 @@ if (!doNotTrack) {
 </span></span></code></pre></div><h3 id="73-standardwrappervavle">7.3 StandardWrapperVavle</h3>
 <p>StandardWrapperValve执行的操作：</p>
 <ol>
-<li>
-<p>通过调用StandardWrapper的allocate方法得到StandardWrapper相关联的servlet</p>
-</li>
-<li>
-<p>通过调用createFilterChain私有方法创建与servlet相关联的filter chain</p>
-</li>
-<li>
-<p>调用filter chain的doFilter方法，这包括调用servlet的service方法</p>
-</li>
-<li>
-<p>释放filter chain</p>
-</li>
-<li>
-<p>调用wrapper的deallocate方法</p>
-</li>
-<li>
-<p>如果servlet永久性不可用，调用wrapper的unload方法</p>
-</li>
+<li>通过调用StandardWrapper的allocate方法得到StandardWrapper相关联的servlet</li>
+<li>通过调用createFilterChain私有方法创建与servlet相关联的filter chain</li>
+<li>调用filter chain的doFilter方法，这包括调用servlet的service方法</li>
+<li>释放filter chain</li>
+<li>调用wrapper的deallocate方法</li>
+<li>如果servlet永久性不可用，调用wrapper的unload方法</li>
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>Request request<span style="color:#f92672">,</span>Response response<span style="color:#f92672">,</span>ValveContext valveContext<span style="color:#f92672">){</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
@@ -1320,45 +1277,19 @@ if (!doNotTrack) {
 <h3 id="81-standardcontext启动过程">8.1 StandardContext启动过程</h3>
 <p>在StandardContext的start方法中：</p>
 <ul>
-<li>
-<p>触发BEFORE_START事件</p>
-</li>
-<li>
-<p>设置<code>availability</code>属性为<code>false</code></p>
-</li>
-<li>
-<p>设置<code>configured</code>属性为<code>false</code></p>
-</li>
-<li>
-<p>设置<code>resources</code></p>
-</li>
-<li>
-<p>设置<code>loader</code></p>
-</li>
-<li>
-<p>设置会话管理<code>manager</code></p>
-</li>
-<li>
-<p>初始化一个character set mapper</p>
-</li>
-<li>
-<p>启动与Context相关联的其他组件</p>
-</li>
-<li>
-<p>启动其子容器</p>
-</li>
-<li>
-<p>启动pipeline</p>
-</li>
-<li>
-<p>触发START事件（会触发LifecycleListener——ContextConfig，该监听器会解析web.xml完成Context的配置，并设置<code>configured</code>字段为<code>true</code>）</p>
-</li>
-<li>
-<p>检查<code>configured</code>属性，如果为<code>true</code>则调用<code>postWelcomePages</code>方法，加载需要加载的子wrappers，并且设置<code>availablity</code>为<code>true</code></p>
-</li>
-<li>
-<p>触发AFTER_START事件</p>
-</li>
+<li>触发BEFORE_START事件</li>
+<li>设置<code>availability</code>属性为<code>false</code></li>
+<li>设置<code>configured</code>属性为<code>false</code></li>
+<li>设置<code>resources</code></li>
+<li>设置<code>loader</code></li>
+<li>设置会话管理<code>manager</code></li>
+<li>初始化一个character set mapper</li>
+<li>启动与Context相关联的其他组件</li>
+<li>启动其子容器</li>
+<li>启动pipeline</li>
+<li>触发START事件（会触发LifecycleListener——ContextConfig，该监听器会解析web.xml完成Context的配置，并设置<code>configured</code>字段为<code>true</code>）</li>
+<li>检查<code>configured</code>属性，如果为<code>true</code>则调用<code>postWelcomePages</code>方法，加载需要加载的子wrappers，并且设置<code>availablity</code>为<code>true</code></li>
+<li>触发AFTER_START事件</li>
 </ul>
 <h3 id="82-standardcontext的invoke方法">8.2 StandardContext的invoke方法</h3>
 <p>StandardContext的invoke方法被与之关联的connector调用，或者如果Context有父Host，则被host的invoke方法而调用。</p>
@@ -1369,10 +1300,10 @@ if (!doNotTrack) {
 <h3 id="83-standardcontextmapper">8.3 StandardContextMapper</h3>
 <p>StandardContextMapper中的核心方法是map，在该方法中会有四个匹配规则</p>
 <ul>
-<li>Rule 1 &ndash; Exact Match</li>
-<li>Rule 2 &ndash; Prefix Match</li>
-<li>Rule 3 &ndash; Extension Match</li>
-<li>Rule 4 &ndash; Default Match</li>
+<li>Rule 1 – Exact Match</li>
+<li>Rule 2 – Prefix Match</li>
+<li>Rule 3 – Extension Match</li>
+<li>Rule 4 – Default Match</li>
 </ul>
 <p>优先级自上至下，通过relativeURI在Context的<code>servletMapping</code>成员属性中寻找与之对应的wrapperName，然后到<code>children</code>成员属性中根据wrapperName得到与之对应的wrapper。其中servletMapping是一个key为pattern，value为wrapperName的HashMap，children是key为name，value为Container的HashMap。</p>
 <p>servletMapping是在Bootstrap对象中手动添加的，如下</p>
@@ -1574,42 +1505,42 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;address</span> <span style="color:#a6e22e">streetName=</span><span style="color:#e6db74">&#34;Downing Street&#34;</span> <span style="color:#a6e22e">streetNumber=</span><span style="color:#e6db74">&#34;10&#34;</span><span style="color:#f92672">/&gt;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;/office&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/employee&gt;</span>
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test02</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>public class Test02 {
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    String path <span style="color:#f92672">=</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">getProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;user.dir&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">+</span> File<span style="color:#f92672">.</span><span style="color:#a6e22e">separator</span>  <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;etc&#34;</span><span style="color:#f92672">;</span>
-</span></span><span style="display:flex;"><span>    File file <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span>path<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;employee2.xml&#34;</span><span style="color:#f92672">);</span>
-</span></span><span style="display:flex;"><span>    Digester digester <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Digester<span style="color:#f92672">();</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// add rules
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    digester<span style="color:#f92672">.</span><span style="color:#a6e22e">addObjectCreate</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;employee&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;ex15.pyrmont.digestertest.Employee&#34;</span><span style="color:#f92672">);</span>
-</span></span><span style="display:flex;"><span>    digester<span style="color:#f92672">.</span><span style="color:#a6e22e">addSetProperties</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;employee&#34;</span><span style="color:#f92672">);</span>    
-</span></span><span style="display:flex;"><span>    digester<span style="color:#f92672">.</span><span style="color:#a6e22e">addObjectCreate</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;employee/office&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;ex15.pyrmont.digestertest.Office&#34;</span><span style="color:#f92672">);</span>
-</span></span><span style="display:flex;"><span>    digester<span style="color:#f92672">.</span><span style="color:#a6e22e">addSetProperties</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;employee/office&#34;</span><span style="color:#f92672">);</span>
-</span></span><span style="display:flex;"><span>    digester<span style="color:#f92672">.</span><span style="color:#a6e22e">addSetNext</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;employee/office&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;addOffice&#34;</span><span style="color:#f92672">);</span>
-</span></span><span style="display:flex;"><span>    digester<span style="color:#f92672">.</span><span style="color:#a6e22e">addObjectCreate</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;employee/office/address&#34;</span><span style="color:#f92672">,</span> 
-</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;ex15.pyrmont.digestertest.Address&#34;</span><span style="color:#f92672">);</span>
-</span></span><span style="display:flex;"><span>    digester<span style="color:#f92672">.</span><span style="color:#a6e22e">addSetProperties</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;employee/office/address&#34;</span><span style="color:#f92672">);</span>
-</span></span><span style="display:flex;"><span>    digester<span style="color:#f92672">.</span><span style="color:#a6e22e">addSetNext</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;employee/office/address&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;setAddress&#34;</span><span style="color:#f92672">);</span> 
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>      Employee employee <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Employee<span style="color:#f92672">)</span> digester<span style="color:#f92672">.</span><span style="color:#a6e22e">parse</span><span style="color:#f92672">(</span>file<span style="color:#f92672">);</span>
-</span></span><span style="display:flex;"><span>      ArrayList offices <span style="color:#f92672">=</span> employee<span style="color:#f92672">.</span><span style="color:#a6e22e">getOffices</span><span style="color:#f92672">();</span>
-</span></span><span style="display:flex;"><span>      Iterator iterator <span style="color:#f92672">=</span> offices<span style="color:#f92672">.</span><span style="color:#a6e22e">iterator</span><span style="color:#f92672">();</span>
-</span></span><span style="display:flex;"><span>      System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;-------------------------------------------------&#34;</span><span style="color:#f92672">);</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>iterator<span style="color:#f92672">.</span><span style="color:#a6e22e">hasNext</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>        Office office <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Office<span style="color:#f92672">)</span> iterator<span style="color:#f92672">.</span><span style="color:#a6e22e">next</span><span style="color:#f92672">();</span>
-</span></span><span style="display:flex;"><span>        Address address <span style="color:#f92672">=</span> office<span style="color:#f92672">.</span><span style="color:#a6e22e">getAddress</span><span style="color:#f92672">();</span>
-</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>office<span style="color:#f92672">.</span><span style="color:#a6e22e">getDescription</span><span style="color:#f92672">());</span>
-</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Address : &#34;</span> <span style="color:#f92672">+</span> 
-</span></span><span style="display:flex;"><span>          address<span style="color:#f92672">.</span><span style="color:#a6e22e">getStreetNumber</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#f92672">+</span> address<span style="color:#f92672">.</span><span style="color:#a6e22e">getStreetName</span><span style="color:#f92672">());</span>
-</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;--------------------------------&#34;</span><span style="color:#f92672">);</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  public static void main(String[] args) {
+</span></span><span style="display:flex;"><span>    String path = System.getProperty(&#34;user.dir&#34;) + File.separator  + &#34;etc&#34;;
+</span></span><span style="display:flex;"><span>    File file = new File(path, &#34;employee2.xml&#34;);
+</span></span><span style="display:flex;"><span>    Digester digester = new Digester();
+</span></span><span style="display:flex;"><span>    // add rules
+</span></span><span style="display:flex;"><span>    digester.addObjectCreate(&#34;employee&#34;, &#34;ex15.pyrmont.digestertest.Employee&#34;);
+</span></span><span style="display:flex;"><span>    digester.addSetProperties(&#34;employee&#34;);    
+</span></span><span style="display:flex;"><span>    digester.addObjectCreate(&#34;employee/office&#34;, &#34;ex15.pyrmont.digestertest.Office&#34;);
+</span></span><span style="display:flex;"><span>    digester.addSetProperties(&#34;employee/office&#34;);
+</span></span><span style="display:flex;"><span>    digester.addSetNext(&#34;employee/office&#34;, &#34;addOffice&#34;);
+</span></span><span style="display:flex;"><span>    digester.addObjectCreate(&#34;employee/office/address&#34;, 
+</span></span><span style="display:flex;"><span>      &#34;ex15.pyrmont.digestertest.Address&#34;);
+</span></span><span style="display:flex;"><span>    digester.addSetProperties(&#34;employee/office/address&#34;);
+</span></span><span style="display:flex;"><span>    digester.addSetNext(&#34;employee/office/address&#34;, &#34;setAddress&#34;); 
+</span></span><span style="display:flex;"><span>    try {
+</span></span><span style="display:flex;"><span>      Employee employee = (Employee) digester.parse(file);
+</span></span><span style="display:flex;"><span>      ArrayList offices = employee.getOffices();
+</span></span><span style="display:flex;"><span>      Iterator iterator = offices.iterator();
+</span></span><span style="display:flex;"><span>      System.out.println(&#34;-------------------------------------------------&#34;);
+</span></span><span style="display:flex;"><span>      while (iterator.hasNext()) {
+</span></span><span style="display:flex;"><span>        Office office = (Office) iterator.next();
+</span></span><span style="display:flex;"><span>        Address address = office.getAddress();
+</span></span><span style="display:flex;"><span>        System.out.println(office.getDescription());
+</span></span><span style="display:flex;"><span>        System.out.println(&#34;Address : &#34; + 
+</span></span><span style="display:flex;"><span>          address.getStreetNumber() + &#34; &#34; + address.getStreetName());
+</span></span><span style="display:flex;"><span>        System.out.println(&#34;--------------------------------&#34;);
+</span></span><span style="display:flex;"><span>      }
 </span></span><span style="display:flex;"><span>      
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">catch</span><span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>      e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>  
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    catch(Exception e) {
+</span></span><span style="display:flex;"><span>      e.printStackTrace();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }  
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="102-contextconfig">10.2 ContextConfig</h3>
 <p>ContextConfig是StandardContext中的一个LifecycleListener，该对象用于配置Context的一些属性，并设置其成员变量<code>configured</code>为true。ContextConfig为每一个servlet元素创建一个StandardWrapper对象，我们不再需要手动初始化wrapper。</p>
 <p>在事件响应方法<code>lifecycleEvent</code>中，START_EVENT和STOP_EVENT会触发函数</p>

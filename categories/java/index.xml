@@ -35,7 +35,16 @@
     </item>
     
     <item>
-      <title>How Tomcat works笔记</title>
+      <title>异常堆栈信息丢失问题定位</title>
+      <link>https://ericwu0930.github.io/post/omit_exception_stack/</link>
+      <pubDate>Tue, 17 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericwu0930.github.io/post/omit_exception_stack/</guid>
+      <description>1. 现象 在完成DataTalk推送队列化改造后，为了测试全局限流措施的有效性，设置信号量为20，使用python脚本在同一时间触发Beacon</description>
+    </item>
+    
+    <item>
+      <title>How Tomcat Works笔记</title>
       <link>https://ericwu0930.github.io/post/tomcat/</link>
       <pubDate>Tue, 03 Jan 2023 00:00:00 +0000</pubDate>
       
